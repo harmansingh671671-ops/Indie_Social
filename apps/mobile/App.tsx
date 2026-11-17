@@ -1,121 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, Linking, Modal, Platform, Pressable, Share, StatusBar, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PaperProvider, ProgressBar } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Linking, Share, TextInput } from 'react-native';
 
-// Demo-only sites for local feed/WebView testing. These are not owner-verified or approved for a public Scroll catalog.
-const sites = [
-  { title: 'Neal.fun', maker: 'Neal Agarwal', tag: 'WEB EXPERIMENTS', line: 'A playful collection of interactive curiosities and tiny games.', url: 'https://neal.fun/', mark: '✳', colors: ['#CDD3B4', '#879979', '#506859'] as [string,string,string] },
-  { title: 'Radio Garden', maker: 'Radio Garden', tag: 'INTERACTIVE SOUND', line: 'Spin a globe and discover radio stations from around the world.', url: 'https://radio.garden/', mark: '◉', colors: ['#E6C9A8', '#B77D62', '#704D50'] as [string,string,string] },
-  { title: 'Patatap', maker: 'Jono Brandel', tag: 'MUSIC & MOTION', line: 'An audiovisual instrument made for playful tapping.', url: 'https://patatap.com/', mark: '♪', colors: ['#CCD7D3', '#819C9A', '#4C6668'] as [string,string,string] },
-  { title: 'Pointer Pointer', maker: 'Moniker', tag: 'INTERACTIVE ART', line: 'A curious camera trick that finds a finger pointing at your cursor.', url: 'https://pointerpointer.com/', mark: '↗', colors: ['#E5D6C5', '#B78567', '#725B50'] as [string,string,string] },
-  { title: 'This Is Sand', maker: 'This Is Sand', tag: 'CREATIVE TOOL', line: 'Draw with falling grains of colored sand.', url: 'https://thisissand.com/', mark: '〰', colors: ['#E9D8A6', '#C39D61', '#756C4B'] as [string,string,string] },
-  { title: 'Zoomquilt', maker: 'Zoomquilt Collective', tag: 'GENERATIVE ART', line: 'Step into a continuously unfolding collaborative painting.', url: 'https://zoomquilt.org/', mark: '◎', colors: ['#D4C8D8', '#9780A1', '#514D6B'] as [string,string,string] },
-  { title: 'Chrome Music Lab', maker: 'Google Creative Lab', tag: 'MUSIC EXPERIMENT', line: 'Small, visual ways to explore rhythm, sound and melody.', url: 'https://musiclab.chromeexperiments.com/', mark: '♫', colors: ['#E5D6BC', '#D09B62', '#765D48'] as [string,string,string] },
-  { title: 'The Pudding', maker: 'The Pudding', tag: 'VISUAL STORIES', line: 'A publication that explains ideas through visual essays.', url: 'https://pudding.cool/', mark: '◌', colors: ['#D8D3BE', '#AFA27D', '#66705C'] as [string,string,string] },
-  { title: 'Bartosz Ciechanowski', maker: 'Bartosz Ciechanowski', tag: 'PLAYABLE EXPLAINER', line: 'Detailed interactive explanations of science and engineering.', url: 'https://ciechanow.ski/', mark: '⌁', colors: ['#D0D9D7', '#8BA5A3', '#4F686C'] as [string,string,string] },
-  { title: 'Nicky Case', maker: 'Nicky Case', tag: 'INTERACTIVE STORY', line: 'Ideas about people and systems, told through things you can play.', url: 'https://ncase.me/', mark: '◇', colors: ['#E5C7B6', '#B88170', '#6C555B'] as [string,string,string] },
-  { title: 'Setosa', maker: 'Setosa', tag: 'VISUAL EXPLAINER', line: 'Clear, interactive stories about statistics and algorithms.', url: 'https://setosa.io/', mark: '⌗', colors: ['#D6DFC5', '#9DAF7D', '#5F715B'] as [string,string,string] },
-  { title: 'Squoosh', maker: 'Google Chrome Labs', tag: 'IMAGE TOOL', line: 'Compare image formats and compression settings side by side.', url: 'https://squoosh.app/', mark: '▧', colors: ['#D7DDE0', '#8DA9B8', '#526B7C'] as [string,string,string] },
-  { title: 'Coolors', maker: 'Coolors', tag: 'COLOR TOOL', line: 'Explore and build color palettes with a few quick actions.', url: 'https://coolors.co/', mark: '◒', colors: ['#E4D0BD', '#C28E70', '#74616B'] as [string,string,string] },
-  { title: 'Excalidraw', maker: 'Excalidraw', tag: 'CREATIVE TOOL', line: 'A friendly sketching canvas for quick diagrams and ideas.', url: 'https://excalidraw.com/', mark: '✎', colors: ['#DDD8C8', '#B6A982', '#6D7561'] as [string,string,string] },
-  { title: 'OpenProcessing', maker: 'OpenProcessing', tag: 'CREATIVE CODING', line: 'A community gallery for sketches and code-based artwork.', url: 'https://openprocessing.org/', mark: '⌘', colors: ['#D3D2E1', '#9290B8', '#55546F'] as [string,string,string] },
+type Site = { id: string; title: string; maker: string; category: string; description: string; url: string; palette: [string, string, string]; mark: string };
+
+// Local test catalog. These public sites are temporary development data, not verified creator submissions.
+const SITES: Site[] = [
+  { id: 'nealfun', title: 'Neal.fun', maker: 'Neal Agarwal', category: 'Web experiments', description: 'Interactive curiosities, tiny games, and playful things for the browser.', url: 'https://neal.fun/', palette: ['#405C52', '#7FA16E', '#D7D39A'], mark: '✳' },
+  { id: 'radiogarden', title: 'Radio Garden', maker: 'Radio Garden', category: 'Interactive sound', description: 'Move around a globe and find radio stations from around the world.', url: 'https://radio.garden/', palette: ['#1E3D58', '#3A7591', '#E0C47C'], mark: '◉' },
+  { id: 'patatap', title: 'Patatap', maker: 'Jono Brandel', category: 'Music and motion', description: 'A simple audiovisual instrument for your keyboard and fingertips.', url: 'https://patatap.com/', palette: ['#512E56', '#A15C82', '#ECB879'], mark: '♪' },
+  { id: 'pointerpointer', title: 'Pointer Pointer', maker: 'Moniker', category: 'Interactive art', description: 'A photo archive that finds a finger pointing at your cursor.', url: 'https://pointerpointer.com/', palette: ['#6B4A3C', '#BF8667', '#E3C6A5'], mark: '↗' },
+  { id: 'thisissand', title: 'This Is Sand', maker: 'This Is Sand', category: 'Creative tool', description: 'Make landscapes by pouring colored sand across the screen.', url: 'https://thisissand.com/', palette: ['#665B38', '#B59A5A', '#EEE0A7'], mark: '〰' },
+  { id: 'zoomquilt', title: 'Zoomquilt', maker: 'Zoomquilt Collective', category: 'Generative art', description: 'Travel through a painting that keeps opening into another painting.', url: 'https://zoomquilt.org/', palette: ['#423657', '#7D6CA1', '#D9BFCE'], mark: '◎' },
+  { id: 'musiclab', title: 'Chrome Music Lab', maker: 'Google Creative Lab', category: 'Music experiment', description: 'Small visual instruments for exploring rhythm, melody, and sound.', url: 'https://musiclab.chromeexperiments.com/', palette: ['#6B4933', '#C88151', '#EBCB8D'], mark: '♫' },
+  { id: 'pudding', title: 'The Pudding', maker: 'The Pudding', category: 'Visual stories', description: 'Ideas about culture, data, and people explained through visual essays.', url: 'https://pudding.cool/', palette: ['#53634B', '#91A475', '#E2D6AF'], mark: '◌' },
+  { id: 'ciechanowski', title: 'Bartosz Ciechanowski', maker: 'Bartosz Ciechanowski', category: 'Playable explainer', description: 'Interactive explanations of science and engineering.', url: 'https://ciechanow.ski/', palette: ['#294E58', '#6F99A1', '#CAE0D8'], mark: '⌁' },
+  { id: 'ncase', title: 'Nicky Case', maker: 'Nicky Case', category: 'Interactive story', description: 'Things you can play to understand people, systems, and society.', url: 'https://ncase.me/', palette: ['#713E4E', '#BB6F77', '#E5BCA2'], mark: '◇' },
+  { id: 'setosa', title: 'Setosa', maker: 'Setosa', category: 'Visual explainer', description: 'Friendly interactive explanations about statistics and algorithms.', url: 'https://setosa.io/', palette: ['#47664D', '#82A470', '#D5DCB7'], mark: '⌗' },
+  { id: 'squoosh', title: 'Squoosh', maker: 'Google Chrome Labs', category: 'Image tool', description: 'Compare image formats and compression settings in your browser.', url: 'https://squoosh.app/', palette: ['#315568', '#6F9CB2', '#C9E0E7'], mark: '▧' },
+  { id: 'coolors', title: 'Coolors', maker: 'Coolors', category: 'Color tool', description: 'Create, explore, and save useful color palettes.', url: 'https://coolors.co/', palette: ['#683B54', '#B16D86', '#EDC6AC'], mark: '◒' },
+  { id: 'excalidraw', title: 'Excalidraw', maker: 'Excalidraw', category: 'Creative tool', description: 'A welcoming canvas for diagrams, sketches, and shared ideas.', url: 'https://excalidraw.com/', palette: ['#5D6247', '#A5A77A', '#E6DEB1'], mark: '✎' },
+  { id: 'openprocessing', title: 'OpenProcessing', maker: 'OpenProcessing', category: 'Creative coding', description: 'A community gallery for code sketches and browser-made art.', url: 'https://openprocessing.org/', palette: ['#474564', '#817FB0', '#D0CEE8'], mark: '⌘' },
 ];
-const theme = { colors: { primary: '#596B4E', background: '#F5F3EC', surface: '#F5F3EC', onSurface: '#252923' } };
 
-function AppContent() {
-  const [index, setIndex] = useState(0);
-  const [ready, setReady] = useState(false);
-  const [minTime, setMinTime] = useState(false);
-  const [savedSites, setSavedSites] = useState<string[]>([]);
-  const [followedMakers, setFollowedMakers] = useState<string[]>([]);
-  const [failed, setFailed] = useState(false);
-  const [retry, setRetry] = useState(0);
-  const [searching, setSearching] = useState(false);
-  const [query, setQuery] = useState('');
-  const [history, setHistory] = useState<number[]>([]);
-  const [storageLoaded, setStorageLoaded] = useState(false);
-  const arrived = useRef(Date.now());
-  const requestGeneration = useRef(0);
-  const readyRef = useRef(false);
-  const site = sites[index];
-  const siteId = site.url;
-  const saved = savedSites.includes(siteId);
-  const following = followedMakers.includes(site.maker);
-  const opened = ready && minTime && !failed;
+const STORE_KEY = 'scroll.demo.saved.v2';
+const MIN_PREVIEW_MS = 5000;
 
-  useEffect(() => {
-    AsyncStorage.multiGet(['scroll.savedSites.v1','scroll.followedMakers.v1']).then(([savedValue,followedValue])=>{
-      try { if(savedValue[1])setSavedSites(JSON.parse(savedValue[1])); } catch {}
-      try { if(followedValue[1])setFollowedMakers(JSON.parse(followedValue[1])); } catch {}
-    }).catch(()=>{}).finally(()=>setStorageLoaded(true));
-  }, []);
-
-  useEffect(() => {
-    if(storageLoaded)AsyncStorage.setItem('scroll.savedSites.v1',JSON.stringify(savedSites)).catch(()=>{});
-  },[savedSites,storageLoaded]);
-  useEffect(() => {
-    if(storageLoaded)AsyncStorage.setItem('scroll.followedMakers.v1',JSON.stringify(followedMakers)).catch(()=>{});
-  },[followedMakers,storageLoaded]);
-
-  useEffect(() => {
-    const generation = ++requestGeneration.current;
-    setReady(false); setMinTime(false); setFailed(false);
-    readyRef.current = false;
-    arrived.current = Date.now();
-    const t = setTimeout(() => setMinTime(true), 5000);
-    const timeout = setTimeout(() => { if(requestGeneration.current===generation&&!readyRef.current)setFailed(true); },15000);
-    return () => { clearTimeout(t); clearTimeout(timeout); };
-  }, [index,retry]);
-
-  const next = () => { setHistory(h=>[...h,index]); setIndex(n=>(n+1)%sites.length); };
-  const previous = () => { const prior=history[history.length-1]; if(prior===undefined)return; setHistory(h=>h.slice(0,-1)); setIndex(prior); };
-  const toggleSaved = () => setSavedSites(v=>saved?v.filter(x=>x!==siteId):[...v,siteId]);
-  const toggleFollowing = () => setFollowedMakers(v=>following?v.filter(x=>x!==site.maker):[...v,site.maker]);
-  const shareSite = () => Share.share({title:site.title,message:`${site.title} — ${site.url}`}).catch(()=>{});
-  const retryLoad = () => setRetry(v=>v+1);
-  const onReady = () => { if(requestGeneration.current>0&&Date.now()-arrived.current>0){readyRef.current=true;setReady(true);} };
-  const filteredSites = sites.filter(x=>`${x.title} ${x.maker} ${x.tag} ${x.line}`.toLowerCase().includes(query.toLowerCase()));
-  const moveToFiltered = (item: typeof sites[number]) => { const target=sites.indexOf(item); if(target>=0){setHistory(h=>[...h,index]);setIndex(target);setSearching(false);setQuery('');} };
-  const icon = (name: keyof typeof MaterialCommunityIcons.glyphMap, size = 21, color = '#454B42') => <MaterialCommunityIcons name={name} size={size} color={color}/>;
-
-  return <SafeAreaView style={s.page} edges={['top','left','right']}>
-    <StatusBar style="dark" />
-    <View style={s.topbar}>
-      <View style={s.wordmark}><View style={s.logo}><Text style={s.logoText}>s</Text></View><Text style={s.brand}>scroll</Text><View style={s.divider}/><Text style={s.edition}>FIELD NOTES  /  001</Text></View>
-      <Pressable style={s.search} accessibilityLabel="Search sites" onPress={()=>setSearching(v=>!v)}><MaterialCommunityIcons name={searching?'close':'magnify'} size={21} color="#50564E"/></Pressable>
-    </View>
-    {searching&&<View style={s.searchArea}><TextInput value={query} onChangeText={setQuery} placeholder="Search sites, makers, topics" placeholderTextColor="#8A8C83" autoFocus style={s.searchInput}/>{query.length>0&&filteredSites.map(item=><Pressable key={item.url} onPress={()=>moveToFiltered(item)} style={s.searchResult}><Text style={s.searchResultTitle}>{item.title}</Text><Text style={s.searchResultMaker}>{item.maker} · {item.tag}</Text></Pressable>)}</View>}
-    <View style={s.intro}><Text style={s.eyebrow}>A MORE CURIOUS WEB</Text><Text style={s.headline}>Somewhere{ '\n'}worth wandering.</Text><Text style={s.subhead}>15 public demo sites for local testing · not owner-verified.</Text></View>
-    <View style={s.filters}><Text style={s.filterActive}>DEMO CATALOG</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>VISUAL</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>INTERACTIVE</Text><View style={s.filterSpacer}/><Text style={s.count}>{String(index+1).padStart(2,'0')} / 15</Text></View>
-    <View style={s.feature}>
-      <WebView key={`${index}-${retry}`} source={{uri:site.url}} style={[StyleSheet.absoluteFill,{opacity:opened?1:0}]} originWhitelist={['https://*']} javaScriptEnabled domStorageEnabled userAgent="ScrollPreview/1.0" onLoadEnd={onReady} onError={()=>setFailed(true)} onHttpError={(e)=>{if(e.nativeEvent.statusCode>=400)setFailed(true)}} />
-      {!opened && <LinearGradient colors={site.colors} style={s.art}>
-        <View style={s.artHeader}><Text style={s.artOverline}>AN INTERNET OBJECT</Text><Text style={s.artNumber}>Nº 0{index+1}</Text></View>
-        <View style={s.artCenter}><View style={s.sunHalo}/><View style={s.sun}/><View style={s.planet}/><View style={s.orbitLine}/><Text style={s.artGlyph}>{site.mark}</Text></View>
-        <View style={s.artCaption}><View style={s.artRule}/><Text style={s.artCaptionText}>A little corner of the internet</Text><MaterialCommunityIcons name="arrow-top-left" size={17} color="#F7F1E5"/></View>
-      </LinearGradient>}
-      <View style={s.featureTop}><View style={s.tag}><View style={s.tagDot}/><Text style={s.tagText}>{site.tag}</Text></View><Text style={s.disclosure}>PUBLIC DEMO</Text></View>
-      {!opened && <View style={s.load}><View style={s.loadRow}><View style={[s.loadDot,ready&&s.loadDotReady]}/><Text style={s.loadText}>{failed?'Site could not be opened':ready?'Ready to explore':'Opening the live site'}</Text><Text style={s.loadTime}>{minTime?'':'5 sec minimum'}</Text></View><ProgressBar progress={ready?1:0.32} color="#F6F0E2" style={s.progress}/>{failed&&<View style={s.errorActions}><Pressable onPress={retryLoad}><Text style={s.errorActionText}>RETRY</Text></Pressable><Pressable onPress={()=>Linking.openURL(site.url).catch(()=>{})}><Text style={s.errorActionText}>OPEN IN BROWSER</Text></Pressable><Pressable onPress={next}><Text style={s.errorActionText}>SKIP</Text></Pressable></View>}</View>}
-      {opened && <Pressable onPress={next} style={s.nextButton} accessibilityLabel="Next website">{icon('arrow-right',22,'#F7F4EC')}</Pressable>}
-    </View>
-    <View style={s.details}>
-      <View style={s.creatorLine}><View style={s.avatar}><Text style={s.avatarText}>{site.maker.split(' ').map(v=>v[0]).join('')}</Text></View><Text style={s.by}>A site by </Text><Text style={s.maker}>{site.maker}</Text><Pressable onPress={toggleFollowing} style={s.follow}><Text style={s.followText}>{following?'FOLLOWING':'FOLLOW +'}</Text></Pressable></View>
-      <Text style={s.title}>{site.title}</Text><Text style={s.description}>{site.line}</Text>
-      <View style={s.actions}><Pressable onPress={toggleSaved} style={s.saveAction}>{icon(saved?'bookmark':'bookmark-outline',18,saved?'#596B4E':'#50564E')}<Text style={s.saveText}>{saved?'SAVED TO YOUR LIBRARY':'SAVE FOR LATER'}</Text></Pressable><View style={s.actionGap}/><Pressable onPress={shareSite} style={s.shareAction}>{icon('share-variant-outline',18)}<Text style={s.saveText}>SHARE</Text></Pressable><View style={s.actionGap}/><Pressable disabled={!history.length} onPress={previous} style={{opacity:history.length?1:.35}}>{icon('arrow-left',18)}</Pressable><Text style={s.siteNo}>SITE 0{index+1}</Text></View>
-    </View>
-    <View style={s.bottom}><Text style={s.bottomLabel}>DEMO CATALOG · NOT OWNER-VERIFIED</Text><Pressable onPress={next} style={s.skip}><Text style={s.skipText}>NEXT DISCOVERY</Text>{icon('arrow-right',16,'#596B4E')}</Pressable></View>
-  </SafeAreaView>;
+function SiteArt({ site }: { site: Site }) {
+  return <View style={[styles.art, { backgroundColor: site.palette[0] }]}><View style={[styles.artBlob, { backgroundColor: site.palette[1] }]} /><View style={[styles.artCircle, { borderColor: site.palette[2] }]} /><Text style={[styles.artMark, { color: site.palette[2] }]}>{site.mark}</Text><Text style={styles.artKicker}>SCROLL DEMO CATALOG</Text><Text style={styles.artFooter}>Open web, in progress</Text></View>;
 }
 
-export default function App(){return <PaperProvider theme={theme}><AppContent/></PaperProvider>}
+function BrowserFrame({ site, onReady, onFailure }: { site: Site; onReady: () => void; onFailure: () => void }) {
+  if (Platform.OS === 'web') return React.createElement('iframe', { src: site.url, title: site.title, onLoad: onReady, onError: onFailure, style: { width: '100%', height: '100%', border: 0, backgroundColor: '#fff' }, sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups' });
+  return <WebView source={{ uri: site.url }} onLoadEnd={onReady} onError={onFailure} onHttpError={(e) => e.nativeEvent.statusCode >= 400 && onFailure()} userAgent="ScrollPreview/1.0" />;
+}
 
-const s=StyleSheet.create({
-  page:{flex:1,backgroundColor:'#F5F3EC',paddingHorizontal:22},topbar:{height:48,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},wordmark:{flexDirection:'row',alignItems:'center'},logo:{width:26,height:26,borderRadius:9,backgroundColor:'#596B4E',alignItems:'center',justifyContent:'center'},logoText:{fontSize:20,fontWeight:'900',fontStyle:'italic',color:'#F7F5EE',marginTop:-2},brand:{fontSize:18,fontWeight:'800',letterSpacing:-.7,color:'#292D27',marginLeft:8},divider:{height:16,width:1,backgroundColor:'#D6D5CA',marginHorizontal:12},edition:{fontSize:9,letterSpacing:1.4,color:'#84877C',fontWeight:'700'},search:{width:36,height:36,borderWidth:1,borderColor:'#DEDDD4',borderRadius:18,alignItems:'center',justifyContent:'center'},searchArea:{backgroundColor:'#fff',padding:12,borderWidth:1,borderColor:'#E3E1D8',zIndex:10},searchInput:{height:36,color:'#292D27'},searchResult:{paddingVertical:9,borderTopWidth:1,borderTopColor:'#EEECE5'},searchResultTitle:{color:'#292D27',fontSize:12,fontWeight:'700'},searchResultMaker:{color:'#7C7E73',fontSize:10,marginTop:3},errorActions:{flexDirection:'row',justifyContent:'space-between',marginTop:9},errorActionText:{fontSize:8,color:'#F7F1E5',fontWeight:'800',letterSpacing:.6},intro:{paddingTop:17,paddingBottom:14},eyebrow:{fontSize:9,letterSpacing:2.2,color:'#64745B',fontWeight:'800'},headline:{fontSize:34,lineHeight:36,letterSpacing:-1.25,color:'#282D26',fontWeight:'700',marginTop:8},subhead:{fontSize:12,color:'#77796F',marginTop:8},filters:{height:30,flexDirection:'row',alignItems:'center',gap:9},filterActive:{fontSize:9,letterSpacing:1,color:'#394632',fontWeight:'800'},filter:{fontSize:9,letterSpacing:1,color:'#9A9B91',fontWeight:'700'},filterDot:{fontSize:13,color:'#C4C3B8'},filterSpacer:{flex:1},count:{fontSize:9,letterSpacing:1,color:'#808378',fontWeight:'700'},feature:{flex:1,minHeight:225,maxHeight:360,borderRadius:4,overflow:'hidden',backgroundColor:'#819979',position:'relative',marginTop:4},art:{flex:1,justifyContent:'space-between',padding:18},artHeader:{flexDirection:'row',justifyContent:'space-between'},artOverline:{color:'#F8F5EBB0',fontSize:8,letterSpacing:1.8,fontWeight:'700'},artNumber:{color:'#F8F5EBB0',fontSize:9,letterSpacing:1.2},artCenter:{flex:1,alignItems:'center',justifyContent:'center'},sunHalo:{width:160,height:160,borderRadius:80,backgroundColor:'#EDE5C326',position:'absolute'},sun:{width:96,height:96,borderRadius:48,backgroundColor:'#E8D7A7',position:'absolute',opacity:.92},planet:{width:38,height:38,borderRadius:19,backgroundColor:'#AE8061',position:'absolute',left:'29%',top:'28%',borderWidth:6,borderColor:'#E8D7A755'},orbitLine:{width:210,height:80,borderWidth:1,borderColor:'#F4EEDB99',borderRadius:100,transform:[{rotate:'-28deg'}],position:'absolute'},artGlyph:{fontSize:36,color:'#485B4B',fontWeight:'300',position:'absolute',bottom:'20%',right:'30%'},artCaption:{flexDirection:'row',alignItems:'center',gap:8},artRule:{height:1,width:22,backgroundColor:'#F7F1E5'},artCaptionText:{fontSize:10,color:'#F7F1E5',letterSpacing:.3},featureTop:{position:'absolute',top:13,left:14,right:14,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},tag:{flexDirection:'row',alignItems:'center',gap:6,backgroundColor:'#F5F3EADD',paddingHorizontal:9,paddingVertical:7,borderRadius:2},tagDot:{width:5,height:5,borderRadius:3,backgroundColor:'#627755'},tagText:{fontSize:8,letterSpacing:1,color:'#394632',fontWeight:'800'},disclosure:{fontSize:8,color:'#F8F5EB',letterSpacing:1.2,fontWeight:'700'},load:{position:'absolute',bottom:13,left:14,right:14,backgroundColor:'#28352DBB',paddingHorizontal:11,paddingVertical:9,borderRadius:3},loadRow:{flexDirection:'row',alignItems:'center',gap:7},loadDot:{width:5,height:5,borderRadius:3,backgroundColor:'#E6D69F'},loadDotReady:{backgroundColor:'#AFC68D'},loadText:{fontSize:9,color:'#F8F5EB',fontWeight:'600',flex:1},loadTime:{fontSize:8,color:'#E6E0D1A8'},progress:{height:2,marginTop:7,backgroundColor:'#FFFFFF3A'},nextButton:{position:'absolute',right:14,bottom:14,width:40,height:40,borderRadius:20,backgroundColor:'#394B3F',alignItems:'center',justifyContent:'center'},details:{paddingTop:13},creatorLine:{height:30,flexDirection:'row',alignItems:'center'},avatar:{width:22,height:22,borderRadius:11,backgroundColor:'#DED5BE',alignItems:'center',justifyContent:'center'},avatarText:{fontSize:8,color:'#4D5849',fontWeight:'800'},by:{fontSize:10,color:'#93948A',marginLeft:7},maker:{fontSize:10,color:'#444A41',fontWeight:'700'},follow:{marginLeft:'auto',borderBottomWidth:1,borderBottomColor:'#89927F',paddingBottom:3},followText:{fontSize:8,letterSpacing:1,color:'#596B4E',fontWeight:'800'},title:{fontSize:24,letterSpacing:-.7,color:'#292D27',fontWeight:'700',marginTop:5},description:{fontSize:12,lineHeight:18,color:'#74766E',marginTop:3},actions:{height:45,borderTopWidth:1,borderBottomWidth:1,borderColor:'#E3E1D8',marginTop:12,flexDirection:'row',alignItems:'center'},saveAction:{flexDirection:'row',alignItems:'center',gap:7},shareAction:{flexDirection:'row',alignItems:'center',gap:7},saveText:{fontSize:8,letterSpacing:.8,color:'#65695F',fontWeight:'700'},actionGap:{height:16,width:1,backgroundColor:'#DCDAD0',marginHorizontal:13},siteNo:{marginLeft:'auto',fontSize:8,letterSpacing:1,color:'#929489'},bottom:{height:38,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},bottomLabel:{fontSize:8,letterSpacing:1.4,color:'#A0A197',fontWeight:'700'},skip:{flexDirection:'row',alignItems:'center',gap:6},skipText:{fontSize:8,letterSpacing:1,color:'#596B4E',fontWeight:'800'}
+function App() {
+  const { height } = useWindowDimensions();
+  const cardHeight = Math.max(430, height - 170);
+  const [saved, setSaved] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Site | null>(null);
+  const [query, setQuery] = useState('');
+  const [openReady, setOpenReady] = useState(false);
+  const [minimumPassed, setMinimumPassed] = useState(false);
+  const [openFailed, setOpenFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => { AsyncStorage.getItem(STORE_KEY).then(value => { if (value) setSaved(JSON.parse(value)); }).catch(() => {}); }, []);
+  const persistSaved = (next: string[]) => { setSaved(next); AsyncStorage.setItem(STORE_KEY, JSON.stringify(next)).catch(() => {}); };
+  const toggleSaved = (id: string) => persistSaved(saved.includes(id) ? saved.filter(item => item !== id) : [...saved, id]);
+  const results = useMemo(() => SITES.filter(site => `${site.title} ${site.maker} ${site.category}`.toLowerCase().includes(query.toLowerCase())), [query]);
+  const startSite = (site: Site) => { setSelected(site); setOpenReady(false); setMinimumPassed(false); setOpenFailed(false); setReloadKey(key => key + 1); };
+  const closeSite = () => setSelected(null);
+  const retry = () => { setOpenReady(false); setMinimumPassed(false); setOpenFailed(false); setReloadKey(key => key + 1); };
+  const share = (site: Site) => Share.share({ title: site.title, message: `${site.title}: ${site.url}` }).catch(() => {});
+
+  useEffect(() => { if (!selected) return; const timer = setTimeout(() => setMinimumPassed(true), MIN_PREVIEW_MS); return () => clearTimeout(timer); }, [selected, reloadKey]);
+  const openVisible = openReady && minimumPassed && !openFailed;
+
+  const renderSite = useCallback(({ item, index }: { item: Site; index: number }) => {
+    const isSaved = saved.includes(item.id);
+    return <View style={[styles.feedItem, { height: cardHeight }]}><View style={styles.indexLine}><Text style={styles.number}>{String(index + 1).padStart(2, '0')}</Text><View style={styles.line}/><Text style={styles.category}>{item.category.toUpperCase()}</Text><Text style={styles.demo}>DEMO</Text></View><Pressable style={styles.preview} onPress={() => startSite(item)} accessibilityLabel={`Open ${item.title}`}><SiteArt site={item}/><View style={styles.previewShade}/><View style={styles.previewButton}><MaterialCommunityIcons name="arrow-up-right" size={20} color="#fff"/></View></Pressable><View style={styles.itemContent}><Text style={styles.maker}>BY {item.maker.toUpperCase()}</Text><Text style={styles.siteTitle}>{item.title}</Text><Text style={styles.siteDescription}>{item.description}</Text><View style={styles.itemActions}><Pressable onPress={() => startSite(item)} style={styles.openButton}><Text style={styles.openButtonText}>OPEN SITE</Text><MaterialCommunityIcons name="arrow-right" size={17} color="#20241E"/></Pressable><Pressable onPress={() => toggleSaved(item.id)} style={styles.iconButton} accessibilityLabel={isSaved ? 'Remove saved site' : 'Save site'}><MaterialCommunityIcons name={isSaved ? 'bookmark' : 'bookmark-outline'} size={21} color={isSaved ? '#547346' : '#4A4E47'}/></Pressable><Pressable onPress={() => share(item)} style={styles.iconButton} accessibilityLabel="Share site"><MaterialCommunityIcons name="share-variant-outline" size={21} color="#4A4E47"/></Pressable></View></View></View>;
+  }, [cardHeight, saved]);
+
+  return <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}><StatusBar barStyle="dark-content"/><View style={styles.header}><View style={styles.brandLockup}><View style={styles.logo}><Text style={styles.logoText}>s</Text></View><Text style={styles.brand}>scroll</Text></View><Text style={styles.headerNote}>{SITES.length} SITES · LOCAL TEST</Text></View><View style={styles.searchRow}><MaterialCommunityIcons name="magnify" size={20} color="#71776D"/><TextInput value={query} onChangeText={setQuery} placeholder="Search the demo catalog" placeholderTextColor="#8B9087" style={styles.searchInput}/>{query.length > 0 && <Pressable onPress={() => setQuery('')}><MaterialCommunityIcons name="close" size={19} color="#71776D"/></Pressable>}</View><FlatList data={results} renderItem={renderSite} keyExtractor={item => item.id} pagingEnabled showsVerticalScrollIndicator={false} snapToInterval={cardHeight} decelerationRate="fast" ListEmptyComponent={<View style={styles.empty}><Text style={styles.emptyTitle}>No sites found</Text><Text style={styles.emptyText}>Try a maker, category, or site name.</Text></View>}/><Modal visible={selected !== null} animationType="slide" onRequestClose={closeSite}>{selected && <SafeAreaView style={styles.browserSafe} edges={['top', 'left', 'right']}><View style={styles.browserHeader}><Pressable onPress={closeSite} style={styles.browserClose}><MaterialCommunityIcons name="arrow-left" size={22} color="#F2F3EC"/></Pressable><View style={styles.browserTitleBlock}><Text style={styles.browserTitle} numberOfLines={1}>{selected.title}</Text><Text style={styles.browserMaker} numberOfLines={1}>{selected.maker} · PUBLIC DEMO</Text></View><Pressable onPress={() => Linking.openURL(selected.url).catch(() => {})} style={styles.browserClose}><MaterialCommunityIcons name="open-in-new" size={20} color="#F2F3EC"/></Pressable></View><View style={styles.browserBody}><BrowserFrame key={`${selected.id}-${reloadKey}`} site={selected} onReady={() => setOpenReady(true)} onFailure={() => setOpenFailed(true)}/>{!openVisible && <View style={styles.gate} pointerEvents="box-none"><SiteArt site={selected}/><View style={styles.gateShade}/><View style={styles.gatePanel}><View style={styles.gateTop}><ActivityIndicator size="small" color="#E7F0D8"/><Text style={styles.gateStatus}>{openFailed ? 'This site could not load here' : openReady ? 'Site is ready' : 'Loading live site'}</Text></View><Text style={styles.gateInfo}>{openFailed ? 'Some websites prevent embedding. Use your browser for the live site.' : minimumPassed ? 'Opening as soon as it is ready.' : 'A five second preview gives every site a fair moment.'}</Text>{openFailed ? <View style={styles.gateActions}><Pressable onPress={retry} style={styles.gateAction}><Text style={styles.gateActionText}>RETRY</Text></Pressable><Pressable onPress={() => Linking.openURL(selected.url).catch(() => {})} style={styles.gateAction}><Text style={styles.gateActionText}>OPEN IN BROWSER</Text></Pressable></View> : <View style={styles.timeBar}><View style={[styles.timeProgress, { width: minimumPassed ? '100%' : '42%' }]}/></View>}</View></View>}</View></SafeAreaView>}</Modal></SafeAreaView>;
+}
+
+export default App;
+
+const styles = StyleSheet.create({
+  safe:{flex:1,backgroundColor:'#F5F3EC'},header:{height:58,paddingHorizontal:20,flexDirection:'row',justifyContent:'space-between',alignItems:'center',borderBottomWidth:1,borderBottomColor:'#E2E0D8'},brandLockup:{flexDirection:'row',alignItems:'center',gap:8},logo:{width:27,height:27,borderRadius:9,backgroundColor:'#4F6845',alignItems:'center',justifyContent:'center'},logoText:{color:'#F8F6EF',fontSize:20,fontWeight:'900',fontStyle:'italic',marginTop:-2},brand:{color:'#252B23',fontWeight:'800',fontSize:19,letterSpacing:-.8},headerNote:{color:'#84897F',fontSize:9,fontWeight:'800',letterSpacing:.9},searchRow:{margin:14,marginBottom:0,borderWidth:1,borderColor:'#DDDBD2',backgroundColor:'#FBFAF6',borderRadius:10,flexDirection:'row',alignItems:'center',paddingHorizontal:12,height:45},searchInput:{flex:1,color:'#343A32',fontSize:14,marginLeft:8,height:'100%'},feedItem:{paddingHorizontal:14,paddingTop:14,justifyContent:'center'},indexLine:{height:28,flexDirection:'row',alignItems:'center',gap:8},number:{color:'#637457',fontSize:11,fontWeight:'800',letterSpacing:1},line:{height:1,width:23,backgroundColor:'#C7C8BE'},category:{color:'#777D73',fontSize:9,letterSpacing:1.2,fontWeight:'800'},demo:{marginLeft:'auto',backgroundColor:'#E6E7DF',paddingHorizontal:7,paddingVertical:4,borderRadius:4,color:'#6E756A',fontSize:8,fontWeight:'800',letterSpacing:1},preview:{flex:1,minHeight:240,maxHeight:360,overflow:'hidden',borderRadius:14,marginTop:8,elevation:2,shadowColor:'#31372E',shadowOpacity:.12,shadowRadius:12,shadowOffset:{width:0,height:5}},art:{flex:1,overflow:'hidden',justifyContent:'space-between',padding:20},artBlob:{position:'absolute',width:280,height:280,borderRadius:140,right:-70,top:-105,opacity:.85},artCircle:{position:'absolute',width:170,height:170,borderRadius:85,borderWidth:1,left:'18%',top:'28%',opacity:.8},artMark:{fontSize:68,fontWeight:'300',position:'absolute',alignSelf:'center',top:'37%'},artKicker:{color:'#FFFFFFB3',fontSize:9,letterSpacing:1.8,fontWeight:'800'},artFooter:{color:'#FFFFFFC7',fontSize:12,fontWeight:'600'},previewShade:{...StyleSheet.absoluteFill,backgroundColor:'#00000012'},previewButton:{position:'absolute',right:14,bottom:14,height:44,width:44,borderRadius:22,alignItems:'center',justifyContent:'center',backgroundColor:'#233126D6'},itemContent:{paddingHorizontal:5,paddingTop:15},maker:{color:'#7C8178',fontSize:9,fontWeight:'800',letterSpacing:1.1},siteTitle:{color:'#282D27',fontSize:27,letterSpacing:-.8,fontWeight:'800',marginTop:5},siteDescription:{color:'#676E65',fontSize:13,lineHeight:19,marginTop:5,maxWidth:'92%'},itemActions:{flexDirection:'row',gap:9,alignItems:'center',marginTop:14},openButton:{height:42,backgroundColor:'#C8E77A',flexDirection:'row',gap:7,alignItems:'center',justifyContent:'center',paddingHorizontal:15,borderRadius:8},openButtonText:{color:'#20241E',fontSize:10,letterSpacing:1,fontWeight:'900'},iconButton:{height:42,width:42,borderWidth:1,borderColor:'#D7D7CF',borderRadius:8,alignItems:'center',justifyContent:'center'},empty:{alignItems:'center',paddingTop:90},emptyTitle:{color:'#30352E',fontSize:18,fontWeight:'800'},emptyText:{color:'#747970',fontSize:13,marginTop:6},browserSafe:{flex:1,backgroundColor:'#151A16'},browserHeader:{height:61,backgroundColor:'#1D251F',flexDirection:'row',alignItems:'center',paddingHorizontal:10,gap:10},browserClose:{height:39,width:39,alignItems:'center',justifyContent:'center'},browserTitleBlock:{flex:1},browserTitle:{color:'#F6F5F0',fontSize:14,fontWeight:'800'},browserMaker:{color:'#B5BDB1',fontSize:10,marginTop:2},browserBody:{flex:1,position:'relative',backgroundColor:'#F7F7F7'},gate:{...StyleSheet.absoluteFill},gateShade:{...StyleSheet.absoluteFill,backgroundColor:'#16201980'},gatePanel:{position:'absolute',bottom:22,left:18,right:18,borderRadius:12,padding:14,backgroundColor:'#162019E6'},gateTop:{flexDirection:'row',alignItems:'center',gap:9},gateStatus:{color:'#F0F3EB',fontSize:13,fontWeight:'800'},gateInfo:{color:'#C9D1C2',fontSize:11,lineHeight:16,marginTop:9},timeBar:{height:3,backgroundColor:'#FFFFFF38',borderRadius:2,marginTop:12},timeProgress:{height:3,backgroundColor:'#C8E77A',borderRadius:2},gateActions:{flexDirection:'row',gap:12,marginTop:12},gateAction:{paddingVertical:7,paddingHorizontal:9,borderRadius:5,backgroundColor:'#C8E77A'},gateActionText:{color:'#20241E',fontSize:9,fontWeight:'900',letterSpacing:.5}
 });
