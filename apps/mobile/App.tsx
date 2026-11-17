@@ -1,82 +1,70 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Icon, IconButton, PaperProvider, ProgressBar } from 'react-native-paper';
+import { PaperProvider, ProgressBar } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 
-type Site = { title: string; creator: string; handle: string; category: string; description: string; url: string; colors: [string, string, ...string[]]; symbol: string; }
-
-const sites: Site[] = [
-  { title: 'A Garden That Thinks', creator: 'Mira Chen', handle: '@miramakes', category: 'GENERATIVE ART', description: 'A quiet little world that grows differently every time you visit.', url: 'https://example.org', colors: ['#152D2A', '#4A8C6A', '#D7A66B'], symbol: '✳' },
-  { title: 'Tiny Planet Radio', creator: 'Studio Orbit', handle: '@studioorbit', category: 'INTERACTIVE SOUND', description: 'Turn the planets. Find a signal. Stay for the strange little songs.', url: 'https://example.com', colors: ['#171934', '#5552A0', '#E8A36C'], symbol: '◉' },
-  { title: 'The Useful Machine', creator: 'Dev Patel', handle: '@devbuilds', category: 'PLAYFUL TOOL', description: 'A small, thoughtful tool for making something out of nothing.', url: 'https://example.net', colors: ['#292118', '#B46A43', '#E2C889'], symbol: '⌘' },
+const sites = [
+  { title: 'A Garden That Thinks', maker: 'Mira Chen', tag: 'GENERATIVE ART', line: 'A quiet little world that grows differently every time you visit.', url: 'https://example.org', mark: '✳', colors: ['#CDD3B4', '#879979', '#506859'] as [string,string,string] },
+  { title: 'Tiny Planet Radio', maker: 'Studio Orbit', tag: 'INTERACTIVE SOUND', line: 'Turn the planets. Find a signal. Stay for the strange little songs.', url: 'https://example.com', mark: '◉', colors: ['#E6C9A8', '#B77D62', '#704D50'] as [string,string,string] },
+  { title: 'The Useful Machine', maker: 'Dev Patel', tag: 'PLAYFUL TOOL', line: 'A small, thoughtful tool for making something out of nothing.', url: 'https://example.net', mark: '⌘', colors: ['#CCD7D3', '#819C9A', '#4C6668'] as [string,string,string] },
 ];
+const theme = { colors: { primary: '#596B4E', background: '#F5F3EC', surface: '#F5F3EC', onSurface: '#252923' } };
 
-const theme = { colors: { primary: '#C6F36B', onPrimary: '#171A15', background: '#0D100E', surface: '#171B18', onSurface: '#F3F0E8', outline: '#363D37' } };
-const MIN_REVIEW_MS = 5000;
-
-function FeedScreen() {
+function AppContent() {
   const [index, setIndex] = useState(0);
-  const [saved, setSaved] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [ready, setReady] = useState(false);
-  const [elapsed, setElapsed] = useState(false);
+  const [minTime, setMinTime] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [following, setFollowing] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [tab, setTab] = useState('For you');
-  const arrivedAt = useRef(Date.now());
+  const arrived = useRef(Date.now());
   const site = sites[index % sites.length];
-  const opened = ready && elapsed;
-  const webKey = `${index}`;
-  const progress = useRef(new Animated.Value(0)).current;
+  const opened = ready && minTime && !failed;
 
   useEffect(() => {
-    setReady(false); setElapsed(false); setFailed(false); setLiked(false); setSaved(false);
-    arrivedAt.current = Date.now();
-    progress.setValue(0);
-    Animated.timing(progress, { toValue: 1, duration: MIN_REVIEW_MS, useNativeDriver: false }).start();
-    const timer = setTimeout(() => setElapsed(true), MIN_REVIEW_MS);
-    return () => clearTimeout(timer);
-  }, [index, progress]);
+    setReady(false); setMinTime(false); setFailed(false); setSaved(false);
+    arrived.current = Date.now();
+    const t = setTimeout(() => setMinTime(true), 5000);
+    return () => clearTimeout(t);
+  }, [index]);
 
-  const next = () => setIndex((v) => v + 1);
-  const status = failed ? 'Taking longer than expected' : opened ? 'You’re in' : ready ? 'Ready when you are' : 'Finding its footing';
+  const next = () => setIndex((n) => n + 1);
+  const icon = (name: keyof typeof MaterialCommunityIcons.glyphMap, size = 21, color = '#454B42') => <MaterialCommunityIcons name={name} size={size} color={color}/>;
 
-  return <SafeAreaView style={s.safe} edges={['top', 'left', 'right']}>
-    <StatusBar style="light" />
-    <View style={s.header}>
-      <View style={s.brand}><View style={s.brandMark}><Text style={s.brandMarkText}>s</Text></View><Text style={s.brandName}>scroll</Text></View>
-      <View style={s.headerRight}><IconButton icon="magnify" iconColor="#E9EDE6" size={23} onPress={() => {}} /><IconButton icon="account-circle-outline" iconColor="#E9EDE6" size={23} onPress={() => {}} /></View>
+  return <SafeAreaView style={s.page} edges={['top','left','right']}>
+    <StatusBar style="dark" />
+    <View style={s.topbar}>
+      <View style={s.wordmark}><View style={s.logo}><Text style={s.logoText}>s</Text></View><Text style={s.brand}>scroll</Text><View style={s.divider}/><Text style={s.edition}>FIELD NOTES  /  001</Text></View>
+      <Pressable style={s.search} accessibilityLabel="Search"><MaterialCommunityIcons name="magnify" size={21} color="#50564E"/></Pressable>
     </View>
-    <View style={s.tabs}>{['For you', 'Following', 'Collections'].map((x) => <Pressable key={x} onPress={() => setTab(x)} style={[s.tab, tab === x && s.tabOn]}><Text style={[s.tabText, tab === x && s.tabTextOn]}>{x}</Text></Pressable>)}</View>
-    <View style={s.card}>
-      <WebView key={webKey} source={{ uri: site.url }} style={[StyleSheet.absoluteFill, { opacity: opened ? 1 : 0 }]} onLoadEnd={() => { if (Date.now() - arrivedAt.current > 1000) setReady(true); }} onError={() => setFailed(true)} onHttpError={(e) => { if (e.nativeEvent.statusCode >= 400) setFailed(true); }} javaScriptEnabled domStorageEnabled allowsBackForwardNavigationGestures originWhitelist={['https://*']} userAgent="ScrollPreview/1.0" />
-      {!opened && <View style={StyleSheet.absoluteFill} pointerEvents="none"><LinearGradient colors={site.colors} style={s.art}>
-        <View style={s.artTop}><Text style={s.artLabel}>A SMALL WEB DISCOVERY</Text><View style={s.livePill}><View style={s.liveDot}/><Text style={s.liveText}>LIVE SITE</Text></View></View>
-        <View style={s.artCenter}><View style={[s.orbit,s.orbit1]}/><View style={[s.orbit,s.orbit2]}/><View style={[s.orbit,s.orbit3]}/><Text style={s.artSymbol}>{site.symbol}</Text><View style={[s.artSpark,s.spark1]}/><View style={[s.artSpark,s.spark2]}/><View style={[s.artSpark,s.spark3]}/></View>
-        <View style={s.artBottom}><Text style={s.artTiny}>MADE FOR THE CURIOUS</Text><Text style={s.artFoot}>A little corner of the internet ↗</Text></View>
-      </LinearGradient></View>}
-      {!opened && <View style={s.scrim} pointerEvents="none"/>}
-      <View style={s.cardTop}><View style={s.categoryPill}><Text style={s.categoryText}>{site.category}</Text></View><IconButton icon="dots-horizontal" iconColor="#FFF" size={22} onPress={() => {}} style={s.more}/></View>
-      <View style={s.cardBottom}>
-        {!opened && <View style={s.reviewPanel}>
-          <View style={s.statusRow}><View style={s.statusDot}/><Text style={s.statusText}>{status}</Text><Text style={s.timeText}>{elapsed ? '·' : '· 5 sec min'}</Text></View>
-          <ProgressBar progress={opened ? 1 : ready ? 1 : 0.38} color="#C6F36B" style={s.progress}/>
-          {failed && <Text style={s.errorText}>The live site is slow. You can retry or open it in your browser.</Text>}
-        </View>}
-        <View style={s.creatorRow}><View style={s.avatar}><Text style={s.avatarText}>{site.creator.split(' ').map(p => p[0]).join('')}</Text></View><View style={s.creatorInfo}><Text style={s.creatorName}>{site.creator}</Text><Text style={s.creatorHandle}>{site.handle}  ·  <Text style={s.aiLabel}>Human-made</Text></Text></View><Button mode="outlined" compact textColor="#F2F3EE" style={s.follow} contentStyle={{ height: 34 }} labelStyle={s.followLabel} onPress={() => {}}>Follow</Button></View>
-        <Text style={s.siteTitle}>{site.title}</Text><Text style={s.description}>{site.description}</Text>
-      </View>
-      {opened && <Pressable style={s.nextArrow} accessibilityRole="button" accessibilityLabel="Next website" onPress={next}><Icon source="arrow-down" size={23} color="#151813"/></Pressable>}
-      {!opened && <View style={s.actionRail}><IconButton icon={liked ? 'heart' : 'heart-outline'} iconColor={liked ? '#FF7D73' : '#FFF'} size={27} onPress={() => setLiked(!liked)}/><Text style={s.railCount}>{liked ? '1' : 'Like'}</Text><IconButton icon={saved ? 'bookmark' : 'bookmark-outline'} iconColor={saved ? '#C6F36B' : '#FFF'} size={25} onPress={() => setSaved(!saved)}/><Text style={s.railCount}>Save</Text><IconButton icon="share-variant-outline" iconColor="#FFF" size={24} onPress={() => {}}/><Text style={s.railCount}>Share</Text></View>}
+    <View style={s.intro}><Text style={s.eyebrow}>A MORE CURIOUS WEB</Text><Text style={s.headline}>Somewhere{ '\n'}worth wandering.</Text><Text style={s.subhead}>Independent websites, chosen by the people who make them.</Text></View>
+    <View style={s.filters}><Text style={s.filterActive}>TODAY'S PICK</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>GENERATIVE</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>TOOLS</Text><View style={s.filterSpacer}/><Text style={s.count}>0{index+1} / 03</Text></View>
+    <View style={s.feature}>
+      <WebView key={index} source={{uri:site.url}} style={[StyleSheet.absoluteFill,{opacity:opened?1:0}]} originWhitelist={['https://*']} javaScriptEnabled domStorageEnabled userAgent="ScrollPreview/1.0" onLoadEnd={()=>{if(Date.now()-arrived.current>800)setReady(true)}} onError={()=>setFailed(true)} onHttpError={(e)=>{if(e.nativeEvent.statusCode>=400)setFailed(true)}} />
+      {!opened && <LinearGradient colors={site.colors} style={s.art}>
+        <View style={s.artHeader}><Text style={s.artOverline}>AN INTERNET OBJECT</Text><Text style={s.artNumber}>Nº 0{index+1}</Text></View>
+        <View style={s.artCenter}><View style={s.sunHalo}/><View style={s.sun}/><View style={s.planet}/><View style={s.orbitLine}/><Text style={s.artGlyph}>{site.mark}</Text></View>
+        <View style={s.artCaption}><View style={s.artRule}/><Text style={s.artCaptionText}>A little corner of the internet</Text><MaterialCommunityIcons name="arrow-top-left" size={17} color="#F7F1E5"/></View>
+      </LinearGradient>}
+      <View style={s.featureTop}><View style={s.tag}><View style={s.tagDot}/><Text style={s.tagText}>{site.tag}</Text></View><Text style={s.disclosure}>HUMAN-MADE</Text></View>
+      {!opened && <View style={s.load}><View style={s.loadRow}><View style={[s.loadDot,ready&&s.loadDotReady]}/><Text style={s.loadText}>{failed?'Site is taking a while':ready?'Ready to explore':'Opening the live site'}</Text><Text style={s.loadTime}>{minTime?'':'5 sec minimum'}</Text></View><ProgressBar progress={ready?1:0.32} color="#F6F0E2" style={s.progress}/></View>}
+      {opened && <Pressable onPress={next} style={s.nextButton} accessibilityLabel="Next website">{icon('arrow-right',22,'#F7F4EC')}</Pressable>}
     </View>
-    <View style={s.footer}><Text style={s.footerHint}>{opened ? 'Explore at your own pace' : 'Independent sites, found one at a time'}</Text>{failed && <Button compact textColor="#C6F36B" onPress={() => setIndex((v) => v)}>Retry</Button>}<View style={s.footerRight}><Pressable onPress={next} style={s.skip}><Text style={s.skipText}>Skip</Text><Icon source="chevron-right" size={18} color="#B8C0B8"/></Pressable></View></View>
+    <View style={s.details}>
+      <View style={s.creatorLine}><View style={s.avatar}><Text style={s.avatarText}>{site.maker.split(' ').map(v=>v[0]).join('')}</Text></View><Text style={s.by}>A site by </Text><Text style={s.maker}>{site.maker}</Text><Pressable onPress={()=>setFollowing(!following)} style={s.follow}><Text style={s.followText}>{following?'FOLLOWING':'FOLLOW +'}</Text></Pressable></View>
+      <Text style={s.title}>{site.title}</Text><Text style={s.description}>{site.line}</Text>
+      <View style={s.actions}><Pressable onPress={()=>setSaved(!saved)} style={s.saveAction}>{icon(saved?'bookmark':'bookmark-outline',18,saved?'#596B4E':'#50564E')}<Text style={s.saveText}>{saved?'SAVED TO YOUR LIBRARY':'SAVE FOR LATER'}</Text></Pressable><View style={s.actionGap}/><Pressable style={s.shareAction}>{icon('share-variant-outline',18)}<Text style={s.saveText}>SHARE</Text></Pressable><View style={s.actionGap}/><Text style={s.siteNo}>SITE 0{index+1}</Text></View>
+    </View>
+    <View style={s.bottom}><Text style={s.bottomLabel}>MADE FOR THE OPEN WEB</Text><Pressable onPress={next} style={s.skip}><Text style={s.skipText}>NEXT DISCOVERY</Text>{icon('arrow-right',16,'#596B4E')}</Pressable></View>
   </SafeAreaView>;
 }
 
-export default function App() { return <PaperProvider theme={theme}><FeedScreen/></PaperProvider>; }
+export default function App(){return <PaperProvider theme={theme}><AppContent/></PaperProvider>}
 
-const s = StyleSheet.create({
-  safe:{flex:1,backgroundColor:'#0D100E',paddingHorizontal:16},header:{height:54,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},brand:{flexDirection:'row',alignItems:'center',gap:9},brandMark:{width:29,height:29,borderRadius:10,backgroundColor:'#C6F36B',alignItems:'center',justifyContent:'center',transform:[{rotate:'-8deg'}]},brandMarkText:{fontSize:22,fontWeight:'900',color:'#151813',fontStyle:'italic',marginTop:-2},brandName:{fontSize:20,fontWeight:'800',color:'#F2F3EE',letterSpacing:-1},headerRight:{flexDirection:'row',alignItems:'center',marginRight:-8},tabs:{height:47,flexDirection:'row',alignItems:'flex-start',gap:22,paddingTop:8},tab:{height:31},tabOn:{borderBottomWidth:2,borderBottomColor:'#C6F36B'},tabText:{color:'#747C75',fontSize:13,fontWeight:'600'},tabTextOn:{color:'#F2F3EE'},card:{flex:1,borderRadius:22,overflow:'hidden',backgroundColor:'#20251F',marginBottom:10},art:{flex:1,justifyContent:'space-between',padding:23},artTop:{flexDirection:'row',justifyContent:'space-between',alignItems:'center'},artLabel:{fontSize:9,letterSpacing:2,color:'#FFFFFFA0',fontWeight:'700'},livePill:{flexDirection:'row',alignItems:'center',gap:6,paddingHorizontal:9,paddingVertical:6,borderRadius:20,backgroundColor:'#17241EBB'},liveDot:{height:6,width:6,borderRadius:3,backgroundColor:'#C6F36B'},liveText:{fontSize:8,color:'#E9F4DE',letterSpacing:1,fontWeight:'700'},artCenter:{flex:1,alignItems:'center',justifyContent:'center'},orbit:{position:'absolute',borderWidth:1,borderColor:'#FFFFFF30',borderRadius:999},orbit1:{width:220,height:220},orbit2:{width:164,height:164,borderColor:'#FFFFFF55'},orbit3:{width:94,height:94,borderColor:'#FFFFFF70'},artSymbol:{fontSize:68,color:'#F1DAA6',textShadowColor:'#EAB87780',textShadowRadius:26},artSpark:{position:'absolute',width:8,height:8,borderRadius:4,backgroundColor:'#F3D69C'},spark1:{top:'23%',left:'26%'},spark2:{top:'68%',right:'27%',width:5,height:5},spark3:{bottom:'29%',left:'31%',width:4,height:4},artBottom:{gap:5},artTiny:{fontSize:8,color:'#FFFFFF90',letterSpacing:2,fontWeight:'700'},artFoot:{fontSize:13,color:'#FFF',fontWeight:'600'},scrim:{...StyleSheet.absoluteFill,backgroundColor:'#00000035'},cardTop:{position:'absolute',top:10,left:10,right:8,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},categoryPill:{paddingHorizontal:11,paddingVertical:7,borderRadius:20,backgroundColor:'#121612C9'},categoryText:{fontSize:9,letterSpacing:1.2,color:'#F4F4EC',fontWeight:'700'},more:{backgroundColor:'#12161270'},cardBottom:{position:'absolute',left:20,right:20,bottom:18},reviewPanel:{borderRadius:14,backgroundColor:'#111511D9',padding:12,marginBottom:14},statusRow:{flexDirection:'row',alignItems:'center',gap:7},statusDot:{height:6,width:6,borderRadius:3,backgroundColor:'#C6F36B'},statusText:{fontSize:11,color:'#F2F3EE',fontWeight:'600'},timeText:{fontSize:10,color:'#B6BDB5'},progress:{height:3,borderRadius:3,marginTop:10,backgroundColor:'#41483F'},errorText:{fontSize:11,color:'#F1B0A7',marginTop:8,lineHeight:16},creatorRow:{flexDirection:'row',alignItems:'center',marginBottom:15},avatar:{width:37,height:37,borderRadius:14,backgroundColor:'#D2A77A',alignItems:'center',justifyContent:'center',marginRight:10},avatarText:{fontSize:11,fontWeight:'800',color:'#281B13'},creatorInfo:{flex:1},creatorName:{color:'#FFF',fontSize:13,fontWeight:'700'},creatorHandle:{color:'#D3D5CF',fontSize:10,marginTop:3},aiLabel:{color:'#D6EDB5'},follow:{borderColor:'#FFFFFF8A',borderRadius:18},followLabel:{fontSize:11,marginHorizontal:8},siteTitle:{color:'#FFF',fontSize:27,fontWeight:'800',letterSpacing:-0.8},description:{color:'#E3E5DE',fontSize:13,lineHeight:19,marginTop:6,maxWidth:'91%'},actionRail:{position:'absolute',right:7,bottom:174,alignItems:'center'},railCount:{fontSize:9,color:'#F5F5F0',marginTop:-7,marginBottom:6,fontWeight:'600'},nextArrow:{position:'absolute',right:18,bottom:20,width:48,height:48,borderRadius:18,backgroundColor:'#C6F36B',alignItems:'center',justifyContent:'center',elevation:8},footer:{height:43,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},footerHint:{color:'#778078',fontSize:11},footerRight:{flexDirection:'row',alignItems:'center'},skip:{flexDirection:'row',alignItems:'center',gap:2,padding:8},skipText:{color:'#B8C0B8',fontSize:12,fontWeight:'600'}
+const s=StyleSheet.create({
+  page:{flex:1,backgroundColor:'#F5F3EC',paddingHorizontal:22},topbar:{height:48,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},wordmark:{flexDirection:'row',alignItems:'center'},logo:{width:26,height:26,borderRadius:9,backgroundColor:'#596B4E',alignItems:'center',justifyContent:'center'},logoText:{fontSize:20,fontWeight:'900',fontStyle:'italic',color:'#F7F5EE',marginTop:-2},brand:{fontSize:18,fontWeight:'800',letterSpacing:-.7,color:'#292D27',marginLeft:8},divider:{height:16,width:1,backgroundColor:'#D6D5CA',marginHorizontal:12},edition:{fontSize:9,letterSpacing:1.4,color:'#84877C',fontWeight:'700'},search:{width:36,height:36,borderWidth:1,borderColor:'#DEDDD4',borderRadius:18,alignItems:'center',justifyContent:'center'},intro:{paddingTop:17,paddingBottom:14},eyebrow:{fontSize:9,letterSpacing:2.2,color:'#64745B',fontWeight:'800'},headline:{fontSize:34,lineHeight:36,letterSpacing:-1.25,color:'#282D26',fontWeight:'700',marginTop:8},subhead:{fontSize:12,color:'#77796F',marginTop:8},filters:{height:30,flexDirection:'row',alignItems:'center',gap:9},filterActive:{fontSize:9,letterSpacing:1,color:'#394632',fontWeight:'800'},filter:{fontSize:9,letterSpacing:1,color:'#9A9B91',fontWeight:'700'},filterDot:{fontSize:13,color:'#C4C3B8'},filterSpacer:{flex:1},count:{fontSize:9,letterSpacing:1,color:'#808378',fontWeight:'700'},feature:{flex:1,minHeight:225,maxHeight:360,borderRadius:4,overflow:'hidden',backgroundColor:'#819979',position:'relative',marginTop:4},art:{flex:1,justifyContent:'space-between',padding:18},artHeader:{flexDirection:'row',justifyContent:'space-between'},artOverline:{color:'#F8F5EBB0',fontSize:8,letterSpacing:1.8,fontWeight:'700'},artNumber:{color:'#F8F5EBB0',fontSize:9,letterSpacing:1.2},artCenter:{flex:1,alignItems:'center',justifyContent:'center'},sunHalo:{width:160,height:160,borderRadius:80,backgroundColor:'#EDE5C326',position:'absolute'},sun:{width:96,height:96,borderRadius:48,backgroundColor:'#E8D7A7',position:'absolute',opacity:.92},planet:{width:38,height:38,borderRadius:19,backgroundColor:'#AE8061',position:'absolute',left:'29%',top:'28%',borderWidth:6,borderColor:'#E8D7A755'},orbitLine:{width:210,height:80,borderWidth:1,borderColor:'#F4EEDB99',borderRadius:100,transform:[{rotate:'-28deg'}],position:'absolute'},artGlyph:{fontSize:36,color:'#485B4B',fontWeight:'300',position:'absolute',bottom:'20%',right:'30%'},artCaption:{flexDirection:'row',alignItems:'center',gap:8},artRule:{height:1,width:22,backgroundColor:'#F7F1E5'},artCaptionText:{fontSize:10,color:'#F7F1E5',letterSpacing:.3},featureTop:{position:'absolute',top:13,left:14,right:14,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},tag:{flexDirection:'row',alignItems:'center',gap:6,backgroundColor:'#F5F3EADD',paddingHorizontal:9,paddingVertical:7,borderRadius:2},tagDot:{width:5,height:5,borderRadius:3,backgroundColor:'#627755'},tagText:{fontSize:8,letterSpacing:1,color:'#394632',fontWeight:'800'},disclosure:{fontSize:8,color:'#F8F5EB',letterSpacing:1.2,fontWeight:'700'},load:{position:'absolute',bottom:13,left:14,right:14,backgroundColor:'#28352DBB',paddingHorizontal:11,paddingVertical:9,borderRadius:3},loadRow:{flexDirection:'row',alignItems:'center',gap:7},loadDot:{width:5,height:5,borderRadius:3,backgroundColor:'#E6D69F'},loadDotReady:{backgroundColor:'#AFC68D'},loadText:{fontSize:9,color:'#F8F5EB',fontWeight:'600',flex:1},loadTime:{fontSize:8,color:'#E6E0D1A8'},progress:{height:2,marginTop:7,backgroundColor:'#FFFFFF3A'},nextButton:{position:'absolute',right:14,bottom:14,width:40,height:40,borderRadius:20,backgroundColor:'#394B3F',alignItems:'center',justifyContent:'center'},details:{paddingTop:13},creatorLine:{height:30,flexDirection:'row',alignItems:'center'},avatar:{width:22,height:22,borderRadius:11,backgroundColor:'#DED5BE',alignItems:'center',justifyContent:'center'},avatarText:{fontSize:8,color:'#4D5849',fontWeight:'800'},by:{fontSize:10,color:'#93948A',marginLeft:7},maker:{fontSize:10,color:'#444A41',fontWeight:'700'},follow:{marginLeft:'auto',borderBottomWidth:1,borderBottomColor:'#89927F',paddingBottom:3},followText:{fontSize:8,letterSpacing:1,color:'#596B4E',fontWeight:'800'},title:{fontSize:24,letterSpacing:-.7,color:'#292D27',fontWeight:'700',marginTop:5},description:{fontSize:12,lineHeight:18,color:'#74766E',marginTop:3},actions:{height:45,borderTopWidth:1,borderBottomWidth:1,borderColor:'#E3E1D8',marginTop:12,flexDirection:'row',alignItems:'center'},saveAction:{flexDirection:'row',alignItems:'center',gap:7},shareAction:{flexDirection:'row',alignItems:'center',gap:7},saveText:{fontSize:8,letterSpacing:.8,color:'#65695F',fontWeight:'700'},actionGap:{height:16,width:1,backgroundColor:'#DCDAD0',marginHorizontal:13},siteNo:{marginLeft:'auto',fontSize:8,letterSpacing:1,color:'#929489'},bottom:{height:38,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},bottomLabel:{fontSize:8,letterSpacing:1.4,color:'#A0A197',fontWeight:'700'},skip:{flexDirection:'row',alignItems:'center',gap:6},skipText:{fontSize:8,letterSpacing:1,color:'#596B4E',fontWeight:'800'}
 });
