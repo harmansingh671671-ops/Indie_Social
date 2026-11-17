@@ -9,10 +9,23 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking, Share, TextInput } from 'react-native';
 
+// Demo-only sites for local feed/WebView testing. These are not owner-verified or approved for a public Scroll catalog.
 const sites = [
-  { title: 'A Garden That Thinks', maker: 'Mira Chen', tag: 'GENERATIVE ART', line: 'A quiet little world that grows differently every time you visit.', url: 'https://example.org', mark: '✳', colors: ['#CDD3B4', '#879979', '#506859'] as [string,string,string] },
-  { title: 'Tiny Planet Radio', maker: 'Studio Orbit', tag: 'INTERACTIVE SOUND', line: 'Turn the planets. Find a signal. Stay for the strange little songs.', url: 'https://example.com', mark: '◉', colors: ['#E6C9A8', '#B77D62', '#704D50'] as [string,string,string] },
-  { title: 'The Useful Machine', maker: 'Dev Patel', tag: 'PLAYFUL TOOL', line: 'A small, thoughtful tool for making something out of nothing.', url: 'https://example.net', mark: '⌘', colors: ['#CCD7D3', '#819C9A', '#4C6668'] as [string,string,string] },
+  { title: 'Neal.fun', maker: 'Neal Agarwal', tag: 'WEB EXPERIMENTS', line: 'A playful collection of interactive curiosities and tiny games.', url: 'https://neal.fun/', mark: '✳', colors: ['#CDD3B4', '#879979', '#506859'] as [string,string,string] },
+  { title: 'Radio Garden', maker: 'Radio Garden', tag: 'INTERACTIVE SOUND', line: 'Spin a globe and discover radio stations from around the world.', url: 'https://radio.garden/', mark: '◉', colors: ['#E6C9A8', '#B77D62', '#704D50'] as [string,string,string] },
+  { title: 'Patatap', maker: 'Jono Brandel', tag: 'MUSIC & MOTION', line: 'An audiovisual instrument made for playful tapping.', url: 'https://patatap.com/', mark: '♪', colors: ['#CCD7D3', '#819C9A', '#4C6668'] as [string,string,string] },
+  { title: 'Pointer Pointer', maker: 'Moniker', tag: 'INTERACTIVE ART', line: 'A curious camera trick that finds a finger pointing at your cursor.', url: 'https://pointerpointer.com/', mark: '↗', colors: ['#E5D6C5', '#B78567', '#725B50'] as [string,string,string] },
+  { title: 'This Is Sand', maker: 'This Is Sand', tag: 'CREATIVE TOOL', line: 'Draw with falling grains of colored sand.', url: 'https://thisissand.com/', mark: '〰', colors: ['#E9D8A6', '#C39D61', '#756C4B'] as [string,string,string] },
+  { title: 'Zoomquilt', maker: 'Zoomquilt Collective', tag: 'GENERATIVE ART', line: 'Step into a continuously unfolding collaborative painting.', url: 'https://zoomquilt.org/', mark: '◎', colors: ['#D4C8D8', '#9780A1', '#514D6B'] as [string,string,string] },
+  { title: 'Chrome Music Lab', maker: 'Google Creative Lab', tag: 'MUSIC EXPERIMENT', line: 'Small, visual ways to explore rhythm, sound and melody.', url: 'https://musiclab.chromeexperiments.com/', mark: '♫', colors: ['#E5D6BC', '#D09B62', '#765D48'] as [string,string,string] },
+  { title: 'The Pudding', maker: 'The Pudding', tag: 'VISUAL STORIES', line: 'A publication that explains ideas through visual essays.', url: 'https://pudding.cool/', mark: '◌', colors: ['#D8D3BE', '#AFA27D', '#66705C'] as [string,string,string] },
+  { title: 'Bartosz Ciechanowski', maker: 'Bartosz Ciechanowski', tag: 'PLAYABLE EXPLAINER', line: 'Detailed interactive explanations of science and engineering.', url: 'https://ciechanow.ski/', mark: '⌁', colors: ['#D0D9D7', '#8BA5A3', '#4F686C'] as [string,string,string] },
+  { title: 'Nicky Case', maker: 'Nicky Case', tag: 'INTERACTIVE STORY', line: 'Ideas about people and systems, told through things you can play.', url: 'https://ncase.me/', mark: '◇', colors: ['#E5C7B6', '#B88170', '#6C555B'] as [string,string,string] },
+  { title: 'Setosa', maker: 'Setosa', tag: 'VISUAL EXPLAINER', line: 'Clear, interactive stories about statistics and algorithms.', url: 'https://setosa.io/', mark: '⌗', colors: ['#D6DFC5', '#9DAF7D', '#5F715B'] as [string,string,string] },
+  { title: 'Squoosh', maker: 'Google Chrome Labs', tag: 'IMAGE TOOL', line: 'Compare image formats and compression settings side by side.', url: 'https://squoosh.app/', mark: '▧', colors: ['#D7DDE0', '#8DA9B8', '#526B7C'] as [string,string,string] },
+  { title: 'Coolors', maker: 'Coolors', tag: 'COLOR TOOL', line: 'Explore and build color palettes with a few quick actions.', url: 'https://coolors.co/', mark: '◒', colors: ['#E4D0BD', '#C28E70', '#74616B'] as [string,string,string] },
+  { title: 'Excalidraw', maker: 'Excalidraw', tag: 'CREATIVE TOOL', line: 'A friendly sketching canvas for quick diagrams and ideas.', url: 'https://excalidraw.com/', mark: '✎', colors: ['#DDD8C8', '#B6A982', '#6D7561'] as [string,string,string] },
+  { title: 'OpenProcessing', maker: 'OpenProcessing', tag: 'CREATIVE CODING', line: 'A community gallery for sketches and code-based artwork.', url: 'https://openprocessing.org/', mark: '⌘', colors: ['#D3D2E1', '#9290B8', '#55546F'] as [string,string,string] },
 ];
 const theme = { colors: { primary: '#596B4E', background: '#F5F3EC', surface: '#F5F3EC', onSurface: '#252923' } };
 
@@ -79,8 +92,8 @@ function AppContent() {
       <Pressable style={s.search} accessibilityLabel="Search sites" onPress={()=>setSearching(v=>!v)}><MaterialCommunityIcons name={searching?'close':'magnify'} size={21} color="#50564E"/></Pressable>
     </View>
     {searching&&<View style={s.searchArea}><TextInput value={query} onChangeText={setQuery} placeholder="Search sites, makers, topics" placeholderTextColor="#8A8C83" autoFocus style={s.searchInput}/>{query.length>0&&filteredSites.map(item=><Pressable key={item.url} onPress={()=>moveToFiltered(item)} style={s.searchResult}><Text style={s.searchResultTitle}>{item.title}</Text><Text style={s.searchResultMaker}>{item.maker} · {item.tag}</Text></Pressable>)}</View>}
-    <View style={s.intro}><Text style={s.eyebrow}>A MORE CURIOUS WEB</Text><Text style={s.headline}>Somewhere{ '\n'}worth wandering.</Text><Text style={s.subhead}>Independent websites, chosen by the people who make them.</Text></View>
-    <View style={s.filters}><Text style={s.filterActive}>TODAY'S PICK</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>GENERATIVE</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>TOOLS</Text><View style={s.filterSpacer}/><Text style={s.count}>0{index+1} / 03</Text></View>
+    <View style={s.intro}><Text style={s.eyebrow}>A MORE CURIOUS WEB</Text><Text style={s.headline}>Somewhere{ '\n'}worth wandering.</Text><Text style={s.subhead}>15 public demo sites for local testing · not owner-verified.</Text></View>
+    <View style={s.filters}><Text style={s.filterActive}>DEMO CATALOG</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>VISUAL</Text><Text style={s.filterDot}>·</Text><Text style={s.filter}>INTERACTIVE</Text><View style={s.filterSpacer}/><Text style={s.count}>{String(index+1).padStart(2,'0')} / 15</Text></View>
     <View style={s.feature}>
       <WebView key={`${index}-${retry}`} source={{uri:site.url}} style={[StyleSheet.absoluteFill,{opacity:opened?1:0}]} originWhitelist={['https://*']} javaScriptEnabled domStorageEnabled userAgent="ScrollPreview/1.0" onLoadEnd={onReady} onError={()=>setFailed(true)} onHttpError={(e)=>{if(e.nativeEvent.statusCode>=400)setFailed(true)}} />
       {!opened && <LinearGradient colors={site.colors} style={s.art}>
@@ -88,7 +101,7 @@ function AppContent() {
         <View style={s.artCenter}><View style={s.sunHalo}/><View style={s.sun}/><View style={s.planet}/><View style={s.orbitLine}/><Text style={s.artGlyph}>{site.mark}</Text></View>
         <View style={s.artCaption}><View style={s.artRule}/><Text style={s.artCaptionText}>A little corner of the internet</Text><MaterialCommunityIcons name="arrow-top-left" size={17} color="#F7F1E5"/></View>
       </LinearGradient>}
-      <View style={s.featureTop}><View style={s.tag}><View style={s.tagDot}/><Text style={s.tagText}>{site.tag}</Text></View><Text style={s.disclosure}>HUMAN-MADE</Text></View>
+      <View style={s.featureTop}><View style={s.tag}><View style={s.tagDot}/><Text style={s.tagText}>{site.tag}</Text></View><Text style={s.disclosure}>PUBLIC DEMO</Text></View>
       {!opened && <View style={s.load}><View style={s.loadRow}><View style={[s.loadDot,ready&&s.loadDotReady]}/><Text style={s.loadText}>{failed?'Site could not be opened':ready?'Ready to explore':'Opening the live site'}</Text><Text style={s.loadTime}>{minTime?'':'5 sec minimum'}</Text></View><ProgressBar progress={ready?1:0.32} color="#F6F0E2" style={s.progress}/>{failed&&<View style={s.errorActions}><Pressable onPress={retryLoad}><Text style={s.errorActionText}>RETRY</Text></Pressable><Pressable onPress={()=>Linking.openURL(site.url).catch(()=>{})}><Text style={s.errorActionText}>OPEN IN BROWSER</Text></Pressable><Pressable onPress={next}><Text style={s.errorActionText}>SKIP</Text></Pressable></View>}</View>}
       {opened && <Pressable onPress={next} style={s.nextButton} accessibilityLabel="Next website">{icon('arrow-right',22,'#F7F4EC')}</Pressable>}
     </View>
@@ -97,7 +110,7 @@ function AppContent() {
       <Text style={s.title}>{site.title}</Text><Text style={s.description}>{site.line}</Text>
       <View style={s.actions}><Pressable onPress={toggleSaved} style={s.saveAction}>{icon(saved?'bookmark':'bookmark-outline',18,saved?'#596B4E':'#50564E')}<Text style={s.saveText}>{saved?'SAVED TO YOUR LIBRARY':'SAVE FOR LATER'}</Text></Pressable><View style={s.actionGap}/><Pressable onPress={shareSite} style={s.shareAction}>{icon('share-variant-outline',18)}<Text style={s.saveText}>SHARE</Text></Pressable><View style={s.actionGap}/><Pressable disabled={!history.length} onPress={previous} style={{opacity:history.length?1:.35}}>{icon('arrow-left',18)}</Pressable><Text style={s.siteNo}>SITE 0{index+1}</Text></View>
     </View>
-    <View style={s.bottom}><Text style={s.bottomLabel}>MADE FOR THE OPEN WEB</Text><Pressable onPress={next} style={s.skip}><Text style={s.skipText}>NEXT DISCOVERY</Text>{icon('arrow-right',16,'#596B4E')}</Pressable></View>
+    <View style={s.bottom}><Text style={s.bottomLabel}>DEMO CATALOG · NOT OWNER-VERIFIED</Text><Pressable onPress={next} style={s.skip}><Text style={s.skipText}>NEXT DISCOVERY</Text>{icon('arrow-right',16,'#596B4E')}</Pressable></View>
   </SafeAreaView>;
 }
 
