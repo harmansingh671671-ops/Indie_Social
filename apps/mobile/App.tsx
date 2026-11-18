@@ -42,28 +42,24 @@ function ReelCard({ site, index, count, pageHeight, saved, onOpen, onSave, onSha
 }
 
 function GridCard({ site, width, saved, onOpen, onSave }: { site: Site; width: number; saved: boolean; onOpen: () => void; onSave: () => void }) {
+  const cardHeight = Math.round(width * 1.25);
   return (
-    <View style={[styles.gridCard, { width }]}>
-      <Pressable onPress={onOpen} style={styles.gridCardArt}>
+    <Pressable onPress={onOpen} style={[styles.gridCard, { width, height: cardHeight }]}>
+      <View style={StyleSheet.absoluteFill}>
         <SiteArt site={site} />
-      </Pressable>
-      <View style={styles.gridCardInfo}>
-        <Text style={styles.gridCardCategory}>{site.category.toUpperCase()}</Text>
-        <Pressable onPress={onOpen}>
-          <Text style={styles.gridCardTitle} numberOfLines={1}>{site.title}</Text>
-        </Pressable>
-        <Text style={styles.gridCardMaker} numberOfLines={1}>by {site.maker}</Text>
-        <View style={styles.gridCardActions}>
-          <Pressable style={styles.gridCardOpenBtn} onPress={onOpen}>
-            <Text style={styles.gridCardOpenText}>OPEN</Text>
-            <MaterialCommunityIcons name="arrow-up-right" color="#1B2119" size={15} />
-          </Pressable>
-          <Pressable onPress={onSave} style={styles.gridCardSaveBtn}>
-            <MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} color={saved ? '#D8F18B' : '#F3F5EE'} size={18} />
-          </Pressable>
-        </View>
       </View>
-    </View>
+      <View pointerEvents="none" style={styles.gridBottomShade} />
+      <View style={styles.gridCardOverlay}>
+        <View style={{ flex: 1, marginRight: 8 }}>
+          <Text style={styles.gridCardCategory}>{site.category.toUpperCase()}</Text>
+          <Text style={styles.gridCardTitle} numberOfLines={1}>{site.title}</Text>
+          <Text style={styles.gridCardMaker} numberOfLines={1}>by {site.maker}</Text>
+        </View>
+        <Pressable onPress={(e) => { onSave(); }} style={styles.gridCardSaveBtn}>
+          <MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} color={saved ? '#D8F18B' : '#fff'} size={20} />
+        </Pressable>
+      </View>
+    </Pressable>
   );
 }
 
@@ -285,14 +281,11 @@ const styles = StyleSheet.create({
   homeDesc: { fontSize: 12, lineHeight: 18, color: '#6C7269', marginTop: 6, maxWidth: 340 },
   gridContent: { paddingHorizontal: 14, paddingBottom: 28 },
   gridRow: { marginBottom: 14 },
-  gridCard: { backgroundColor: '#1F271F', borderRadius: 13, overflow: 'hidden', shadowColor: '#263026', shadowOpacity: .14, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
-  gridCardArt: { height: 155, overflow: 'hidden' },
-  gridCardInfo: { padding: 11 },
-  gridCardCategory: { fontSize: 8, letterSpacing: .9, color: '#B8C4B3', fontWeight: '800' },
-  gridCardTitle: { fontSize: 17, color: '#F5F6EE', fontWeight: '900', marginTop: 4, letterSpacing: -.4 },
-  gridCardMaker: { fontSize: 10, color: '#A9B3A6', marginTop: 2 },
-  gridCardActions: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 10 },
-  gridCardOpenBtn: { height: 31, flex: 1, backgroundColor: '#D8F18B', borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 },
-  gridCardOpenText: { fontSize: 8, fontWeight: '900', letterSpacing: 1, color: '#1B2119' },
-  gridCardSaveBtn: { width: 31, height: 31, borderRadius: 6, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#FFFFFF32' },
+  gridCard: { backgroundColor: '#1A241A', borderRadius: 14, overflow: 'hidden', shadowColor: '#101610', shadowOpacity: .18, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 3, position: 'relative' },
+  gridBottomShade: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', backgroundColor: '#00000088' },
+  gridCardOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 12, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  gridCardCategory: { fontSize: 8, letterSpacing: 1, color: '#D8F18B', fontWeight: '900' },
+  gridCardTitle: { fontSize: 16, color: '#FFFFFF', fontWeight: '900', marginTop: 3, letterSpacing: -.3 },
+  gridCardMaker: { fontSize: 10, color: '#E1E7D9', marginTop: 2 },
+  gridCardSaveBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#00000055', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center' },
 });
