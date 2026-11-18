@@ -41,23 +41,56 @@ function ReelCard({ site, index, count, pageHeight, saved, onOpen, onSave, onSha
   return <View style={[styles.reel, { height: pageHeight }]}><Pressable style={styles.artPressable} onPress={onOpen}><SiteArt site={site}/><View style={styles.tint}/></Pressable><View pointerEvents="none" style={styles.topShade}/><View style={styles.reelHeader}><View style={styles.reelBrand}><View style={styles.logo}><Text style={styles.logoText}>s</Text></View><Text style={styles.reelBrandText}>scroll</Text></View><Text style={styles.reelCount}>{String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}</Text></View><View style={styles.reelMeta}><View style={styles.categoryPill}><View style={styles.liveDot}/><Text style={styles.categoryText}>{site.category.toUpperCase()}</Text></View><Text style={styles.demoText}>LOCAL DEMO</Text></View><View style={styles.bottomShade}/><View style={styles.reelInfo}><Text style={styles.maker}>@{site.maker.replaceAll(' ', '').toLowerCase()}</Text><Text style={styles.title}>{site.title}</Text><Text style={styles.description}>{site.description}</Text><Pressable style={styles.openButton} onPress={onOpen}><Text style={styles.openButtonText}>OPEN LIVE SITE</Text><MaterialCommunityIcons name="arrow-up-right" size={18} color="#1A2018"/></Pressable></View><View style={styles.actionRail}><Pressable style={styles.railButton} onPress={onSave}><MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} size={26} color={saved ? '#C8E77A' : '#fff'}/><Text style={styles.railText}>{saved ? 'Saved' : 'Save'}</Text></Pressable><Pressable style={styles.railButton} onPress={onShare}><MaterialCommunityIcons name="share-variant-outline" size={25} color="#fff"/><Text style={styles.railText}>Share</Text></Pressable><Pressable style={styles.railButton} onPress={onOpen}><MaterialCommunityIcons name="web" size={24} color="#fff"/><Text style={styles.railText}>Visit</Text></Pressable></View><View style={styles.swipeHint}><MaterialCommunityIcons name="chevron-down" size={16} color="#FFFFFFA8"/><Text style={styles.swipeText}>SWIPE FOR NEXT</Text></View></View>;
 }
 
-function GridCard({ site, width, saved, onOpen, onSave }: { site: Site; width: number; saved: boolean; onOpen: () => void; onSave: () => void }) {
+function GridCard({ site, width, saved, onOpen, onSave, onShare }: { site: Site; width: number; saved: boolean; onOpen: () => void; onSave: () => void; onShare: () => void }) {
   const cardHeight = Math.round(width * 1.25);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <Pressable onPress={onOpen} style={[styles.gridCard, { width, height: cardHeight }]}>
       <View style={StyleSheet.absoluteFill}>
         <SiteArt site={site} />
       </View>
       <View pointerEvents="none" style={styles.gridBottomShade} />
-      <View style={styles.gridCardOverlay}>
-        <View style={{ flex: 1, marginRight: 8 }}>
+      
+      <Pressable
+        onPress={(e) => { e.stopPropagation?.(); setMenuOpen(prev => !prev); }}
+        style={styles.gridCardMenuBtn}
+      >
+        <MaterialCommunityIcons name="dots-vertical" color="#fff" size={18} />
+      </Pressable>
+
+      {menuOpen && (
+        <View style={styles.gridCardMenuDropdown}>
+          <Pressable
+            onPress={(e) => { e.stopPropagation?.(); setMenuOpen(false); onSave(); }}
+            style={styles.gridCardMenuItem}
+          >
+            <MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} size={15} color={saved ? '#D8F18B' : '#fff'} />
+            <Text style={styles.gridCardMenuText}>{saved ? 'Saved' : 'Save'}</Text>
+          </Pressable>
+          <Pressable
+            onPress={(e) => { e.stopPropagation?.(); setMenuOpen(false); onShare(); }}
+            style={styles.gridCardMenuItem}
+          >
+            <MaterialCommunityIcons name="share-variant-outline" size={15} color="#fff" />
+            <Text style={styles.gridCardMenuText}>Share</Text>
+          </Pressable>
+          <Pressable
+            onPress={(e) => { e.stopPropagation?.(); setMenuOpen(false); Linking.openURL(site.url).catch(() => {}); }}
+            style={styles.gridCardMenuItem}
+          >
+            <MaterialCommunityIcons name="web" size={15} color="#fff" />
+            <Text style={styles.gridCardMenuText}>Visit</Text>
+          </Pressable>
+        </View>
+      )}
+
+      <View style={styles.gridCardOverlay} pointerEvents="none">
+        <View style={{ flex: 1 }}>
           <Text style={styles.gridCardCategory}>{site.category.toUpperCase()}</Text>
           <Text style={styles.gridCardTitle} numberOfLines={1}>{site.title}</Text>
           <Text style={styles.gridCardMaker} numberOfLines={1}>by {site.maker}</Text>
         </View>
-        <Pressable onPress={(e) => { onSave(); }} style={styles.gridCardSaveBtn}>
-          <MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} color={saved ? '#D8F18B' : '#fff'} size={20} />
-        </Pressable>
       </View>
     </Pressable>
   );
@@ -123,6 +156,7 @@ function App() {
             saved={savedIds.includes(item.id)}
             onOpen={() => start(item)}
             onSave={() => save(item.id)}
+            onShare={() => Share.share({ title: item.title, message: `${item.title}: ${item.url}` }).catch(() => {})}
           />
         )}
         columnWrapperStyle={numColumns > 1 ? [styles.gridRow, { gap: gridGap }] : undefined}
@@ -288,4 +322,8 @@ const styles = StyleSheet.create({
   gridCardTitle: { fontSize: 16, color: '#FFFFFF', fontWeight: '900', marginTop: 3, letterSpacing: -.3 },
   gridCardMaker: { fontSize: 10, color: '#E1E7D9', marginTop: 2 },
   gridCardSaveBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'transparent', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center' },
+  gridCardMenuBtn: { position: 'absolute', top: 10, left: 10, width: 32, height: 32, borderRadius: 16, backgroundColor: '#00000055', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center', zIndex: 10 },
+  gridCardMenuDropdown: { position: 'absolute', top: 48, left: 10, backgroundColor: '#182018FA', borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF25', paddingVertical: 4, width: 110, zIndex: 20, shadowColor: '#000', shadowOpacity: .3, shadowRadius: 6, elevation: 5 },
+  gridCardMenuItem: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 10, paddingVertical: 8 },
+  gridCardMenuText: { fontSize: 11, fontWeight: '800', color: '#fff' },
 });
