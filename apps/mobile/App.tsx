@@ -41,8 +41,34 @@ function ReelCard({ site, index, count, pageHeight, saved, onOpen, onSave, onSha
   return <View style={[styles.reel, { height: pageHeight }]}><Pressable style={styles.artPressable} onPress={onOpen}><SiteArt site={site}/><View style={styles.tint}/></Pressable><View pointerEvents="none" style={styles.topShade}/><View style={styles.reelHeader}><View style={styles.reelBrand}><View style={styles.logo}><Text style={styles.logoText}>s</Text></View><Text style={styles.reelBrandText}>scroll</Text></View><Text style={styles.reelCount}>{String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}</Text></View><View style={styles.reelMeta}><View style={styles.categoryPill}><View style={styles.liveDot}/><Text style={styles.categoryText}>{site.category.toUpperCase()}</Text></View><Text style={styles.demoText}>LOCAL DEMO</Text></View><View style={styles.bottomShade}/><View style={styles.reelInfo}><Text style={styles.maker}>@{site.maker.replaceAll(' ', '').toLowerCase()}</Text><Text style={styles.title}>{site.title}</Text><Text style={styles.description}>{site.description}</Text><Pressable style={styles.openButton} onPress={onOpen}><Text style={styles.openButtonText}>OPEN LIVE SITE</Text><MaterialCommunityIcons name="arrow-up-right" size={18} color="#1A2018"/></Pressable></View><View style={styles.actionRail}><Pressable style={styles.railButton} onPress={onSave}><MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} size={26} color={saved ? '#C8E77A' : '#fff'}/><Text style={styles.railText}>{saved ? 'Saved' : 'Save'}</Text></Pressable><Pressable style={styles.railButton} onPress={onShare}><MaterialCommunityIcons name="share-variant-outline" size={25} color="#fff"/><Text style={styles.railText}>Share</Text></Pressable><Pressable style={styles.railButton} onPress={onOpen}><MaterialCommunityIcons name="web" size={24} color="#fff"/><Text style={styles.railText}>Visit</Text></Pressable></View><View style={styles.swipeHint}><MaterialCommunityIcons name="chevron-down" size={16} color="#FFFFFFA8"/><Text style={styles.swipeText}>SWIPE FOR NEXT</Text></View></View>;
 }
 
+function GridCard({ site, width, saved, onOpen, onSave }: { site: Site; width: number; saved: boolean; onOpen: () => void; onSave: () => void }) {
+  return (
+    <View style={[styles.gridCard, { width }]}>
+      <Pressable onPress={onOpen} style={styles.gridCardArt}>
+        <SiteArt site={site} />
+      </Pressable>
+      <View style={styles.gridCardInfo}>
+        <Text style={styles.gridCardCategory}>{site.category.toUpperCase()}</Text>
+        <Pressable onPress={onOpen}>
+          <Text style={styles.gridCardTitle} numberOfLines={1}>{site.title}</Text>
+        </Pressable>
+        <Text style={styles.gridCardMaker} numberOfLines={1}>by {site.maker}</Text>
+        <View style={styles.gridCardActions}>
+          <Pressable style={styles.gridCardOpenBtn} onPress={onOpen}>
+            <Text style={styles.gridCardOpenText}>OPEN</Text>
+            <MaterialCommunityIcons name="arrow-up-right" color="#1B2119" size={15} />
+          </Pressable>
+          <Pressable onPress={onSave} style={styles.gridCardSaveBtn}>
+            <MaterialCommunityIcons name={saved ? 'bookmark' : 'bookmark-outline'} color={saved ? '#D8F18B' : '#F3F5EE'} size={18} />
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function App() {
-  const { height } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const pageHeight = Math.max(550, height);
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<Site | null>(null);
@@ -53,6 +79,15 @@ function App() {
   const [failed, setFailed] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
+
+  // Dynamic grid: target card width ~180px, range [160, 240]
+  const gridPadding = 28;
+  const gridGap = 14;
+  const targetCardWidth = 180;
+  const availableWidth = width - gridPadding;
+  const numColumns = Math.max(1, Math.round(availableWidth / (targetCardWidth + gridGap)));
+  const cardWidth = Math.floor((availableWidth - (numColumns - 1) * gridGap) / numColumns);
+
   useEffect(() => { AsyncStorage.getItem(STORE_KEY).then(value => { if (value) setSavedIds(JSON.parse(value)); }).catch(() => {}); }, []);
   useEffect(() => { if (selected) { const id = setTimeout(() => setMinimumPassed(true), 5000); return () => clearTimeout(id); } }, [selected, reloadKey]);
   const results = useMemo(() => SITES.filter(site => `${site.title} ${site.maker} ${site.category}`.toLowerCase().includes(query.toLowerCase())), [query]);
@@ -61,7 +96,43 @@ function App() {
   const retry = () => { setSiteReady(false); setMinimumPassed(false); setFailed(false); setReloadKey(value => value + 1); };
   const liveVisible = siteReady && minimumPassed && !failed;
 
-  return <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}><StatusBar barStyle="light-content"/><FlatList data={results} renderItem={({ item, index }) => <ReelCard site={item} index={index} count={results.length} pageHeight={pageHeight} saved={savedIds.includes(item.id)} onOpen={() => start(item)} onSave={() => save(item.id)} onShare={() => Share.share({ title: item.title, message: `${item.title}: ${item.url}` }).catch(() => {})}/>} keyExtractor={item => item.id} pagingEnabled snapToInterval={pageHeight} decelerationRate="fast" showsVerticalScrollIndicator={false} ListEmptyComponent={<View style={styles.empty}><Text style={styles.emptyTitle}>No demo sites found</Text></View>}/><Pressable style={styles.searchButton} onPress={() => setSearchOpen(true)}><MaterialCommunityIcons name="magnify" size={23} color="#fff"/></Pressable><Modal visible={searchOpen} animationType="slide" transparent><SafeAreaView style={styles.searchSheet} edges={['top','left','right']}><View style={styles.searchHeader}><Text style={styles.searchTitle}>Find a site</Text><Pressable onPress={() => { setSearchOpen(false); setQuery(''); }}><MaterialCommunityIcons name="close" size={24} color="#2D332C"/></Pressable></View><View style={styles.inputRow}><MaterialCommunityIcons name="magnify" size={20} color="#72776F"/><TextInput value={query} onChangeText={setQuery} autoFocus placeholder="Search 15 demo sites" placeholderTextColor="#92978D" style={styles.input}/></View><FlatList data={results} keyExtractor={item => item.id} renderItem={({ item }) => <Pressable style={styles.searchItem} onPress={() => { setSearchOpen(false); setQuery(''); start(item); }}><Text style={styles.searchItemCategory}>{item.category.toUpperCase()}</Text><Text style={styles.searchItemTitle}>{item.title}</Text><Text style={styles.searchItemMaker}>{item.maker}</Text></Pressable>}/></SafeAreaView></Modal><Modal visible={selected !== null} animationType="slide" onRequestClose={() => setSelected(null)}>
+  return (
+    <SafeAreaView style={styles.homeSafe} edges={['top', 'left', 'right']}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.homeHeader}>
+        <View style={styles.homeBrand}>
+          <View style={styles.homeLogo}><Text style={styles.homeLogoText}>s</Text></View>
+          <Text style={styles.homeBrandText}>scroll</Text>
+        </View>
+        <Pressable onPress={() => setSearchOpen(true)} style={styles.homeSearchBtn}>
+          <MaterialCommunityIcons name="magnify" size={20} color="#606860" />
+        </Pressable>
+      </View>
+      <View style={styles.homeIntro}>
+        <Text style={styles.homeKicker}>DISCOVER</Text>
+        <Text style={styles.homeTitle}>Play with the web.</Text>
+        <Text style={styles.homeDesc}>Every site below is interactive. Tap a card to open the full experience.</Text>
+      </View>
+      <FlatList
+        key={`grid-${numColumns}`}
+        data={results}
+        numColumns={numColumns}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <GridCard
+            site={item}
+            width={cardWidth}
+            saved={savedIds.includes(item.id)}
+            onOpen={() => start(item)}
+            onSave={() => save(item.id)}
+          />
+        )}
+        columnWrapperStyle={numColumns > 1 ? [styles.gridRow, { gap: gridGap }] : undefined}
+        contentContainerStyle={styles.gridContent}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<View style={styles.empty}><Text style={styles.emptyTitle}>No sites found</Text></View>}
+      />
+<Modal visible={searchOpen} animationType="slide" transparent><SafeAreaView style={styles.searchSheet} edges={['top','left','right']}><View style={styles.searchHeader}><Text style={styles.searchTitle}>Find a site</Text><Pressable onPress={() => { setSearchOpen(false); setQuery(''); }}><MaterialCommunityIcons name="close" size={24} color="#2D332C"/></Pressable></View><View style={styles.inputRow}><MaterialCommunityIcons name="magnify" size={20} color="#72776F"/><TextInput value={query} onChangeText={setQuery} autoFocus placeholder="Search 15 demo sites" placeholderTextColor="#92978D" style={styles.input}/></View><FlatList data={results} keyExtractor={item => item.id} renderItem={({ item }) => <Pressable style={styles.searchItem} onPress={() => { setSearchOpen(false); setQuery(''); start(item); }}><Text style={styles.searchItemCategory}>{item.category.toUpperCase()}</Text><Text style={styles.searchItemTitle}>{item.title}</Text><Text style={styles.searchItemMaker}>{item.maker}</Text></Pressable>}/></SafeAreaView></Modal><Modal visible={selected !== null} animationType="slide" onRequestClose={() => setSelected(null)}>
   {selected && (
     <View style={styles.fullScreenModal}>
       <View style={styles.fullScreenWebView}>
@@ -139,7 +210,9 @@ function App() {
       </View>
     </View>
   )}
-</Modal></SafeAreaView>;
+</Modal>
+    </SafeAreaView>
+  );
 }
 
 export default function RootApp() { return <SafeAreaProvider><App /></SafeAreaProvider>; }
@@ -197,4 +270,27 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   floatingActionText: { fontSize: 9, fontWeight: '900', color: '#fff', letterSpacing: 0.8 },
+  homeSafe: { flex: 1, backgroundColor: '#F5F4EE' },
+  homeHeader: { height: 58, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#E1E0D8' },
+  homeBrand: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  homeLogo: { width: 28, height: 28, borderRadius: 9, backgroundColor: '#526C47', alignItems: 'center', justifyContent: 'center' },
+  homeLogoText: { color: '#F5F4EE', fontSize: 21, fontWeight: '900', fontStyle: 'italic', marginTop: -2 },
+  homeBrandText: { fontSize: 19, fontWeight: '900', letterSpacing: -.8, color: '#272D25' },
+  homeSearchBtn: { width: 38, height: 38, borderRadius: 19, borderWidth: 1, borderColor: '#D4D3CC', alignItems: 'center', justifyContent: 'center' },
+  homeIntro: { paddingHorizontal: 18, paddingTop: 20, paddingBottom: 17 },
+  homeKicker: { fontSize: 9, color: '#59704E', fontWeight: '900', letterSpacing: 1.7 },
+  homeTitle: { fontSize: 29, letterSpacing: -1, color: '#282E26', fontWeight: '900', marginTop: 5 },
+  homeDesc: { fontSize: 12, lineHeight: 18, color: '#6C7269', marginTop: 6, maxWidth: 340 },
+  gridContent: { paddingHorizontal: 14, paddingBottom: 28 },
+  gridRow: { marginBottom: 14 },
+  gridCard: { backgroundColor: '#1F271F', borderRadius: 13, overflow: 'hidden', shadowColor: '#263026', shadowOpacity: .14, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  gridCardArt: { height: 155, overflow: 'hidden' },
+  gridCardInfo: { padding: 11 },
+  gridCardCategory: { fontSize: 8, letterSpacing: .9, color: '#B8C4B3', fontWeight: '800' },
+  gridCardTitle: { fontSize: 17, color: '#F5F6EE', fontWeight: '900', marginTop: 4, letterSpacing: -.4 },
+  gridCardMaker: { fontSize: 10, color: '#A9B3A6', marginTop: 2 },
+  gridCardActions: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 10 },
+  gridCardOpenBtn: { height: 31, flex: 1, backgroundColor: '#D8F18B', borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 },
+  gridCardOpenText: { fontSize: 8, fontWeight: '900', letterSpacing: 1, color: '#1B2119' },
+  gridCardSaveBtn: { width: 31, height: 31, borderRadius: 6, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#FFFFFF32' },
 });
