@@ -282,10 +282,10 @@ const styles = StyleSheet.create({
   gridContent: { paddingHorizontal: 14, paddingBottom: 28 },
   gridRow: { marginBottom: 14 },
   gridCard: { backgroundColor: '#1A241A', borderRadius: 14, overflow: 'hidden', shadowColor: '#101610', shadowOpacity: .18, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 3, position: 'relative' },
-  gridBottomShade: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', backgroundColor: '#00000088' },
+  gridBottomShade: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', backgroundColor: 'transparent' },
   gridCardOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 12, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   gridCardCategory: { fontSize: 8, letterSpacing: 1, color: '#D8F18B', fontWeight: '900' },
   gridCardTitle: { fontSize: 16, color: '#FFFFFF', fontWeight: '900', marginTop: 3, letterSpacing: -.3 },
   gridCardMaker: { fontSize: 10, color: '#E1E7D9', marginTop: 2 },
-  gridCardSaveBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#00000055', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center' },
+  gridCardSaveBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'transparent', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center' },
 });
