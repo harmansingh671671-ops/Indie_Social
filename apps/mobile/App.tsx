@@ -322,8 +322,8 @@ const styles = StyleSheet.create({
   gridCardTitle: { fontSize: 16, color: '#FFFFFF', fontWeight: '900', marginTop: 3, letterSpacing: -.3 },
   gridCardMaker: { fontSize: 10, color: '#E1E7D9', marginTop: 2 },
   gridCardSaveBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'transparent', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center' },
-  gridCardMenuBtn: { position: 'absolute', top: 10, left: 10, width: 32, height: 32, borderRadius: 16, backgroundColor: '#00000055', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center', zIndex: 10 },
-  gridCardMenuDropdown: { position: 'absolute', top: 48, left: 10, backgroundColor: '#182018FA', borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF25', paddingVertical: 4, width: 110, zIndex: 20, shadowColor: '#000', shadowOpacity: .3, shadowRadius: 6, elevation: 5 },
+  gridCardMenuBtn: { position: 'absolute', top: 10, right: 10, width: 32, height: 32, borderRadius: 16, backgroundColor: '#00000055', borderWidth: 1, borderColor: '#FFFFFF30', alignItems: 'center', justifyContent: 'center', zIndex: 10 },
+  gridCardMenuDropdown: { position: 'absolute', top: 48, right: 10, backgroundColor: '#182018FA', borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF25', paddingVertical: 4, width: 110, zIndex: 20, shadowColor: '#000', shadowOpacity: .3, shadowRadius: 6, elevation: 5 },
   gridCardMenuItem: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 10, paddingVertical: 8 },
   gridCardMenuText: { fontSize: 11, fontWeight: '800', color: '#fff' },
 });
