@@ -29,7 +29,7 @@ const SITES: Site[] = [
 const STORE_KEY = 'scroll.demo.saved.v3';
 
 function SiteArt({ site }: { site: Site }) {
-  return <View style={[styles.art, { backgroundColor: site.palette[0] }]}><View style={[styles.blob, { backgroundColor: site.palette[1] }]} /><View style={[styles.ring, { borderColor: site.palette[2] }]} /><View style={[styles.ringSmall, { borderColor: site.palette[2] }]} /><Text style={[styles.mark, { color: site.palette[2] }]}>{site.mark}</Text><Text style={styles.artKicker}>SCROLL · PUBLIC DEMO</Text><Text style={styles.artFooter}>Open web, in progress</Text></View>;
+  return <View style={[styles.art, { backgroundColor: site.palette[0] }]}><View style={[styles.blob, { backgroundColor: site.palette[1] }]} /><View style={[styles.ring, { borderColor: site.palette[2] }]} /><View style={[styles.ringSmall, { borderColor: site.palette[2] }]} /><Text style={[styles.mark, { color: site.palette[2] }]}>{site.mark}</Text></View>;
 }
 
 function BrowserFrame({ site, onReady, onFailure }: { site: Site; onReady: () => void; onFailure: () => void }) {
