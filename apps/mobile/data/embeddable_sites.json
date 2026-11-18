@@ -1,0 +1,182 @@
+[
+  {
+    "id": "patatap",
+    "url": "https://patatap.com",
+    "title": "Patatap",
+    "maker": "Jono Brandel",
+    "category": "Music",
+    "description": "Tap keys to trigger colorful animations and sound effects — a portable animation and sound kit.",
+    "color": "#e84545"
+  },
+  {
+    "id": "weavesilk",
+    "url": "https://weavesilk.com",
+    "title": "Silk",
+    "maker": "Yuri Vishnevsky",
+    "category": "Generative art",
+    "description": "Draw glowing symmetrical threads that weave into mesmerizing generative silk art.",
+    "color": "#0d0d0d"
+  },
+  {
+    "id": "thisissand",
+    "url": "https://thisissand.com",
+    "title": "This Is Sand",
+    "maker": "David Li",
+    "category": "Interactive experiment",
+    "description": "Pour colorful sand to create layered landscapes, a calming digital sandbox.",
+    "color": "#2d1b00"
+  },
+  {
+    "id": "sandspiel",
+    "url": "https://sandspiel.club",
+    "title": "Sandspiel",
+    "maker": "Max Bittker",
+    "category": "Game",
+    "description": "A falling-sand game with elements like water, fire, plants, and fungi that interact physically.",
+    "color": "#1a1a1a"
+  },
+  {
+    "id": "fluid-sim",
+    "url": "https://paveldogreat.github.io/WebGL-Fluid-Simulation/",
+    "title": "Fluid Simulation",
+    "maker": "Pavel Dobryakov",
+    "category": "Generative art",
+    "description": "Swirl vibrant fluid dynamics simulations with your finger — stunning GPU-accelerated art.",
+    "color": "#1a1a2e"
+  },
+  {
+    "id": "pointer-pointer",
+    "url": "https://pointerpointer.com",
+    "title": "Pointer Pointer",
+    "maker": "Studio Moniker",
+    "category": "Interactive experiment",
+    "description": "Move your cursor anywhere and a photo appears of someone pointing right at it.",
+    "color": "#f5f5dc"
+  },
+  {
+    "id": "zoomquilt",
+    "url": "https://zoomquilt.org",
+    "title": "Zoomquilt",
+    "maker": "Nikolaus Baumgarten & friends",
+    "category": "Visual essay",
+    "description": "An infinitely zooming painting — a seamless, dreamlike fractal of illustrated worlds.",
+    "color": "#2a3a1a"
+  },
+  {
+    "id": "staggering-beauty",
+    "url": "https://www.staggeringbeauty.com",
+    "title": "Staggering Beauty",
+    "maker": "George Michael Brower",
+    "category": "Interactive experiment",
+    "description": "Wiggle a worm gently — then shake it fast for a wild, stroboscopic surprise.",
+    "color": "#000000"
+  },
+  {
+    "id": "windows93",
+    "url": "https://www.windows93.net",
+    "title": "Windows 93",
+    "maker": "Jankenpopp & Zombectro",
+    "category": "Game",
+    "description": "A fully functional parody OS in the browser with bizarre apps, games, and easter eggs.",
+    "color": "#008080"
+  },
+  {
+    "id": "dwitter",
+    "url": "https://dwitter.net",
+    "title": "Dwitter",
+    "maker": "Lionel Lemariè",
+    "category": "Generative art",
+    "description": "Social network for creative coders sharing visual effects in 140 characters of JavaScript.",
+    "color": "#111111"
+  },
+  {
+    "id": "falling-falling",
+    "url": "https://www.fallingfalling.com",
+    "title": "Falling Falling",
+    "maker": "Rafaël Rozendaal",
+    "category": "Generative art",
+    "description": "Hypnotic layered shapes fall endlessly in shifting colors — pure net art meditation.",
+    "color": "#1a365d"
+  },
+  {
+    "id": "pixel-thoughts",
+    "url": "https://www.pixelthoughts.co",
+    "title": "Pixel Thoughts",
+    "maker": "Delta 7 Studios",
+    "category": "Tool",
+    "description": "A 60-second guided meditation that shrinks your worry into the vastness of the universe.",
+    "color": "#0b132b"
+  },
+  {
+    "id": "neal-fun",
+    "url": "https://neal.fun",
+    "title": "Neal.fun",
+    "maker": "Neal Agarwal",
+    "category": "Interactive experiment",
+    "description": "Collection of delightful interactive experiments — spend a billion dollars, explore deep sea, and more.",
+    "color": "#240046"
+  },
+  {
+    "id": "chrome-music-lab",
+    "url": "https://musiclab.chromeexperiments.com",
+    "title": "Chrome Music Lab",
+    "maker": "Google Creative Lab",
+    "category": "Music",
+    "description": "Hands-on music experiments — make songs with Song Maker, explore rhythm, melody, and sound waves.",
+    "color": "#4285f4"
+  },
+  {
+    "id": "stars-100k",
+    "url": "https://stars.chromeexperiments.com",
+    "title": "100,000 Stars",
+    "maker": "Google Data Arts Team",
+    "category": "Visual essay",
+    "description": "An interactive 3D visualization of the stellar neighborhood — zoom from the Sun to the galaxy.",
+    "color": "#050510"
+  },
+  {
+    "id": "stellarium",
+    "url": "https://stellarium-web.org",
+    "title": "Stellarium Web",
+    "maker": "Stellarium",
+    "category": "Tool",
+    "description": "An online planetarium showing the real sky with stars, planets, and constellations in real time.",
+    "color": "#0b0e17"
+  },
+  {
+    "id": "find-invisible-cow",
+    "url": "https://findtheinvisiblecow.com",
+    "title": "Find The Invisible Cow",
+    "maker": "Unknown",
+    "category": "Game",
+    "description": "Move your cursor around the screen to find the hidden cow — guided only by sound.",
+    "color": "#2c6b33"
+  },
+  {
+    "id": "radio-garden",
+    "url": "https://radio.garden",
+    "title": "Radio Garden",
+    "maker": "Studio Puckey & Moniker",
+    "category": "Music",
+    "description": "Spin a 3D globe and tune into live radio stations from cities around the world.",
+    "color": "#0a192f"
+  },
+  {
+    "id": "paper-toilet",
+    "url": "https://papertoilet.com",
+    "title": "Paper Toilet",
+    "maker": "Rafaël Rozendaal",
+    "category": "Interactive experiment",
+    "description": "Unroll an infinite roll of toilet paper with satisfying swipe gestures — oddly calming.",
+    "color": "#f0eee5"
+  },
+  {
+    "id": "lines-foldnfly",
+    "url": "https://lines.foldnfly.com",
+    "title": "Lines – Fold 'N Fly",
+    "maker": "Fold 'N Fly",
+    "category": "Interactive experiment",
+    "description": "A mesmerizing generative line animation — colorful threads dance and weave across the canvas.",
+    "color": "#2b2d42"
+  }
+]

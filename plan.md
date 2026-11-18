@@ -4,6 +4,34 @@
 > **Start date:** November 2026
 > **Working folder:** `C:\IndieSocial`
 > **Updated against:** `Scroll_Updated_Product_and_Execution_Plan.docx` (17 November 2026)
+> **Last updated:** 17 November 2026
+
+---
+
+## 0. Current Status
+
+### What exists
+- **Monorepo** at `C:\IndieSocial` connected to GitHub (`harmansingh671671-ops/Indie_Social.git`)
+- **Expo React Native app** at `apps/mobile/` — runs on web via `npm run dev` (port 4000)
+- **Home screen** — 2-column grid of 15 sites with Save, Share, Open actions
+- **Usage page** — full-screen vertical paging through sites with back/save/share
+- **Local persistence** — saved sites stored via AsyncStorage
+- **Android project** generated at `apps/mobile/android/`
+- **WebView lifecycle spec** at `docs/webview-lifecycle-spike.md`
+
+### What's fake / placeholder
+- All 15 "sites" are **local interactive mini-demos** (garden, orbit, palette, rhythm, tiles) — not real embedded websites
+- No actual WebView embedding — the previews are React Native components, not iframes or WebViews loading real URLs
+- No backend, no API, no database
+- No capture pipeline
+- No auth, no site registry
+
+### What's next (immediate)
+1. **Replace fake demos with real website embedding** — use `<iframe>` (web) or `react-native-webview` (native) to load actual URLs
+2. **Implement the load-aware lifecycle** — poster → loading → ready+5s → open
+3. **Add the bottom Next arrow** in full-site mode (no branding, no counters)
+4. **Remove** logo, branding, and counters from usage page per user request
+5. **Pick 15 real websites** that allow iframe embedding for web preview testing
 
 ---
 

@@ -61,11 +61,140 @@ function App() {
   const retry = () => { setSiteReady(false); setMinimumPassed(false); setFailed(false); setReloadKey(value => value + 1); };
   const liveVisible = siteReady && minimumPassed && !failed;
 
-  return <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}><StatusBar barStyle="light-content"/><FlatList data={results} renderItem={({ item, index }) => <ReelCard site={item} index={index} count={results.length} pageHeight={pageHeight} saved={savedIds.includes(item.id)} onOpen={() => start(item)} onSave={() => save(item.id)} onShare={() => Share.share({ title: item.title, message: `${item.title}: ${item.url}` }).catch(() => {})}/>} keyExtractor={item => item.id} pagingEnabled snapToInterval={pageHeight} decelerationRate="fast" showsVerticalScrollIndicator={false} ListEmptyComponent={<View style={styles.empty}><Text style={styles.emptyTitle}>No demo sites found</Text></View>}/><Pressable style={styles.searchButton} onPress={() => setSearchOpen(true)}><MaterialCommunityIcons name="magnify" size={23} color="#fff"/></Pressable><Modal visible={searchOpen} animationType="slide" transparent><SafeAreaView style={styles.searchSheet} edges={['top','left','right']}><View style={styles.searchHeader}><Text style={styles.searchTitle}>Find a site</Text><Pressable onPress={() => { setSearchOpen(false); setQuery(''); }}><MaterialCommunityIcons name="close" size={24} color="#2D332C"/></Pressable></View><View style={styles.inputRow}><MaterialCommunityIcons name="magnify" size={20} color="#72776F"/><TextInput value={query} onChangeText={setQuery} autoFocus placeholder="Search 15 demo sites" placeholderTextColor="#92978D" style={styles.input}/></View><FlatList data={results} keyExtractor={item => item.id} renderItem={({ item }) => <Pressable style={styles.searchItem} onPress={() => { setSearchOpen(false); setQuery(''); start(item); }}><Text style={styles.searchItemCategory}>{item.category.toUpperCase()}</Text><Text style={styles.searchItemTitle}>{item.title}</Text><Text style={styles.searchItemMaker}>{item.maker}</Text></Pressable>}/></SafeAreaView></Modal><Modal visible={selected !== null} animationType="slide" onRequestClose={() => setSelected(null)}>{selected && <SafeAreaView style={styles.browserSafe} edges={['top','left','right']}><View style={styles.browserHeader}><Pressable onPress={() => setSelected(null)} style={styles.browserIcon}><MaterialCommunityIcons name="arrow-left" size={23} color="#F3F4EE"/></Pressable><View style={styles.browserTitleBlock}><Text style={styles.browserTitle}>{selected.title}</Text><Text style={styles.browserSubtitle}>{selected.maker} · PUBLIC DEMO</Text></View><Pressable onPress={() => Linking.openURL(selected.url).catch(() => {})} style={styles.browserIcon}><MaterialCommunityIcons name="open-in-new" size={20} color="#F3F4EE"/></Pressable></View><View style={styles.browserBody}><BrowserFrame key={`${selected.id}-${reloadKey}`} site={selected} onReady={() => setSiteReady(true)} onFailure={() => setFailed(true)}/>{!liveVisible && <View style={styles.gate}><SiteArt site={selected}/><View style={styles.gateTint}/><View style={styles.gatePanel}><View style={styles.gateTop}><ActivityIndicator color="#D8F18B"/><Text style={styles.gateStatus}>{failed ? 'This site cannot open here' : siteReady ? 'Site is ready' : 'Loading live website'}</Text></View><Text style={styles.gateDescription}>{failed ? 'Some sites block embedded browsing. You can still open this one in your browser.' : minimumPassed ? 'Opening now that the site is ready.' : 'Previewing for five seconds before opening.'}</Text>{failed ? <View style={styles.gateActions}><Pressable style={styles.gateButton} onPress={retry}><Text style={styles.gateButtonText}>RETRY</Text></Pressable><Pressable style={styles.gateButton} onPress={() => Linking.openURL(selected.url).catch(() => {})}><Text style={styles.gateButtonText}>OPEN IN BROWSER</Text></Pressable></View> : <View style={styles.progressTrack}><View style={[styles.progressBar, { width: minimumPassed ? '100%' : '44%' }]}/></View>}</View></View>}</View></SafeAreaView>}</Modal></SafeAreaView>;
+  return <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}><StatusBar barStyle="light-content"/><FlatList data={results} renderItem={({ item, index }) => <ReelCard site={item} index={index} count={results.length} pageHeight={pageHeight} saved={savedIds.includes(item.id)} onOpen={() => start(item)} onSave={() => save(item.id)} onShare={() => Share.share({ title: item.title, message: `${item.title}: ${item.url}` }).catch(() => {})}/>} keyExtractor={item => item.id} pagingEnabled snapToInterval={pageHeight} decelerationRate="fast" showsVerticalScrollIndicator={false} ListEmptyComponent={<View style={styles.empty}><Text style={styles.emptyTitle}>No demo sites found</Text></View>}/><Pressable style={styles.searchButton} onPress={() => setSearchOpen(true)}><MaterialCommunityIcons name="magnify" size={23} color="#fff"/></Pressable><Modal visible={searchOpen} animationType="slide" transparent><SafeAreaView style={styles.searchSheet} edges={['top','left','right']}><View style={styles.searchHeader}><Text style={styles.searchTitle}>Find a site</Text><Pressable onPress={() => { setSearchOpen(false); setQuery(''); }}><MaterialCommunityIcons name="close" size={24} color="#2D332C"/></Pressable></View><View style={styles.inputRow}><MaterialCommunityIcons name="magnify" size={20} color="#72776F"/><TextInput value={query} onChangeText={setQuery} autoFocus placeholder="Search 15 demo sites" placeholderTextColor="#92978D" style={styles.input}/></View><FlatList data={results} keyExtractor={item => item.id} renderItem={({ item }) => <Pressable style={styles.searchItem} onPress={() => { setSearchOpen(false); setQuery(''); start(item); }}><Text style={styles.searchItemCategory}>{item.category.toUpperCase()}</Text><Text style={styles.searchItemTitle}>{item.title}</Text><Text style={styles.searchItemMaker}>{item.maker}</Text></Pressable>}/></SafeAreaView></Modal><Modal visible={selected !== null} animationType="slide" onRequestClose={() => setSelected(null)}>
+  {selected && (
+    <View style={styles.fullScreenModal}>
+      <View style={styles.fullScreenWebView}>
+        <BrowserFrame
+          key={`${selected.id}-${reloadKey}`}
+          site={selected}
+          onReady={() => setSiteReady(true)}
+          onFailure={() => setFailed(true)}
+        />
+        {!liveVisible && (
+          <View style={styles.gate}>
+            <SiteArt site={selected} />
+            <View style={styles.gateTint} />
+            <View style={styles.gatePanel}>
+              <View style={styles.gateTop}>
+                <ActivityIndicator color="#D8F18B" />
+                <Text style={styles.gateStatus}>
+                  {failed ? 'This site cannot open here' : siteReady ? 'Site is ready' : 'Loading live website'}
+                </Text>
+              </View>
+              <Text style={styles.gateDescription}>
+                {failed ? 'Some sites block embedded browsing. You can still open this one in your browser.' : minimumPassed ? 'Opening now that the site is ready.' : 'Previewing for five seconds before opening.'}
+              </Text>
+              {failed ? (
+                <View style={styles.gateActions}>
+                  <Pressable style={styles.gateButton} onPress={retry}>
+                    <Text style={styles.gateButtonText}>RETRY</Text>
+                  </Pressable>
+                  <Pressable style={styles.gateButton} onPress={() => Linking.openURL(selected.url).catch(() => {})}>
+                    <Text style={styles.gateButtonText}>OPEN IN BROWSER</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <View style={styles.gateActions}>
+                  <Pressable style={styles.gateButton} onPress={() => setMinimumPassed(true)}>
+                    <Text style={styles.gateButtonText}>OPEN NOW</Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
+      </View>
+
+      {/* Floating Overlay: Back Button (Top-Left) */}
+      <Pressable onPress={() => setSelected(null)} style={styles.floatingBackBtn}>
+        <MaterialCommunityIcons name="arrow-left" size={22} color="#fff" />
+      </Pressable>
+
+      {/* Floating Overlay: Info & Actions Card (Bottom) */}
+      <View style={styles.floatingInfoCard} pointerEvents="box-none">
+        <View style={styles.floatingInfoInner}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.floatingCategory}>{selected.category.toUpperCase()}</Text>
+            <Text style={styles.floatingTitle}>{selected.title}</Text>
+            <Text style={styles.floatingMaker} numberOfLines={1}>by {selected.maker} · {selected.description}</Text>
+          </View>
+          <View style={styles.floatingActions}>
+            <Pressable onPress={() => save(selected.id)} style={styles.floatingActionBtn}>
+              <MaterialCommunityIcons
+                name={savedIds.includes(selected.id) ? 'bookmark' : 'bookmark-outline'}
+                size={20}
+                color={savedIds.includes(selected.id) ? '#D8F18B' : '#fff'}
+              />
+              <Text style={[styles.floatingActionText, savedIds.includes(selected.id) && { color: '#D8F18B' }]}>
+                {savedIds.includes(selected.id) ? 'SAVED' : 'SAVE'}
+              </Text>
+            </Pressable>
+            <Pressable onPress={() => Share.share({ title: selected.title, message: `${selected.title}: ${selected.url}` }).catch(() => {})} style={styles.floatingActionBtn}>
+              <MaterialCommunityIcons name="share-variant-outline" size={20} color="#fff" />
+              <Text style={styles.floatingActionText}>SHARE</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </View>
+  )}
+</Modal></SafeAreaView>;
 }
 
 export default function RootApp() { return <SafeAreaProvider><App /></SafeAreaProvider>; }
 
 const styles = StyleSheet.create({
-  safe:{flex:1,backgroundColor:'#101410'},reel:{position:'relative',overflow:'hidden',backgroundColor:'#26372A'},artPressable:{...StyleSheet.absoluteFill},art:{flex:1,overflow:'hidden',justifyContent:'space-between',padding:24},blob:{position:'absolute',width:420,height:420,borderRadius:210,right:-120,top:-120,opacity:.82},ring:{position:'absolute',width:270,height:270,borderRadius:135,borderWidth:1,left:'12%',top:'30%',opacity:.8},ringSmall:{position:'absolute',width:124,height:124,borderRadius:62,borderWidth:1,right:'18%',top:'42%',opacity:.65},mark:{fontSize:112,fontWeight:'300',position:'absolute',alignSelf:'center',top:'38%'},artKicker:{color:'#FFFFFFB0',fontSize:10,letterSpacing:2,fontWeight:'800'},artFooter:{color:'#FFFFFFCC',fontSize:13,fontWeight:'600'},tint:{...StyleSheet.absoluteFill,backgroundColor:'#00000016'},topShade:{...StyleSheet.absoluteFill,backgroundColor:'#00000022',height:'28%'},bottomShade:{position:'absolute',left:0,right:0,bottom:0,height:'48%',backgroundColor:'#00000066'},reelHeader:{position:'absolute',top:14,left:20,right:20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},reelBrand:{flexDirection:'row',alignItems:'center',gap:8},logo:{width:29,height:29,borderRadius:10,backgroundColor:'#D8F18B',alignItems:'center',justifyContent:'center'},logoText:{color:'#1B241B',fontSize:21,fontWeight:'900',fontStyle:'italic',marginTop:-2},reelBrandText:{color:'#F5F6EE',fontWeight:'800',fontSize:19,letterSpacing:-.8},reelCount:{color:'#FFFFFFD0',fontSize:10,letterSpacing:1.1,fontWeight:'800'},reelMeta:{position:'absolute',top:66,left:20,right:20,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},categoryPill:{backgroundColor:'#10151099',borderWidth:1,borderColor:'#FFFFFF2B',borderRadius:18,paddingHorizontal:10,paddingVertical:7,flexDirection:'row',gap:6,alignItems:'center'},liveDot:{height:5,width:5,borderRadius:4,backgroundColor:'#D8F18B'},categoryText:{color:'#F1F3EB',fontSize:9,letterSpacing:1.1,fontWeight:'800'},demoText:{color:'#FFFFFF9E',fontSize:8,letterSpacing:1,fontWeight:'800'},reelInfo:{position:'absolute',left:20,right:85,bottom:72},maker:{color:'#E1E7D9',fontSize:12,fontWeight:'700'},title:{color:'#fff',fontSize:34,fontWeight:'900',letterSpacing:-1.1,marginTop:5},description:{color:'#F5F6F0',fontSize:13,lineHeight:19,marginTop:6,maxWidth:330},openButton:{alignSelf:'flex-start',marginTop:15,backgroundColor:'#D8F18B',borderRadius:9,height:43,paddingHorizontal:14,flexDirection:'row',alignItems:'center',gap:7},openButtonText:{color:'#1A2018',fontSize:10,letterSpacing:1,fontWeight:'900'},actionRail:{position:'absolute',right:14,bottom:84,alignItems:'center',gap:14},railButton:{alignItems:'center',gap:3,width:54},railText:{color:'#fff',fontSize:9,fontWeight:'700'},swipeHint:{position:'absolute',bottom:18,alignSelf:'center',alignItems:'center'},swipeText:{color:'#FFFFFFA8',fontSize:8,letterSpacing:1.2,fontWeight:'800'},searchButton:{position:'absolute',right:16,top:64,width:44,height:44,borderRadius:22,backgroundColor:'#151B15A8',borderWidth:1,borderColor:'#FFFFFF2B',alignItems:'center',justifyContent:'center'},empty:{alignItems:'center',paddingTop:100},emptyTitle:{color:'#fff',fontSize:17,fontWeight:'800'},searchSheet:{flex:1,backgroundColor:'#F4F3EC',padding:20},searchHeader:{height:48,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},searchTitle:{color:'#293029',fontSize:22,fontWeight:'900'},inputRow:{height:48,borderWidth:1,borderColor:'#DAD9D0',borderRadius:9,paddingHorizontal:12,alignItems:'center',flexDirection:'row',marginTop:7},input:{flex:1,height:'100%',fontSize:14,color:'#293029',marginLeft:8},searchItem:{paddingVertical:16,borderBottomWidth:1,borderBottomColor:'#E1E0D8'},searchItemCategory:{fontSize:9,color:'#74816C',letterSpacing:1,fontWeight:'800'},searchItemTitle:{fontSize:18,color:'#293029',fontWeight:'800',marginTop:3},searchItemMaker:{fontSize:12,color:'#73786F',marginTop:3},browserSafe:{flex:1,backgroundColor:'#111611'},browserHeader:{height:61,backgroundColor:'#1B241B',flexDirection:'row',alignItems:'center',paddingHorizontal:10,gap:10},browserIcon:{height:40,width:40,alignItems:'center',justifyContent:'center'},browserTitleBlock:{flex:1},browserTitle:{color:'#F3F4EE',fontSize:14,fontWeight:'800'},browserSubtitle:{color:'#B5C0AD',fontSize:10,marginTop:2},browserBody:{flex:1,position:'relative',backgroundColor:'#fff'},gate:{...StyleSheet.absoluteFill},gateTint:{...StyleSheet.absoluteFill,backgroundColor:'#00000055'},gatePanel:{position:'absolute',bottom:24,left:18,right:18,backgroundColor:'#152015E8',borderRadius:14,padding:15},gateTop:{flexDirection:'row',alignItems:'center',gap:9},gateStatus:{color:'#F2F4EC',fontSize:13,fontWeight:'800'},gateDescription:{color:'#CCD3C5',fontSize:11,lineHeight:16,marginTop:10},progressTrack:{height:3,backgroundColor:'#FFFFFF35',marginTop:13,borderRadius:2},progressBar:{height:3,backgroundColor:'#D8F18B',borderRadius:2},gateActions:{flexDirection:'row',gap:9,marginTop:13},gateButton:{paddingHorizontal:11,paddingVertical:8,borderRadius:6,backgroundColor:'#D8F18B'},gateButtonText:{fontSize:9,fontWeight:'900',letterSpacing:.5,color:'#172016'}
+  safe:{flex:1,backgroundColor:'#101410'},reel:{position:'relative',overflow:'hidden',backgroundColor:'#26372A'},artPressable:{...StyleSheet.absoluteFill},art:{flex:1,overflow:'hidden',justifyContent:'space-between',padding:24},blob:{position:'absolute',width:420,height:420,borderRadius:210,right:-120,top:-120,opacity:.82},ring:{position:'absolute',width:270,height:270,borderRadius:135,borderWidth:1,left:'12%',top:'30%',opacity:.8},ringSmall:{position:'absolute',width:124,height:124,borderRadius:62,borderWidth:1,right:'18%',top:'42%',opacity:.65},mark:{fontSize:112,fontWeight:'300',position:'absolute',alignSelf:'center',top:'38%'},artKicker:{color:'#FFFFFFB0',fontSize:10,letterSpacing:2,fontWeight:'800'},artFooter:{color:'#FFFFFFCC',fontSize:13,fontWeight:'600'},tint:{...StyleSheet.absoluteFill,backgroundColor:'#00000016'},topShade:{...StyleSheet.absoluteFill,backgroundColor:'#00000022',height:'28%'},bottomShade:{position:'absolute',left:0,right:0,bottom:0,height:'48%',backgroundColor:'#00000066'},reelHeader:{position:'absolute',top:14,left:20,right:20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},reelBrand:{flexDirection:'row',alignItems:'center',gap:8},logo:{width:29,height:29,borderRadius:10,backgroundColor:'#D8F18B',alignItems:'center',justifyContent:'center'},logoText:{color:'#1B241B',fontSize:21,fontWeight:'900',fontStyle:'italic',marginTop:-2},reelBrandText:{color:'#F5F6EE',fontWeight:'800',fontSize:19,letterSpacing:-.8},reelCount:{color:'#FFFFFFD0',fontSize:10,letterSpacing:1.1,fontWeight:'800'},reelMeta:{position:'absolute',top:66,left:20,right:20,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},categoryPill:{backgroundColor:'#10151099',borderWidth:1,borderColor:'#FFFFFF2B',borderRadius:18,paddingHorizontal:10,paddingVertical:7,flexDirection:'row',gap:6,alignItems:'center'},liveDot:{height:5,width:5,borderRadius:4,backgroundColor:'#D8F18B'},categoryText:{color:'#F1F3EB',fontSize:9,letterSpacing:1.1,fontWeight:'800'},demoText:{color:'#FFFFFF9E',fontSize:8,letterSpacing:1,fontWeight:'800'},reelInfo:{position:'absolute',left:20,right:85,bottom:72},maker:{color:'#E1E7D9',fontSize:12,fontWeight:'700'},title:{color:'#fff',fontSize:34,fontWeight:'900',letterSpacing:-1.1,marginTop:5},description:{color:'#F5F6F0',fontSize:13,lineHeight:19,marginTop:6,maxWidth:330},openButton:{alignSelf:'flex-start',marginTop:15,backgroundColor:'#D8F18B',borderRadius:9,height:43,paddingHorizontal:14,flexDirection:'row',alignItems:'center',gap:7},openButtonText:{color:'#1A2018',fontSize:10,letterSpacing:1,fontWeight:'900'},actionRail:{position:'absolute',right:14,bottom:84,alignItems:'center',gap:14},railButton:{alignItems:'center',gap:3,width:54},railText:{color:'#fff',fontSize:9,fontWeight:'700'},swipeHint:{position:'absolute',bottom:18,alignSelf:'center',alignItems:'center'},swipeText:{color:'#FFFFFFA8',fontSize:8,letterSpacing:1.2,fontWeight:'800'},searchButton:{position:'absolute',right:16,top:64,width:44,height:44,borderRadius:22,backgroundColor:'#151B15A8',borderWidth:1,borderColor:'#FFFFFF2B',alignItems:'center',justifyContent:'center'},empty:{alignItems:'center',paddingTop:100},emptyTitle:{color:'#fff',fontSize:17,fontWeight:'800'},searchSheet:{flex:1,backgroundColor:'#F4F3EC',padding:20},searchHeader:{height:48,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},searchTitle:{color:'#293029',fontSize:22,fontWeight:'900'},inputRow:{height:48,borderWidth:1,borderColor:'#DAD9D0',borderRadius:9,paddingHorizontal:12,alignItems:'center',flexDirection:'row',marginTop:7},input:{flex:1,height:'100%',fontSize:14,color:'#293029',marginLeft:8},searchItem:{paddingVertical:16,borderBottomWidth:1,borderBottomColor:'#E1E0D8'},searchItemCategory:{fontSize:9,color:'#74816C',letterSpacing:1,fontWeight:'800'},searchItemTitle:{fontSize:18,color:'#293029',fontWeight:'800',marginTop:3},searchItemMaker:{fontSize:12,color:'#73786F',marginTop:3},browserSafe:{flex:1,backgroundColor:'#111611'},browserHeader:{height:61,backgroundColor:'#1B241B',flexDirection:'row',alignItems:'center',paddingHorizontal:10,gap:10},browserIcon:{height:40,width:40,alignItems:'center',justifyContent:'center'},browserTitleBlock:{flex:1},browserTitle:{color:'#F3F4EE',fontSize:14,fontWeight:'800'},browserSubtitle:{color:'#B5C0AD',fontSize:10,marginTop:2},browserBody:{flex:1,position:'relative',backgroundColor:'#fff'},gate:{...StyleSheet.absoluteFill},gateTint:{...StyleSheet.absoluteFill,backgroundColor:'#00000055'},gatePanel:{position:'absolute',bottom:24,left:18,right:18,backgroundColor:'#152015E8',borderRadius:14,padding:15},gateTop:{flexDirection:'row',alignItems:'center',gap:9},gateStatus:{color:'#F2F4EC',fontSize:13,fontWeight:'800'},gateDescription:{color:'#CCD3C5',fontSize:11,lineHeight:16,marginTop:10},progressTrack:{height:3,backgroundColor:'#FFFFFF35',marginTop:13,borderRadius:2},progressBar:{height:3,backgroundColor:'#D8F18B',borderRadius:2},gateActions:{flexDirection:'row',gap:9,marginTop:13},gateButton:{paddingHorizontal:11,paddingVertical:8,borderRadius:6,backgroundColor:'#D8F18B'},gateButtonText:{fontSize:9,fontWeight:'900',letterSpacing:.5,color:'#172016'},
+  fullScreenModal: { flex: 1, backgroundColor: '#101410', position: 'relative' },
+  fullScreenWebView: { flex: 1, position: 'relative', backgroundColor: '#fff' },
+  floatingBackBtn: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#00000088',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 40,
+    borderWidth: 1,
+    borderColor: '#ffffff25',
+  },
+  floatingInfoCard: {
+    position: 'absolute',
+    bottom: 24,
+    left: 16,
+    right: 16,
+    backgroundColor: '#0c100cb8',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#ffffff20',
+    zIndex: 40,
+  },
+  floatingInfoInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  floatingCategory: { fontSize: 8, fontWeight: '900', letterSpacing: 1.2, color: '#D8F18B' },
+  floatingTitle: { fontSize: 17, fontWeight: '900', color: '#fff', marginTop: 2, letterSpacing: -.4 },
+  floatingMaker: { fontSize: 11, color: '#CFD7C8', marginTop: 3 },
+  floatingActions: { flexDirection: 'row', gap: 8 },
+  floatingActionBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 9,
+    backgroundColor: '#ffffff18',
+    borderWidth: 1,
+    borderColor: '#ffffff30',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 5,
+  },
+  floatingActionText: { fontSize: 9, fontWeight: '900', color: '#fff', letterSpacing: 0.8 },
 });
