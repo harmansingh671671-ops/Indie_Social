@@ -99,21 +99,23 @@ function App() {
   return (
     <SafeAreaView style={styles.homeSafe} edges={['top', 'left', 'right']}>
       <StatusBar barStyle="dark-content" />
-      <View style={styles.homeHeader}>
-        <View style={styles.homeBrand}>
-          <View style={styles.homeLogo}><Text style={styles.homeLogoText}>s</Text></View>
-          <Text style={styles.homeBrandText}>scroll</Text>
-        </View>
-        <Pressable onPress={() => setSearchOpen(true)} style={styles.homeSearchBtn}>
-          <MaterialCommunityIcons name="magnify" size={20} color="#606860" />
-        </Pressable>
-      </View>
-      <View style={styles.homeIntro}>
-        <Text style={styles.homeKicker}>DISCOVER</Text>
-        <Text style={styles.homeTitle}>Play with the web.</Text>
-        <Text style={styles.homeDesc}>Every site below is interactive. Tap a card to open the full experience.</Text>
-      </View>
       <FlatList
+        ListHeaderComponent={
+          <>
+            <View style={styles.homeHeader}>
+              <View style={styles.homeBrand}>
+                <View style={styles.homeLogo}><Text style={styles.homeLogoText}>s</Text></View>
+                <Text style={styles.homeBrandText}>scroll</Text>
+              </View>
+              <Pressable onPress={() => setSearchOpen(true)} style={styles.homeSearchBtn}>
+                <MaterialCommunityIcons name="magnify" size={20} color="#606860" />
+              </Pressable>
+            </View>
+            <View style={styles.homeIntro}>
+              <Text style={styles.homeTitle}>Play with the web.</Text>
+            </View>
+          </>
+        }
         key={`grid-${numColumns}`}
         data={results}
         numColumns={numColumns}
