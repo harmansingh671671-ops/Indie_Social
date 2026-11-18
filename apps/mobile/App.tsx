@@ -26,12 +26,13 @@ export default function App() {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
   const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const toggleSave = (id: string) => {
     setSavedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  const filteredPins = PINS.filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase()));
+  const filteredPins = PINS.filter(p => (activeCategory === 'All' || p.category === activeCategory) && (p.title.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())));
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] text-[#111] font-sans selection:bg-[#E60023] selection:text-white">
@@ -68,7 +69,22 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      {/* Pinterest Category Filter Pills */}
+      <div className="max-w-7xl mx-auto px-6 pt-4 pb-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        {['All', 'Productivity', 'Wallpaper', 'Planner', 'Audio', 'Analytics', 'Art', 'Simulation'].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-4 py-2 rounded-full font-bold text-xs whitespace-nowrap transition ${
+              activeCategory === cat ? 'bg-[#111] text-white' : 'bg-gray-100 hover:bg-gray-200 text-[#111]'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-4 gap-5 [column-fill:_balance]">
           {filteredPins.map((pin) => {
             const isSaved = savedIds.includes(pin.id);
