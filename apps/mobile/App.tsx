@@ -676,6 +676,7 @@ export default function App() {
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
   const [search, setSearch] = useState('');
   const [activeNav, setActiveNav] = useState('home');
+  const [hoveredPinId, setHoveredPinId] = useState<string | null>(null);
 
   const { width, height } = Dimensions.get('window');
   const isMobile = width < 1024;
@@ -848,44 +849,55 @@ export default function App() {
                       const isMenuOpen = activeMenuId === pin.id;
 
                       return (
-                        <TouchableOpacity
+                        <View
                           key={pin.id}
-                          onPress={() => setSelectedPin(pin)}
-                          style={[styles.card, { width: pinWidth, height: pin.calculatedHeight }]}
-                          activeOpacity={0.9}
+                          // @ts-ignore - web-specific hover props
+                          onMouseEnter={() => {
+                            setHoveredPinId(pin.id);
+                          }}
+                          // @ts-ignore - web-specific hover props
+                          onMouseLeave={() => {
+                            setHoveredPinId(null);
+                          }}
                         >
-                          {/* Pin Image */}
-                          <View style={[styles.cardImageContainer, { width: pinWidth, height: pin.calculatedHeight }]}>
-                            <Image 
-                              source={{ uri: pin.image }} 
-                              style={[styles.cardImage, { width: pinWidth, height: pin.calculatedHeight }]}
-                            />
-                            
-                            {/* Save Button Overlay */}
-                            <TouchableOpacity
-                              onPress={(e) => { 
-                                e.stopPropagation(); 
-                                toggleSave(pin.id); 
-                              }}
-                              style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
-                            >
-                              <MaterialIcons 
-                                name={isSaved ? 'bookmark' : 'bookmark-border'} 
-                                size={18} 
-                                color={isSaved ? 'white' : '#000'} 
+                          <TouchableOpacity
+                            onPress={() => setSelectedPin(pin)}
+                            style={[
+                              styles.card,
+                              { width: pinWidth, height: pin.calculatedHeight },
+                              hoveredPinId === pin.id && styles.cardHover
+                            ]}
+                            activeOpacity={0.9}
+                          >
+                            {/* Pin Image */}
+                            <View style={[styles.cardImageContainer, { width: pinWidth, height: pin.calculatedHeight }]}>
+                              <Image 
+                                source={{ uri: pin.image }} 
+                                style={[styles.cardImage, { width: pinWidth, height: pin.calculatedHeight }]}
                               />
-                            </TouchableOpacity>
-                            
-                            {/* Top Right Menu */}
-                            <TouchableOpacity
-                              onPress={(e) => { 
-                                e.stopPropagation(); 
-                                setActiveMenuId(isMenuOpen ? null : pin.id); 
-                              }}
-                              style={[styles.menuButton, { right: 56 }]}
-                            >
-                              <MaterialIcons name="more-vert" size={20} color="white" />
-                            </TouchableOpacity>
+                              
+                              {/* Top Right Menu with Bookmark on Hover */}
+                              <TouchableOpacity
+                                onPress={(e) => { 
+                                  e.stopPropagation(); 
+                                  if (hoveredPinId === pin.id) {
+                                    toggleSave(pin.id);
+                                  } else {
+                                    setActiveMenuId(isMenuOpen ? null : pin.id);
+                                  }
+                                }}
+                                style={[styles.menuButton, { right: 12 }]}
+                              >
+                                {hoveredPinId === pin.id ? (
+                                  <MaterialIcons 
+                                    name={isSaved ? 'bookmark' : 'bookmark-border'} 
+                                    size={20} 
+                                    color="white" 
+                                  />
+                                ) : (
+                                  <MaterialIcons name="more-vert" size={20} color="white" />
+                                )}
+                              </TouchableOpacity>
                             
                             {isMenuOpen && (
                               <View style={[styles.dropdownMenu, { width: 200 }]}>
@@ -1082,36 +1094,59 @@ export default function App() {
                 const pinHeight = mobilePinWidth * aspectRatio;
                 
                 return (
-                  <TouchableOpacity
+                  <View
                     key={pin.id}
-                    onPress={() => setSelectedPin(pin)}
-                    style={[styles.mobileCard, { width: mobilePinWidth, height: pinHeight }]}
-                    activeOpacity={0.9}
+                    // @ts-ignore - web-specific hover props
+                    onMouseEnter={() => {
+                      setHoveredPinId(pin.id);
+                    }}
+                    // @ts-ignore - web-specific hover props
+                    onMouseLeave={() => {
+                      setHoveredPinId(null);
+                    }}
                   >
-                    <View style={[styles.cardImageContainer, { width: mobilePinWidth, height: pinHeight }]}>
-                      <Image 
-                        source={{ uri: pin.image }} 
-                        style={[styles.cardImage, { width: mobilePinWidth, height: pinHeight }]}
-                      />
-                      <TouchableOpacity
-                        onPress={(e) => { 
-                          e.stopPropagation(); 
-                          toggleSave(pin.id); 
-                        }}
-                        style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
-                      >
-                        <MaterialIcons 
-                          name={isSaved ? 'bookmark' : 'bookmark-border'} 
-                          size={18} 
-                          color={isSaved ? 'white' : '#000'} 
+                    <TouchableOpacity
+                      onPress={() => setSelectedPin(pin)}
+                      style={[
+                        styles.mobileCard,
+                        { width: mobilePinWidth, height: pinHeight },
+                        hoveredPinId === pin.id && styles.cardHover
+                      ]}
+                      activeOpacity={0.9}
+                    >
+                      <View style={[styles.cardImageContainer, { width: mobilePinWidth, height: pinHeight }]}>
+                        <Image 
+                          source={{ uri: pin.image }} 
+                          style={[styles.cardImage, { width: mobilePinWidth, height: pinHeight }]}
                         />
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.cardContent}>
-                      <Text style={[styles.cardTitle, styles.mobileCardTitle]} numberOfLines={1}>{pin.title}</Text>
-                      <Text style={[styles.creatorName, styles.mobileCreatorName]}>{pin.creator}</Text>
-                    </View>
-                  </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={(e) => { 
+                            e.stopPropagation(); 
+                            if (hoveredPinId === pin.id) {
+                              toggleSave(pin.id);
+                            } else {
+                              setActiveMenuId(isMenuOpen ? null : pin.id);
+                            }
+                          }}
+                          style={[styles.menuButton, { right: 12 }]}
+                        >
+                          {hoveredPinId === pin.id ? (
+                            <MaterialIcons 
+                              name={isSaved ? 'bookmark' : 'bookmark-border'} 
+                              size={20} 
+                              color="white" 
+                            />
+                          ) : (
+                            <MaterialIcons name="more-vert" size={20} color="white" />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                      <View style={styles.cardContent}>
+                        <Text style={[styles.cardTitle, styles.mobileCardTitle]} numberOfLines={1}>{pin.title}</Text>
+                        <Text style={[styles.creatorName, styles.mobileCreatorName]}>{pin.creator}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 );
               })}
             </View>
@@ -1296,6 +1331,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  },
+  cardHover: {
+    transform: [{ translateY: -8 }],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+    zIndex: 1,
   },
   cardImageContainer: {
     position: 'relative',
@@ -1331,12 +1376,16 @@ const styles = StyleSheet.create({
   menuButton: {
     position: 'absolute',
     top: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
+    transition: 'background-color 0.3s ease',
+  },
+  menuButtonHover: {
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
   },
   menuButtonText: {
     color: 'white',
@@ -1621,5 +1670,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   },
 });
