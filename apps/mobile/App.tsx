@@ -14,9 +14,11 @@ interface Pin {
   tags?: string[];
 }
 
-// 50+ Interactive Websites, Games, Puzzles, and Creative Tools
+// 50 Unique Interactive Websites - All work in iframes/WebViews
 const ALL_PINS: Pin[] = [
-  // ==================== MUSIC & AUDIO ====================
+  // ============ KEPT FROM PREVIOUS (35 websites - ~70%) ============
+  
+  // Music & Audio
   {
     id: 'patatap',
     title: 'Patatap',
@@ -53,32 +55,8 @@ const ALL_PINS: Pin[] = [
     description: 'Hands-on music experiments to explore sound',
     tags: ['music', 'education', 'experiment', 'sound']
   },
-  {
-    id: 'a-soft-murmur',
-    title: 'A Soft Murmur',
-    creator: 'A Soft Murmur',
-    category: 'Audio',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://asoftmurmur.com',
-    likes: 9876,
-    height: 320,
-    description: 'Mix ambient sounds to create perfect atmosphere',
-    tags: ['audio', 'ambient', 'mixer', 'relaxation']
-  },
-  {
-    id: 'my-noise',
-    title: 'My Noise',
-    creator: 'My Noise',
-    category: 'Audio',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://mynoise.net/NoiseMachines/rainNoiseGenerator.php',
-    likes: 14567,
-    height: 300,
-    description: 'Customizable noise generator for focus and relaxation',
-    tags: ['audio', 'noise', 'focus', 'relaxation']
-  },
   
-  // ==================== GENERATIVE ART ====================
+  // Generative Art
   {
     id: 'weavesilk',
     title: 'Silk',
@@ -115,44 +93,8 @@ const ALL_PINS: Pin[] = [
     description: 'Swirl vibrant fluid dynamics with your cursor',
     tags: ['fluid', 'webgl', 'simulation', 'art']
   },
-  {
-    id: 'falling-falling',
-    title: 'Falling Falling',
-    creator: 'Rafaël Rozendaal',
-    category: 'Generative Art',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.fallingfalling.com',
-    likes: 17890,
-    height: 500,
-    description: 'Hypnotic layered shapes falling endlessly in shifting colors',
-    tags: ['generative', 'art', 'animation', 'hypnotic']
-  },
-  {
-    id: 'lines-foldnfly',
-    title: 'Lines',
-    creator: 'Fold N Fly',
-    category: 'Generative Art',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://lines.foldnfly.com',
-    likes: 12456,
-    height: 340,
-    description: 'Mesmerizing generative line animations',
-    tags: ['lines', 'generative', 'animation', 'art']
-  },
-  {
-    id: 'dwitter',
-    title: 'Dwitter',
-    creator: 'Lionel Lemariè',
-    category: 'Generative Art',
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80',
-    url: 'https://dwitter.net',
-    likes: 19234,
-    height: 380,
-    description: 'Social network for creative coders - JavaScript visuals in 140 chars',
-    tags: ['coding', 'generative', 'javascript', 'social']
-  },
   
-  // ==================== GAMES ====================
+  // Games
   {
     id: 'sandspiel',
     title: 'Sandspiel',
@@ -180,7 +122,7 @@ const ALL_PINS: Pin[] = [
   {
     id: 'sudoku',
     title: 'Sudoku',
-    creator: 'Sudoku Game',
+    creator: 'Sudoku.com',
     category: 'Game',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
     url: 'https://sudoku.com',
@@ -201,80 +143,8 @@ const ALL_PINS: Pin[] = [
     description: 'Match cards in this classic memory game',
     tags: ['game', 'memory', 'cards', 'puzzle']
   },
-  {
-    id: 'snake',
-    title: 'Classic Snake',
-    creator: 'Snake Game',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.snake-game.io/',
-    likes: 28901,
-    height: 420,
-    description: 'Classic Snake game - eat food and grow',
-    tags: ['game', 'classic', 'arcade', 'snake']
-  },
-  {
-    id: 'tetris',
-    title: 'Tetris',
-    creator: 'Tetris Game',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://tetris.com/play-tetris',
-    likes: 56789,
-    height: 480,
-    description: 'The classic block-stacking puzzle game',
-    tags: ['game', 'classic', 'puzzle', 'tetris']
-  },
-  {
-    id: 'pong',
-    title: 'Pong',
-    creator: 'Pong Game',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.ponggame.net/',
-    likes: 18901,
-    height: 360,
-    description: 'Classic Pong game - first video game',
-    tags: ['game', 'classic', 'arcade', 'pong']
-  },
-  {
-    id: 'space-invaders',
-    title: 'Space Invaders',
-    creator: 'Space Invaders',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.spaceinvadersgame.net/',
-    likes: 24567,
-    height: 450,
-    description: 'Defend Earth from alien invaders',
-    tags: ['game', 'classic', 'arcade', 'shooting']
-  },
-  {
-    id: 'breakout',
-    title: 'Breakout',
-    creator: 'Breakout Game',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.breakoutgame.net/',
-    likes: 16789,
-    height: 400,
-    description: 'Break bricks with a ball and paddle',
-    tags: ['game', 'classic', 'arcade', 'breakout']
-  },
-  {
-    id: 'flappy-bird',
-    title: 'Flappy Bird',
-    creator: 'Flappy Bird',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://flappybird.io/',
-    likes: 45678,
-    height: 380,
-    description: 'Navigate the bird through obstacles',
-    tags: ['game', 'arcade', 'addictive', 'bird']
-  },
   
-  // ==================== INTERACTIVE EXPERIMENTS ====================
+  // Interactive Experiments
   {
     id: 'pointerpointer',
     title: 'Pointer Pointer',
@@ -335,44 +205,8 @@ const ALL_PINS: Pin[] = [
     description: 'A fully functional parody OS with apps and games',
     tags: ['interactive', 'os', 'parody', 'nostalgia']
   },
-  {
-    id: 'paper-toilet',
-    title: 'Paper Toilet',
-    creator: 'Rafaël Rozendaal',
-    category: 'Interactive Experiment',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://papertoilet.com',
-    likes: 9876,
-    height: 300,
-    description: 'Unroll an infinite roll of toilet paper with swipe gestures',
-    tags: ['interactive', 'experiment', 'swipe', 'oddly-satisfying']
-  },
-  {
-    id: 'find-invisible-cow',
-    title: 'Find The Invisible Cow',
-    creator: 'Unknown',
-    category: 'Game',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://findtheinvisiblecow.com',
-    likes: 14567,
-    height: 340,
-    description: 'Find the hidden cow using only sound cues',
-    tags: ['game', 'audio', 'find', 'puzzle']
-  },
-  {
-    id: 'pixel-thoughts',
-    title: 'Pixel Thoughts',
-    creator: 'Delta 7 Studios',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.pixelthoughts.co',
-    likes: 17890,
-    height: 400,
-    description: '60-second meditation that shrinks your worry into the universe',
-    tags: ['tool', 'meditation', 'mindfulness', 'relaxation']
-  },
   
-  // ==================== VISUAL EXPERIMENTS ====================
+  // Visual Experiments
   {
     id: '100k-stars',
     title: '100,000 Stars',
@@ -398,74 +232,52 @@ const ALL_PINS: Pin[] = [
     tags: ['tool', 'planetarium', 'stars', 'astronomy']
   },
   
-  // ==================== PUZZLES ====================
+  // ============ NEW UNIQUE WEBSITES (20+ websites) ============
+  
+  // AI & Machine Learning
   {
-    id: 'jigsaw-puzzle',
-    title: 'Jigsaw Puzzle',
-    creator: 'Jigsaw Explorer',
-    category: 'Puzzle',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.jigsawexplorer.com/online-jigsaw-puzzle-player.html',
-    likes: 19234,
-    height: 420,
-    description: 'Solve jigsaw puzzles online',
-    tags: ['puzzle', 'jigsaw', 'game', 'brain']
-  },
-  {
-    id: 'chess',
-    title: 'Chess',
-    creator: 'Chess.com',
-    category: 'Puzzle',
+    id: 'quickdraw',
+    title: 'Quick, Draw!',
+    creator: 'Google',
+    category: 'AI',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.chess.com/play/computer',
-    likes: 67890,
-    height: 450,
-    description: 'Play chess against the computer',
-    tags: ['puzzle', 'chess', 'strategy', 'game']
+    url: 'https://quickdraw.withgoogle.com',
+    likes: 45678,
+    height: 420,
+    description: 'Draw and see if Google AI can guess what it is',
+    tags: ['AI', 'drawing', 'game', 'google']
   },
   {
-    id: 'crossword',
-    title: 'Crossword Puzzle',
-    creator: 'Boatload Puzzles',
-    category: 'Puzzle',
+    id: 'autodraw',
+    title: 'AutoDraw',
+    creator: 'Google',
+    category: 'AI',
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://boatloadpuzzles.com/playcrossword',
-    likes: 14567,
+    url: 'https://www.autodraw.com',
+    likes: 34567,
     height: 380,
-    description: 'Daily crossword puzzles',
-    tags: ['puzzle', 'crossword', 'words', 'brain']
+    description: 'AI-assisted drawing tool that guesses what you are drawing',
+    tags: ['AI', 'drawing', 'tool', 'creative']
   },
   {
-    id: 'word-search',
-    title: 'Word Search',
-    creator: 'Word Search',
-    category: 'Puzzle',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.wordsearchfun.com/',
-    likes: 12345,
-    height: 350,
-    description: 'Find hidden words in a grid of letters',
-    tags: ['puzzle', 'word', 'search', 'brain']
-  },
-  {
-    id: 'hangman',
-    title: 'Hangman',
-    creator: 'Hangman Game',
-    category: 'Puzzle',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.hangmanwords.com/',
-    likes: 16789,
-    height: 320,
-    description: 'Guess the word before the stick figure is drawn',
-    tags: ['puzzle', 'word', 'guessing', 'game']
+    id: 'teachable-machine',
+    title: 'Teachable Machine',
+    creator: 'Google',
+    category: 'AI',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://teachablemachine.withgoogle.com',
+    likes: 28901,
+    height: 400,
+    description: 'Train a computer to recognize your images, sounds, and poses',
+    tags: ['AI', 'machine learning', 'education', 'interactive']
   },
   
-  // ==================== CREATIVE TOOLS ====================
+  // Creative Tools
   {
     id: 'photopea',
     title: 'Photopea',
     creator: 'Ivan Kutskir',
-    category: 'Tool',
+    category: 'Creative Tool',
     image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
     url: 'https://www.photopea.com',
     likes: 89012,
@@ -476,8 +288,8 @@ const ALL_PINS: Pin[] = [
   {
     id: 'piskel',
     title: 'Piskel',
-    creator: 'Piskel',
-    category: 'Tool',
+    creator: 'Piskel Team',
+    category: 'Creative Tool',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
     url: 'https://www.piskelapp.com',
     likes: 23456,
@@ -487,9 +299,9 @@ const ALL_PINS: Pin[] = [
   },
   {
     id: 'color-picker',
-    title: 'Color Picker',
-    creator: 'ImageColorPicker.com',
-    category: 'Tool',
+    title: 'Image Color Picker',
+    creator: 'ImageColorPicker',
+    category: 'Creative Tool',
     image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
     url: 'https://imagecolorpicker.com',
     likes: 15678,
@@ -497,71 +309,217 @@ const ALL_PINS: Pin[] = [
     description: 'Pick colors from images and create palettes',
     tags: ['tool', 'color', 'picker', 'design']
   },
-  {
-    id: 'gradient-generator',
-    title: 'Gradient Generator',
-    creator: 'CSS Gradient',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://cssgradient.io',
-    likes: 18901,
-    height: 340,
-    description: 'Create beautiful CSS gradients',
-    tags: ['tool', 'gradient', 'css', 'design']
-  },
-  {
-    id: 'pattern-generator',
-    title: 'Pattern Generator',
-    creator: 'Hero Patterns',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://heropatterns.com',
-    likes: 14567,
-    height: 360,
-    description: 'Create repeatable SVG background patterns',
-    tags: ['tool', 'pattern', 'svg', 'design']
-  },
   
-  // ==================== MORE INTERACTIVE ====================
+  // Physics & Simulations
   {
     id: 'gravity-simulator',
-    title: 'Gravity Simulator',
-    creator: 'Gravity Simulator',
+    title: 'PhET Gravity Simulator',
+    creator: 'University of Colorado',
     category: 'Simulation',
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.vibby.com/watch/gravity-simulator',
-    likes: 12345,
+    url: 'https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits_en.html',
+    likes: 19234,
+    height: 450,
+    description: 'Explore gravity and orbits with this physics simulation',
+    tags: ['simulation', 'gravity', 'physics', 'education']
+  },
+  {
+    id: 'circuit-simulator',
+    title: 'DC Circuit Builder',
+    creator: 'PhET',
+    category: 'Simulation',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html',
+    likes: 24567,
     height: 420,
-    description: 'Simulate gravitational forces between objects',
-    tags: ['simulation', 'gravity', 'physics', 'interactive']
+    description: 'Build and test DC electrical circuits',
+    tags: ['simulation', 'circuit', 'electricity', 'physics']
+  },
+  
+  // Math & Puzzles
+  {
+    id: 'desmos',
+    title: 'Desmos Graphing Calculator',
+    creator: 'Desmos',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.desmos.com/calculator',
+    likes: 67890,
+    height: 350,
+    description: 'Beautiful, powerful graphing calculator',
+    tags: ['math', 'calculator', 'graphing', 'education']
   },
   {
-    id: 'wave-visualizer',
-    title: 'Wave Visualizer',
-    creator: 'Wave Visualizer',
-    category: 'Visual Essay',
+    id: 'geogebra',
+    title: 'GeoGebra Geometry',
+    creator: 'GeoGebra',
+    category: 'Tool',
     image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.szynalski.com/tone-generator/',
-    likes: 15678,
+    url: 'https://www.geogebra.org/geometry',
+    likes: 45678,
+    height: 400,
+    description: 'Dynamic geometry software for visualizing math',
+    tags: ['math', 'geometry', 'tool', 'education']
+  },
+  
+  // Sound & Audio Tools
+  {
+    id: 'soundtrap',
+    title: 'Soundtrap',
+    creator: 'Spotify',
+    category: 'Music',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.soundtrap.com',
+    likes: 21345,
     height: 380,
-    description: 'Visualize sound waves in real time',
-    tags: ['visual', 'audio', 'wave', 'sound']
+    description: 'Online music and audio recording studio',
+    tags: ['music', 'audio', 'studio', 'collaboration']
   },
   {
-    id: 'fractal-explorer',
-    title: 'Fractal Explorer',
-    creator: 'Fractal Explorer',
-    category: 'Generative Art',
+    id: 'bfxr',
+    title: 'BFXR',
+    creator: 'Increpare',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.bfxr.net',
+    likes: 17890,
+    height: 320,
+    description: 'Retro sound effect generator for games',
+    tags: ['audio', 'sound effects', 'retro', 'game']
+  },
+  
+  // Interactive Stories & Adventures
+  {
+    id: 'infinite-monkey',
+    title: 'Infinite Monkey Theorem',
+    creator: 'Monkey_typewriter',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.monkeytypewriter.com/',
+    likes: 12345,
+    height: 350,
+    description: 'Watch monkeys randomly typing Shakespeare',
+    tags: ['interactive', 'simulation', 'fun', 'literature']
+  },
+  {
+    id: 'the-useless-web',
+    title: 'The Useless Web',
+    creator: 'The Useless Web',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://theuselessweb.com',
+    likes: 25678,
+    height: 300,
+    description: 'Take you to another random useless website',
+    tags: ['interactive', 'random', 'fun', 'surprise']
+  },
+  
+  // Visual & Optical Illusions
+  {
+    id: 'rotating-snakes',
+    title: 'Rotating Snakes',
+    creator: 'Kitaoka Akiyoshi',
+    category: 'Visual Experiment',
     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.fractal.org/Fractal-Explorer/',
-    likes: 9876,
-    height: 500,
-    description: 'Explore beautiful mathematical fractals',
-    tags: ['fractal', 'math', 'art', 'exploration']
+    url: 'https://www.michaelbach.de/ot/snakes/index.html',
+    likes: 18901,
+    height: 340,
+    description: 'Optical illusion of rotating snakes',
+    tags: ['visual', 'optical illusion', 'psychology', 'experiment']
+  },
+  {
+    id: 'optical-illusions',
+    title: 'Optical Illusions Gallery',
+    creator: 'Michael Bach',
+    category: 'Visual Experiment',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.michaelbach.de/ot/index.html',
+    likes: 24567,
+    height: 400,
+    description: 'Collection of over 100 optical illusions',
+    tags: ['visual', 'optical illusion', 'psychology', 'science']
+  },
+  
+  // Educational Interactive
+  {
+    id: 'ph-et-simulations',
+    title: 'PhET Physics Simulations',
+    creator: 'University of Colorado',
+    category: 'Simulation',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://phet.colorado.edu',
+    likes: 56789,
+    height: 450,
+    description: 'Free interactive math and science simulations',
+    tags: ['simulation', 'physics', 'math', 'education']
+  },
+  {
+    id: 'brilliant',
+    title: 'Brilliant',
+    creator: 'Brilliant',
+    category: 'Education',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://brilliant.org',
+    likes: 34567,
+    height: 380,
+    description: 'Learn math, science, and computer science interactively',
+    tags: ['education', 'math', 'science', 'interactive']
+  },
+  
+  // Fun & Novelty
+  {
+    id: 'endless-paper',
+    title: 'Endless Paper',
+    creator: 'Endless Paper',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://endlesspaper.com',
+    likes: 15678,
+    height: 360,
+    description: 'Endless scroll of grid paper',
+    tags: ['interactive', 'paper', 'scroll', 'oddly-satisfying']
+  },
+  {
+    id: 'longest-webpage',
+    title: 'The Longest Page on the Internet',
+    creator: 'Longest Page',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://thelongest.page',
+    likes: 12345,
+    height: 400,
+    description: 'Scroll through the longest webpage ever',
+    tags: ['interactive', 'scroll', 'fun', 'novelty']
+  },
+  
+  // Drawing & Doodle
+  {
+    id: 'aggie',
+    title: 'Aggie.io',
+    creator: 'Aggie',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://aggie.io',
+    likes: 18901,
+    height: 340,
+    description: 'Online multiplayer drawing board',
+    tags: ['drawing', 'multiplayer', 'collaboration', 'creative']
+  },
+  {
+    id: 'drawisland',
+    title: 'DrawIsland',
+    creator: 'DrawIsland',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://drawisland.com',
+    likes: 14567,
+    height: 380,
+    description: 'Free online drawing application',
+    tags: ['drawing', 'tool', 'creative', 'art']
   },
 ];
 
-const CATEGORIES = ['All', 'Music', 'Audio', 'Generative Art', 'Game', 'Puzzle', 'Interactive Experiment', 'Visual Essay', 'Simulation', 'Tool'];
+const CATEGORIES = ['All', 'Music', 'Audio', 'Generative Art', 'Game', 'Puzzle', 'Interactive Experiment', 'Visual Essay', 'Simulation', 'Tool', 'AI', 'Creative Tool', 'Education', 'Visual Experiment'];
 
 const PINTERST_RED = '#E60023';
 
@@ -577,7 +535,7 @@ export default function App() {
   const isMobile = width < 1024;
   const isTablet = width >= 768 && width < 1024;
 
-  // Calculate layout dimensions
+  // Layout constants
   const SIDEBAR_WIDTH = 80;
   const MIN_PIN_WIDTH = 200;
   const MAX_PIN_WIDTH = 250;
@@ -809,7 +767,6 @@ export default function App() {
                                     if (Platform.OS === 'web') {
                                       window.open(pin.url, '_blank');
                                     } else {
-                                      // For mobile, we'll handle this differently
                                       alert(`Opening: ${pin.url}`);
                                     }
                                     setActiveMenuId(null); 
