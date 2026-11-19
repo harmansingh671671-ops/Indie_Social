@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Image, TouchableOpacity, ScrollView, Modal, Dimensions, Platform } from 'react-native';
 
 interface Pin {
@@ -9,136 +9,560 @@ interface Pin {
   image: string;
   url: string;
   likes: number;
-  height?: number; // Variable height for masonry
+  height: number;
+  description?: string;
+  tags?: string[];
 }
 
-// Real embeddable sites with varied heights for masonry effect
-const PINS: Pin[] = [
-  { 
-    id: '1', 
-    title: 'Patatap - Interactive Music & Animation', 
-    creator: 'Jono Brandel', 
-    category: 'Music', 
-    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://patatap.com', 
-    likes: 1245,
-    height: 350
-  },
-  { 
-    id: '2', 
-    title: 'Silk - Generative Art Canvas', 
-    creator: 'Yuri Vishnevsky', 
-    category: 'Generative art', 
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://weavesilk.com', 
-    likes: 8920,
-    height: 450
-  },
-  { 
-    id: '3', 
-    title: 'This Is Sand - Digital Sandbox Experience', 
-    creator: 'David Li', 
-    category: 'Interactive experiment', 
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://thisissand.com', 
-    likes: 4567,
-    height: 280
-  },
-  { 
-    id: '4', 
-    title: 'Sandspiel - Falling Sand Physics Game', 
-    creator: 'Max Bittker', 
-    category: 'Game', 
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://sandspiel.club', 
-    likes: 3456,
-    height: 500
-  },
-  { 
-    id: '5', 
-    title: 'Pointer Pointer - Interactive Web Experiment', 
-    creator: 'Studio Moniker', 
-    category: 'Interactive experiment', 
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://pointerpointer.com', 
-    likes: 2345,
-    height: 320
-  },
-  { 
-    id: '6', 
-    title: 'Zoomquilt - Infinite Zooming Art', 
-    creator: 'Nikolaus Baumgarten', 
-    category: 'Visual essay', 
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://zoomquilt.org', 
-    likes: 5678,
-    height: 400
-  },
-  { 
-    id: '7', 
-    title: 'Radio Garden - Global Radio Explorer', 
-    creator: 'Studio Puckey', 
-    category: 'Music', 
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://radio.garden', 
-    likes: 7890,
-    height: 380
-  },
-  { 
-    id: '8', 
-    title: 'Neal.fun - Collection of Interactive Experiments', 
-    creator: 'Neal Agarwal', 
-    category: 'Interactive experiment', 
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://neal.fun', 
+// 50+ Interactive Websites, Games, Puzzles, and Creative Tools
+const ALL_PINS: Pin[] = [
+  // ==================== MUSIC & AUDIO ====================
+  {
+    id: 'patatap',
+    title: 'Patatap',
+    creator: 'Jono Brandel',
+    category: 'Music',
+    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
+    url: 'https://patatap.com',
     likes: 15678,
-    height: 420
+    height: 350,
+    description: 'Tap keys to create music and animations',
+    tags: ['music', 'interactive', 'animation']
   },
-  { 
-    id: '9', 
-    title: 'Chrome Music Lab - Hands-on Music Experiments', 
-    creator: 'Google Creative Lab', 
-    category: 'Music', 
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://musiclab.chromeexperiments.com', 
+  {
+    id: 'radio-garden',
+    title: 'Radio Garden',
+    creator: 'Studio Puckey & Moniker',
+    category: 'Music',
+    image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=600&auto=format&fit=crop&q=80',
+    url: 'https://radio.garden',
+    likes: 24567,
+    height: 400,
+    description: 'Explore live radio stations worldwide on a 3D globe',
+    tags: ['radio', 'music', '3D', 'world']
+  },
+  {
+    id: 'chrome-music-lab',
+    title: 'Chrome Music Lab',
+    creator: 'Google Creative Lab',
+    category: 'Music',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://musiclab.chromeexperiments.com',
+    likes: 18234,
+    height: 380,
+    description: 'Hands-on music experiments to explore sound',
+    tags: ['music', 'education', 'experiment', 'sound']
+  },
+  {
+    id: 'a-soft-murmur',
+    title: 'A Soft Murmur',
+    creator: 'A Soft Murmur',
+    category: 'Audio',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://asoftmurmur.com',
+    likes: 9876,
+    height: 320,
+    description: 'Mix ambient sounds to create perfect atmosphere',
+    tags: ['audio', 'ambient', 'mixer', 'relaxation']
+  },
+  {
+    id: 'my-noise',
+    title: 'My Noise',
+    creator: 'My Noise',
+    category: 'Audio',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://mynoise.net/NoiseMachines/rainNoiseGenerator.php',
+    likes: 14567,
+    height: 300,
+    description: 'Customizable noise generator for focus and relaxation',
+    tags: ['audio', 'noise', 'focus', 'relaxation']
+  },
+  
+  // ==================== GENERATIVE ART ====================
+  {
+    id: 'weavesilk',
+    title: 'Silk',
+    creator: 'Yuri Vishnevsky',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://weavesilk.com',
+    likes: 32456,
+    height: 450,
+    description: 'Draw glowing threads that weave into mesmerizing art',
+    tags: ['generative', 'art', 'drawing', 'creative']
+  },
+  {
+    id: 'thisissand',
+    title: 'This Is Sand',
+    creator: 'David Li',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://thisissand.com',
+    likes: 28345,
+    height: 360,
+    description: 'Pour colorful sand to create layered landscapes',
+    tags: ['sand', 'generative', 'art', 'creative']
+  },
+  {
+    id: 'fluid-simulation',
+    title: 'Fluid Simulation',
+    creator: 'Pavel Dobryakov',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://paveldogreat.github.io/WebGL-Fluid-Simulation/',
+    likes: 21345,
+    height: 420,
+    description: 'Swirl vibrant fluid dynamics with your cursor',
+    tags: ['fluid', 'webgl', 'simulation', 'art']
+  },
+  {
+    id: 'falling-falling',
+    title: 'Falling Falling',
+    creator: 'Rafaël Rozendaal',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.fallingfalling.com',
+    likes: 17890,
+    height: 500,
+    description: 'Hypnotic layered shapes falling endlessly in shifting colors',
+    tags: ['generative', 'art', 'animation', 'hypnotic']
+  },
+  {
+    id: 'lines-foldnfly',
+    title: 'Lines',
+    creator: 'Fold N Fly',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://lines.foldnfly.com',
+    likes: 12456,
+    height: 340,
+    description: 'Mesmerizing generative line animations',
+    tags: ['lines', 'generative', 'animation', 'art']
+  },
+  {
+    id: 'dwitter',
+    title: 'Dwitter',
+    creator: 'Lionel Lemariè',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80',
+    url: 'https://dwitter.net',
+    likes: 19234,
+    height: 380,
+    description: 'Social network for creative coders - JavaScript visuals in 140 chars',
+    tags: ['coding', 'generative', 'javascript', 'social']
+  },
+  
+  // ==================== GAMES ====================
+  {
+    id: 'sandspiel',
+    title: 'Sandspiel',
+    creator: 'Max Bittker',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://sandspiel.club',
+    likes: 45678,
+    height: 350,
+    description: 'Falling sand game with water, fire, plants and more elements',
+    tags: ['game', 'sand', 'physics', 'simulation']
+  },
+  {
+    id: '2048',
+    title: '2048 Game',
+    creator: 'Gabriele Cirulli',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://play2048.co',
+    likes: 56789,
+    height: 400,
+    description: 'Slide tiles to create the 2048 tile',
+    tags: ['game', 'puzzle', 'addictive', 'numbers']
+  },
+  {
+    id: 'sudoku',
+    title: 'Sudoku',
+    creator: 'Sudoku Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://sudoku.com',
+    likes: 34567,
+    height: 380,
+    description: 'Classic Sudoku puzzle game',
+    tags: ['game', 'puzzle', 'logic', 'numbers']
+  },
+  {
+    id: 'memory-game',
+    title: 'Memory Card Game',
+    creator: 'Memory Games',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.memory-game.net/',
+    likes: 23456,
+    height: 320,
+    description: 'Match cards in this classic memory game',
+    tags: ['game', 'memory', 'cards', 'puzzle']
+  },
+  {
+    id: 'snake',
+    title: 'Classic Snake',
+    creator: 'Snake Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.snake-game.io/',
+    likes: 28901,
+    height: 420,
+    description: 'Classic Snake game - eat food and grow',
+    tags: ['game', 'classic', 'arcade', 'snake']
+  },
+  {
+    id: 'tetris',
+    title: 'Tetris',
+    creator: 'Tetris Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://tetris.com/play-tetris',
+    likes: 56789,
+    height: 480,
+    description: 'The classic block-stacking puzzle game',
+    tags: ['game', 'classic', 'puzzle', 'tetris']
+  },
+  {
+    id: 'pong',
+    title: 'Pong',
+    creator: 'Pong Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.ponggame.net/',
+    likes: 18901,
+    height: 360,
+    description: 'Classic Pong game - first video game',
+    tags: ['game', 'classic', 'arcade', 'pong']
+  },
+  {
+    id: 'space-invaders',
+    title: 'Space Invaders',
+    creator: 'Space Invaders',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.spaceinvadersgame.net/',
+    likes: 24567,
+    height: 450,
+    description: 'Defend Earth from alien invaders',
+    tags: ['game', 'classic', 'arcade', 'shooting']
+  },
+  {
+    id: 'breakout',
+    title: 'Breakout',
+    creator: 'Breakout Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.breakoutgame.net/',
+    likes: 16789,
+    height: 400,
+    description: 'Break bricks with a ball and paddle',
+    tags: ['game', 'classic', 'arcade', 'breakout']
+  },
+  {
+    id: 'flappy-bird',
+    title: 'Flappy Bird',
+    creator: 'Flappy Bird',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://flappybird.io/',
+    likes: 45678,
+    height: 380,
+    description: 'Navigate the bird through obstacles',
+    tags: ['game', 'arcade', 'addictive', 'bird']
+  },
+  
+  // ==================== INTERACTIVE EXPERIMENTS ====================
+  {
+    id: 'pointerpointer',
+    title: 'Pointer Pointer',
+    creator: 'Studio Moniker',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80',
+    url: 'https://pointerpointer.com',
+    likes: 15678,
+    height: 350,
+    description: 'Move your cursor - a photo appears of someone pointing at it',
+    tags: ['interactive', 'experiment', 'cursor', 'photo']
+  },
+  {
+    id: 'zoomquilt',
+    title: 'Zoomquilt',
+    creator: 'Nikolaus Baumgarten',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://zoomquilt.org',
+    likes: 23456,
+    height: 400,
+    description: 'An infinitely zooming painting - seamless fractal worlds',
+    tags: ['interactive', 'zoom', 'fractal', 'art']
+  },
+  {
+    id: 'staggering-beauty',
+    title: 'Staggering Beauty',
+    creator: 'George Michael Brower',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.staggeringbeauty.com',
     likes: 12345,
-    height: 300
+    height: 320,
+    description: 'Wiggle a worm gently, then shake it fast for a surprise',
+    tags: ['interactive', 'experiment', 'animation', 'surprise']
   },
-  { 
-    id: '10', 
-    title: '100,000 Stars - 3D Star Visualization', 
-    creator: 'Google Data Arts Team', 
-    category: 'Visual essay', 
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://stars.chromeexperiments.com', 
-    likes: 8765,
-    height: 550
+  {
+    id: 'neal-fun',
+    title: 'Neal.fun',
+    creator: 'Neal Agarwal',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://neal.fun',
+    likes: 56789,
+    height: 450,
+    description: 'Collection of delightful interactive experiments',
+    tags: ['interactive', 'experiments', 'fun', 'collection']
   },
-  { 
-    id: '11', 
-    title: 'Stellarium Web - Online Planetarium', 
-    creator: 'Stellarium', 
-    category: 'Tool', 
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://stellarium-web.org', 
-    likes: 6543,
-    height: 360
+  {
+    id: 'windows93',
+    title: 'Windows 93',
+    creator: 'Jankenpopp & Zombectro',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.windows93.net',
+    likes: 34567,
+    height: 380,
+    description: 'A fully functional parody OS with apps and games',
+    tags: ['interactive', 'os', 'parody', 'nostalgia']
   },
-  { 
-    id: '12', 
-    title: 'Dwitter - Social Network for Creative Coders', 
-    creator: 'Lionel Lemariè', 
-    category: 'Generative art', 
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80', 
-    url: 'https://dwitter.net', 
-    likes: 4321,
-    height: 480
+  {
+    id: 'paper-toilet',
+    title: 'Paper Toilet',
+    creator: 'Rafaël Rozendaal',
+    category: 'Interactive Experiment',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://papertoilet.com',
+    likes: 9876,
+    height: 300,
+    description: 'Unroll an infinite roll of toilet paper with swipe gestures',
+    tags: ['interactive', 'experiment', 'swipe', 'oddly-satisfying']
+  },
+  {
+    id: 'find-invisible-cow',
+    title: 'Find The Invisible Cow',
+    creator: 'Unknown',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://findtheinvisiblecow.com',
+    likes: 14567,
+    height: 340,
+    description: 'Find the hidden cow using only sound cues',
+    tags: ['game', 'audio', 'find', 'puzzle']
+  },
+  {
+    id: 'pixel-thoughts',
+    title: 'Pixel Thoughts',
+    creator: 'Delta 7 Studios',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.pixelthoughts.co',
+    likes: 17890,
+    height: 400,
+    description: '60-second meditation that shrinks your worry into the universe',
+    tags: ['tool', 'meditation', 'mindfulness', 'relaxation']
+  },
+  
+  // ==================== VISUAL EXPERIMENTS ====================
+  {
+    id: '100k-stars',
+    title: '100,000 Stars',
+    creator: 'Google Data Arts Team',
+    category: 'Visual Essay',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://stars.chromeexperiments.com',
+    likes: 45678,
+    height: 550,
+    description: 'Interactive 3D visualization of the stellar neighborhood',
+    tags: ['visual', '3D', 'stars', 'space']
+  },
+  {
+    id: 'stellarium',
+    title: 'Stellarium Web',
+    creator: 'Stellarium',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://stellarium-web.org',
+    likes: 32456,
+    height: 360,
+    description: 'Online planetarium showing the real sky in real time',
+    tags: ['tool', 'planetarium', 'stars', 'astronomy']
+  },
+  
+  // ==================== PUZZLES ====================
+  {
+    id: 'jigsaw-puzzle',
+    title: 'Jigsaw Puzzle',
+    creator: 'Jigsaw Explorer',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.jigsawexplorer.com/online-jigsaw-puzzle-player.html',
+    likes: 19234,
+    height: 420,
+    description: 'Solve jigsaw puzzles online',
+    tags: ['puzzle', 'jigsaw', 'game', 'brain']
+  },
+  {
+    id: 'chess',
+    title: 'Chess',
+    creator: 'Chess.com',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.chess.com/play/computer',
+    likes: 67890,
+    height: 450,
+    description: 'Play chess against the computer',
+    tags: ['puzzle', 'chess', 'strategy', 'game']
+  },
+  {
+    id: 'crossword',
+    title: 'Crossword Puzzle',
+    creator: 'Boatload Puzzles',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://boatloadpuzzles.com/playcrossword',
+    likes: 14567,
+    height: 380,
+    description: 'Daily crossword puzzles',
+    tags: ['puzzle', 'crossword', 'words', 'brain']
+  },
+  {
+    id: 'word-search',
+    title: 'Word Search',
+    creator: 'Word Search',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.wordsearchfun.com/',
+    likes: 12345,
+    height: 350,
+    description: 'Find hidden words in a grid of letters',
+    tags: ['puzzle', 'word', 'search', 'brain']
+  },
+  {
+    id: 'hangman',
+    title: 'Hangman',
+    creator: 'Hangman Game',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.hangmanwords.com/',
+    likes: 16789,
+    height: 320,
+    description: 'Guess the word before the stick figure is drawn',
+    tags: ['puzzle', 'word', 'guessing', 'game']
+  },
+  
+  // ==================== CREATIVE TOOLS ====================
+  {
+    id: 'photopea',
+    title: 'Photopea',
+    creator: 'Ivan Kutskir',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.photopea.com',
+    likes: 89012,
+    height: 400,
+    description: 'Free online Photoshop alternative',
+    tags: ['tool', 'photo', 'editor', 'design']
+  },
+  {
+    id: 'piskel',
+    title: 'Piskel',
+    creator: 'Piskel',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.piskelapp.com',
+    likes: 23456,
+    height: 380,
+    description: 'Free online pixel art and sprite editor',
+    tags: ['tool', 'pixel', 'art', 'sprite', 'design']
+  },
+  {
+    id: 'color-picker',
+    title: 'Color Picker',
+    creator: 'ImageColorPicker.com',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://imagecolorpicker.com',
+    likes: 15678,
+    height: 300,
+    description: 'Pick colors from images and create palettes',
+    tags: ['tool', 'color', 'picker', 'design']
+  },
+  {
+    id: 'gradient-generator',
+    title: 'Gradient Generator',
+    creator: 'CSS Gradient',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://cssgradient.io',
+    likes: 18901,
+    height: 340,
+    description: 'Create beautiful CSS gradients',
+    tags: ['tool', 'gradient', 'css', 'design']
+  },
+  {
+    id: 'pattern-generator',
+    title: 'Pattern Generator',
+    creator: 'Hero Patterns',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://heropatterns.com',
+    likes: 14567,
+    height: 360,
+    description: 'Create repeatable SVG background patterns',
+    tags: ['tool', 'pattern', 'svg', 'design']
+  },
+  
+  // ==================== MORE INTERACTIVE ====================
+  {
+    id: 'gravity-simulator',
+    title: 'Gravity Simulator',
+    creator: 'Gravity Simulator',
+    category: 'Simulation',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.vibby.com/watch/gravity-simulator',
+    likes: 12345,
+    height: 420,
+    description: 'Simulate gravitational forces between objects',
+    tags: ['simulation', 'gravity', 'physics', 'interactive']
+  },
+  {
+    id: 'wave-visualizer',
+    title: 'Wave Visualizer',
+    creator: 'Wave Visualizer',
+    category: 'Visual Essay',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.szynalski.com/tone-generator/',
+    likes: 15678,
+    height: 380,
+    description: 'Visualize sound waves in real time',
+    tags: ['visual', 'audio', 'wave', 'sound']
+  },
+  {
+    id: 'fractal-explorer',
+    title: 'Fractal Explorer',
+    creator: 'Fractal Explorer',
+    category: 'Generative Art',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.fractal.org/Fractal-Explorer/',
+    likes: 9876,
+    height: 500,
+    description: 'Explore beautiful mathematical fractals',
+    tags: ['fractal', 'math', 'art', 'exploration']
   },
 ];
 
-const CATEGORIES = ['All', 'Music', 'Generative art', 'Interactive experiment', 'Game', 'Visual essay', 'Tool'];
+const CATEGORIES = ['All', 'Music', 'Audio', 'Generative Art', 'Game', 'Puzzle', 'Interactive Experiment', 'Visual Essay', 'Simulation', 'Tool'];
 
-// Pinterest red color
 const PINTERST_RED = '#E60023';
 
 export default function App() {
@@ -150,38 +574,41 @@ export default function App() {
   const [activeNav, setActiveNav] = useState('home');
 
   const { width, height } = Dimensions.get('window');
-  const isMobile = width < 768;
+  const isMobile = width < 1024;
+  const isTablet = width >= 768 && width < 1024;
 
-  // Calculate pin width based on screen size (Pinterest uses ~236px)
-  const getPinWidth = () => {
-    if (isMobile) {
-      // On mobile, use 2 columns
-      return (width - 48) / 2; // 16px padding * 2 + 16px gap
-    }
-    // On desktop, use fixed width like Pinterest
-    const columns = Math.floor((width - 240) / 236); // 240px for sidebar
-    const totalGap = (columns - 1) * 16;
-    const availableWidth = width - 240 - totalGap;
-    return Math.min(236, availableWidth / columns);
-  };
+  // Calculate layout dimensions
+  const SIDEBAR_WIDTH = 80;
+  const MIN_PIN_WIDTH = 200;
+  const MAX_PIN_WIDTH = 250;
+  const GAP = 16;
+  const SIDEBAR_PADDING = 24;
 
-  const pinWidth = getPinWidth();
+  // Calculate available width for grid
+  const availableWidth = width - (isMobile ? 0 : SIDEBAR_WIDTH) - SIDEBAR_PADDING * 2;
+  
+  // Calculate number of columns
+  const numColumns = Math.max(1, Math.floor(availableWidth / (MIN_PIN_WIDTH + GAP)));
+  
+  // Calculate pin width
+  const pinWidth = Math.min(MAX_PIN_WIDTH, Math.floor((availableWidth - (numColumns - 1) * GAP) / numColumns));
 
   const toggleSave = (id: string) => {
     setSavedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  const filteredPins = PINS.filter(p => {
+  const filteredPins = ALL_PINS.filter(p => {
     const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
     const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) || 
                           p.creator.toLowerCase().includes(search.toLowerCase()) ||
-                          p.category.toLowerCase().includes(search.toLowerCase());
+                          p.category.toLowerCase().includes(search.toLowerCase()) ||
+                          (p.description && p.description.toLowerCase().includes(search.toLowerCase())) ||
+                          (p.tags && p.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase())));
     return matchesCategory && matchesSearch;
   });
 
-  // Calculate masonry layout
+  // Masonry layout algorithm
   const getMasonryLayout = () => {
-    const numColumns = isMobile ? 2 : Math.floor((width - 240) / (pinWidth + 16)) + 1;
     const columns: {items: Pin[], height: number}[] = Array.from({ length: numColumns }, () => ({ items: [], height: 0 }));
     
     filteredPins.forEach(pin => {
@@ -193,12 +620,12 @@ export default function App() {
         }
       }
       
-      // Calculate the height ratio (Pinterest pins have varied aspect ratios)
-      const aspectRatio = (pin.height || 300) / 300; // Default to 300 if not specified
+      // Calculate the aspect ratio for this pin
+      const aspectRatio = pin.height / 300;
       const itemHeight = pinWidth * aspectRatio;
       
       columns[minIndex].items.push({ ...pin, calculatedHeight: itemHeight });
-      columns[minIndex].height += itemHeight + 16; // 16px gap
+      columns[minIndex].height += itemHeight + GAP;
     });
     
     return columns;
@@ -217,12 +644,29 @@ export default function App() {
     { id: 'profile', icon: '👤', label: 'Profile' },
   ];
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClick = () => {
+      setActiveMenuId(null);
+    };
+    // @ts-ignore - Add event listener for web
+    if (Platform.OS === 'web') {
+      document.addEventListener('click', handleClick);
+    }
+    return () => {
+      // @ts-ignore
+      if (Platform.OS === 'web') {
+        document.removeEventListener('click', handleClick);
+      }
+    };
+  }, []);
+
   return (
     <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
       {!isMobile && (
         <>
-          {/* Left Sidebar - Pinterest Style */}
-          <View style={styles.sidebar}>
+          {/* Left Sidebar */}
+          <View style={[styles.sidebar, { width: SIDEBAR_WIDTH }]}>
             <View style={styles.sidebarContent}>
               {/* Pinterest Logo */}
               <View style={styles.logoContainer}>
@@ -271,7 +715,7 @@ export default function App() {
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false} 
-              contentContainerStyle={styles.categoryContainer}
+              contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
             >
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
@@ -287,7 +731,10 @@ export default function App() {
             </ScrollView>
 
             {/* Masonry Grid */}
-            <ScrollView contentContainerStyle={styles.gridContainer}>
+            <ScrollView 
+              contentContainerStyle={[styles.gridContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
+              showsVerticalScrollIndicator={true}
+            >
               <View style={[styles.grid, { width: '100%' }]}>
                 {masonryColumns.map((column, colIndex) => (
                   <View key={colIndex} style={[styles.column, { width: pinWidth }]}>
@@ -328,13 +775,13 @@ export default function App() {
                                 e.stopPropagation(); 
                                 setActiveMenuId(isMenuOpen ? null : pin.id); 
                               }}
-                              style={styles.menuButton}
+                              style={[styles.menuButton, { right: 56 }]}
                             >
                               <Text style={styles.menuButtonText}>•••</Text>
                             </TouchableOpacity>
                             
                             {isMenuOpen && (
-                              <View style={styles.dropdownMenu}>
+                              <View style={[styles.dropdownMenu, { width: 200 }]}>
                                 <TouchableOpacity
                                   onPress={(e) => { 
                                     e.stopPropagation(); 
@@ -348,7 +795,7 @@ export default function App() {
                                 <TouchableOpacity
                                   onPress={(e) => { 
                                     e.stopPropagation(); 
-                                    alert(`Shared ${pin.title}!`); 
+                                    alert(`Shared "${pin.title}"!\n\n${pin.url}`); 
                                     setActiveMenuId(null); 
                                   }}
                                   style={styles.dropdownItem}
@@ -359,12 +806,33 @@ export default function App() {
                                   onPress={(e) => { 
                                     e.stopPropagation(); 
                                     // @ts-ignore
-                                    window.open(pin.url, '_blank'); 
+                                    if (Platform.OS === 'web') {
+                                      window.open(pin.url, '_blank');
+                                    } else {
+                                      // For mobile, we'll handle this differently
+                                      alert(`Opening: ${pin.url}`);
+                                    }
                                     setActiveMenuId(null); 
                                   }}
                                   style={styles.dropdownItem}
                                 >
-                                  <Text style={styles.dropdownItemText}>Open in browser</Text>
+                                  <Text style={styles.dropdownItemText}>Visit Website</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  onPress={(e) => { 
+                                    e.stopPropagation(); 
+                                    // @ts-ignore
+                                    if (Platform.OS === 'web') {
+                                      navigator.clipboard.writeText(pin.url);
+                                      alert('Link copied to clipboard!');
+                                    } else {
+                                      alert(`Link: ${pin.url}`);
+                                    }
+                                    setActiveMenuId(null); 
+                                  }}
+                                  style={styles.dropdownItem}
+                                >
+                                  <Text style={styles.dropdownItemText}>Copy Link</Text>
                                 </TouchableOpacity>
                               </View>
                             )}
@@ -431,12 +899,20 @@ export default function App() {
                       {selectedPin?.creator} · {selectedPin?.category}
                     </Text>
                     
+                    {selectedPin?.description && (
+                      <Text style={styles.modalTagline}>{selectedPin.description}</Text>
+                    )}
+                    
                     <Text style={styles.modalLikes}>❤️ {selectedPin?.likes.toLocaleString()} saves</Text>
                     
                     <TouchableOpacity
                       onPress={() => {
                         // @ts-ignore
-                        window.open(selectedPin?.url, '_blank');
+                        if (Platform.OS === 'web') {
+                          window.open(selectedPin?.url, '_blank');
+                        } else {
+                          alert(`Opening: ${selectedPin?.url}`);
+                        }
                         setSelectedPin(null);
                       }}
                       style={styles.modalVisitButton}
@@ -459,7 +935,10 @@ export default function App() {
               <Text style={styles.logoText}>P</Text>
             </View>
             <Text style={styles.mobileHeaderTitle}>Pinterest</Text>
-            <TouchableOpacity style={styles.mobileSearch}>
+            <TouchableOpacity 
+              onPress={() => { /* Search action */ }}
+              style={styles.mobileSearch}
+            >
               <Text>🔍</Text>
             </TouchableOpacity>
           </View>
@@ -481,13 +960,13 @@ export default function App() {
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={styles.categoryContainer}
+            contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: 16 }]}
           >
             {CATEGORIES.map((cat) => (
               <TouchableOpacity
                 key={cat}
                 onPress={() => setActiveCategory(cat)}
-                style={[styles.categoryButton, activeCategory === cat ? styles.categoryButtonActive : styles.categoryButtonInactive]}
+                style={[styles.categoryButton, styles.categoryButtonMobile, activeCategory === cat ? styles.categoryButtonActive : styles.categoryButtonInactive]}
               >
                 <Text style={[styles.categoryButtonText, activeCategory === cat ? styles.categoryButtonTextActive : styles.categoryButtonTextInactive]}>
                   {cat}
@@ -497,28 +976,45 @@ export default function App() {
           </ScrollView>
           
           {/* Mobile Grid */}
-          <ScrollView contentContainerStyle={styles.mobileGridContainer}>
-            <View style={styles.mobileGrid}>
+          <ScrollView 
+            contentContainerStyle={styles.mobileGridContainer}
+            showsVerticalScrollIndicator={true}
+          >
+            <View style={[styles.mobileGrid, { gap: GAP }]}>
               {filteredPins.map(pin => {
                 const isSaved = savedIds.includes(pin.id);
+                const cols = isTablet ? 3 : 2;
+                const mobilePinWidth = (width - (cols + 1) * GAP) / cols;
+                const aspectRatio = (pin.height || 300) / 300;
+                const pinHeight = mobilePinWidth * aspectRatio;
+                
                 return (
                   <TouchableOpacity
                     key={pin.id}
                     onPress={() => setSelectedPin(pin)}
-                    style={[styles.mobileCard, { width: pinWidth }]}
+                    style={[styles.mobileCard, { width: mobilePinWidth, height: pinHeight }]}
+                    activeOpacity={0.9}
                   >
-                    <View style={[styles.cardImageContainer, { width: pinWidth, height: pinWidth * 1.5 }]}>
-                      <Image source={{ uri: pin.image }} style={[styles.cardImage, { width: pinWidth, height: pinWidth * 1.5 }]} />
+                    <View style={[styles.cardImageContainer, { width: mobilePinWidth, height: pinHeight }]}>
+                      <Image 
+                        source={{ uri: pin.image }} 
+                        style={[styles.cardImage, { width: mobilePinWidth, height: pinHeight }]}
+                      />
                       <TouchableOpacity
-                        onPress={(e) => { e.stopPropagation(); toggleSave(pin.id); }}
+                        onPress={(e) => { 
+                          e.stopPropagation(); 
+                          toggleSave(pin.id); 
+                        }}
                         style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
                       >
-                        <Text style={styles.saveButtonText}>{isSaved ? '●' : '○'}</Text>
+                        <Text style={styles.saveButtonText}>
+                          {isSaved ? '●' : '○'}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                     <View style={styles.cardContent}>
-                      <Text style={styles.cardTitle} numberOfLines={1}>{pin.title}</Text>
-                      <Text style={styles.creatorName}>{pin.creator}</Text>
+                      <Text style={[styles.cardTitle, styles.mobileCardTitle]} numberOfLines={1}>{pin.title}</Text>
+                      <Text style={[styles.creatorName, styles.mobileCreatorName]}>{pin.creator}</Text>
                     </View>
                   </TouchableOpacity>
                 );
@@ -534,16 +1030,46 @@ export default function App() {
             onRequestClose={() => setSelectedPin(null)}
           >
             <View style={styles.modalOverlay}>
-              <View style={styles.mobileModalContent}>
+              <View style={[styles.modalContent, styles.mobileModalContent]}>
                 <TouchableOpacity
                   onPress={() => setSelectedPin(null)}
                   style={styles.modalClose}
                 >
                   <Text style={styles.modalCloseText}>×</Text>
                 </TouchableOpacity>
-                <Image source={{ uri: selectedPin?.image || '' }} style={styles.mobileModalImage} resizeMode="contain" />
-                <Text style={styles.mobileModalTitle}>{selectedPin?.title}</Text>
-                <Text style={styles.mobileModalDescription}>{selectedPin?.creator} · {selectedPin?.category}</Text>
+                
+                <View style={styles.mobileModalImageContainer}>
+                  <Image 
+                    source={{ uri: selectedPin?.image || '' }} 
+                    style={styles.mobileModalImage}
+                    resizeMode="contain"
+                  />
+                </View>
+                
+                <View style={styles.mobileModalDetails}>
+                  <Text style={[styles.modalTitle, styles.mobileModalTitle]}>{selectedPin?.title}</Text>
+                  <Text style={[styles.modalDescription, styles.mobileModalDescription]}>
+                    {selectedPin?.creator} · {selectedPin?.category}
+                  </Text>
+                  {selectedPin?.description && (
+                    <Text style={styles.mobileModalTagline}>{selectedPin.description}</Text>
+                  )}
+                  <Text style={[styles.modalLikes, styles.mobileModalLikes]}>❤️ {selectedPin?.likes.toLocaleString()} saves</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // @ts-ignore
+                      if (Platform.OS === 'web') {
+                        window.open(selectedPin?.url, '_blank');
+                      } else {
+                        alert(`Opening: ${selectedPin?.url}`);
+                      }
+                      setSelectedPin(null);
+                    }}
+                    style={[styles.modalVisitButton, styles.mobileVisitButton]}
+                  >
+                    <Text style={styles.modalVisitButtonText}>Visit Website</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </Modal>
@@ -560,7 +1086,6 @@ const styles = StyleSheet.create({
   },
   // Sidebar
   sidebar: {
-    width: 80,
     backgroundColor: '#FFFFFF',
     borderRightWidth: 1,
     borderRightColor: '#EFEFEF',
@@ -630,7 +1155,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   searchBarContainer: {
-    padding: 16,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#EFEFEF',
   },
@@ -640,6 +1165,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     maxWidth: 560,
+    marginLeft: 24,
   },
   searchInput: {
     fontSize: 16,
@@ -648,14 +1174,18 @@ const styles = StyleSheet.create({
   },
   // Categories
   categoryContainer: {
-    paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 8,
+    flexDirection: 'row',
   },
   categoryButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
+  },
+  categoryButtonMobile: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   categoryButtonActive: {
     backgroundColor: '#E60023',
@@ -675,7 +1205,7 @@ const styles = StyleSheet.create({
   },
   // Grid
   gridContainer: {
-    padding: 16,
+    paddingVertical: 16,
   },
   grid: {
     flexDirection: 'row',
@@ -729,7 +1259,6 @@ const styles = StyleSheet.create({
   menuButton: {
     position: 'absolute',
     top: 12,
-    right: 64,
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -749,7 +1278,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     paddingVertical: 8,
-    width: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -774,6 +1302,9 @@ const styles = StyleSheet.create({
     color: '#111',
     lineHeight: 20,
   },
+  mobileCardTitle: {
+    fontSize: 14,
+  },
   creatorRow: {
     marginTop: 4,
   },
@@ -781,6 +1312,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     fontWeight: '400',
+  },
+  mobileCreatorName: {
+    fontSize: 12,
   },
   statsRow: {
     marginTop: 8,
@@ -806,6 +1340,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
   },
+  mobileModalContent: {
+    width: '95%',
+    maxHeight: '90%',
+    flexDirection: 'column',
+  },
   modalClose: {
     position: 'absolute',
     top: 16,
@@ -828,16 +1367,35 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: 300,
+  },
+  mobileModalImageContainer: {
+    width: '100%',
+    backgroundColor: '#1a1a1a',
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 250,
   },
   modalImage: {
     width: '100%',
     height: '100%',
     maxHeight: 500,
   },
+  mobileModalImage: {
+    width: '100%',
+    height: 300,
+    maxHeight: 400,
+  },
   modalDetails: {
     flex: 1,
     padding: 32,
     justifyContent: 'flex-start',
+    maxHeight: '100%',
+  },
+  mobileModalDetails: {
+    padding: 20,
+    paddingTop: 10,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -871,15 +1429,39 @@ const styles = StyleSheet.create({
     color: '#111',
     marginBottom: 8,
   },
+  mobileModalTitle: {
+    fontSize: 20,
+    marginBottom: 6,
+  },
   modalDescription: {
     fontSize: 14,
     color: '#666',
     marginBottom: 16,
   },
+  mobileModalDescription: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  modalTagline: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  mobileModalTagline: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 18,
+  },
   modalLikes: {
     fontSize: 14,
     color: '#666',
     marginBottom: 24,
+  },
+  mobileModalLikes: {
+    fontSize: 12,
+    marginBottom: 16,
   },
   modalVisitButton: {
     paddingHorizontal: 28,
@@ -887,6 +1469,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     borderRadius: 24,
     alignSelf: 'flex-start',
+  },
+  mobileVisitButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   modalVisitButtonText: {
     fontSize: 16,
@@ -896,6 +1482,7 @@ const styles = StyleSheet.create({
   // Mobile Styles
   mobileContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   mobileHeader: {
     flexDirection: 'row',
@@ -929,7 +1516,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   mobileSearchContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#EFEFEF',
   },
@@ -946,11 +1534,11 @@ const styles = StyleSheet.create({
   },
   mobileGridContainer: {
     padding: 16,
+    paddingBottom: 40,
   },
   mobileGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
   },
   mobileCard: {
     borderRadius: 16,
@@ -961,30 +1549,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-  },
-  mobileModalContent: {
-    width: '90%',
-    maxHeight: '80%',
-    backgroundColor: 'white',
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-  },
-  mobileModalImage: {
-    width: '100%',
-    height: 300,
-    marginBottom: 16,
-    borderRadius: 12,
-  },
-  mobileModalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111',
-    marginBottom: 8,
-  },
-  mobileModalDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
   },
 });
