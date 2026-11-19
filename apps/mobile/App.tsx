@@ -517,6 +517,54 @@ const ALL_PINS: Pin[] = [
     description: 'Free online drawing application',
     tags: ['drawing', 'tool', 'creative', 'art']
   },
+  {
+    id: 'scratch',
+    title: 'Scratch',
+    creator: 'MIT',
+    category: 'Education',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://scratch.mit.edu',
+    likes: 189012,
+    height: 420,
+    description: 'Program interactive stories, games, and animations',
+    tags: ['education', 'programming', 'games', 'creative']
+  },
+  {
+    id: 'codepen',
+    title: 'CodePen',
+    creator: 'CodePen',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://codepen.io',
+    likes: 98765,
+    height: 400,
+    description: 'Social development environment for front-end designers and developers',
+    tags: ['tool', 'code', 'web', 'creative']
+  },
+  {
+    id: 'glitch',
+    title: 'Glitch',
+    creator: 'Glitch',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://glitch.com',
+    likes: 45678,
+    height: 380,
+    description: 'Build the web, faster. Simple app hosting and deployment',
+    tags: ['tool', 'code', 'web', 'development']
+  },
+  {
+    id: 'replit',
+    title: 'Replit',
+    creator: 'Replit',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://replit.com',
+    likes: 67890,
+    height: 360,
+    description: 'Online IDE - write, run, and collaborate on code in the browser',
+    tags: ['tool', 'code', 'ide', 'development']
+  },
 ];
 
 const CATEGORIES = ['All', 'Music', 'Audio', 'Generative Art', 'Game', 'Puzzle', 'Interactive Experiment', 'Visual Essay', 'Simulation', 'Tool', 'AI', 'Creative Tool', 'Education', 'Visual Experiment'];
