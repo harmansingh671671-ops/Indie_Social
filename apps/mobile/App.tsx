@@ -13,9 +13,33 @@ interface Pin {
   height: number;
   description?: string;
   tags?: string[];
+  calculatedHeight?: number;
 }
 
-// 50 Unique Interactive Websites - All work in iframes/WebViews
+// Pinterest Color Scheme
+const PINTERST_RED = '#E60023';
+const PINTERST_WHITE = '#FFFFFF';
+const PINTERST_GRAY = '#EFEFEF';
+const PINTERST_TEXT = '#111111';
+const PINTERST_TEXT_SECONDARY = '#666666';
+const PINTERST_BG = '#FFFFFF';
+
+// Pinterest Navigation Items
+const PINTEREST_TOP_NAV = [
+  { id: 'home', icon: 'home', label: 'Home' },
+  { id: 'explore', icon: 'explore', label: 'Explore' },
+  { id: 'create', icon: 'add', label: 'Create' },
+];
+
+const PINTEREST_MOBILE_NAV = [
+  { id: 'home', icon: 'home' },
+  { id: 'explore', icon: 'explore' },
+  { id: 'create', icon: 'add', size: 28 },
+  { id: 'messages', icon: 'message' },
+  { id: 'profile', icon: 'person' },
+];
+
+// 51 Unique Interactive Websites - All work in iframes/WebViews
 const ALL_PINS: Pin[] = [
   // ============ KEPT FROM PREVIOUS (30 websites - exactly 70%) ============
   
@@ -519,156 +543,51 @@ const ALL_PINS: Pin[] = [
     category: 'AI',
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
     url: 'https://runwayml.com',
-    likes: 19234,
-    height: 360,
-    description: 'Create and explore machine learning models without coding',
+    likes: 21345,
+    height: 380,
+    description: 'AI tools for creative projects',
     tags: ['AI', 'machine learning', 'creative', 'tool']
   },
   {
     id: 'deep-dream',
     title: 'Deep Dream Generator',
-    creator: 'Google',
+    creator: 'Deep Dream',
     category: 'AI',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
     url: 'https://deepdreamgenerator.com',
-    likes: 24567,
+    likes: 17890,
     height: 420,
-    description: 'Generate artistic images using AI neural networks',
+    description: 'Create AI-generated art from your photos',
     tags: ['AI', 'art', 'generator', 'creative']
-  },
-  
-  // Simulation (3)
-  {
-    id: 'ph-et-simulations',
-    title: 'PhET Physics Simulations',
-    creator: 'University of Colorado',
-    category: 'Simulation',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://phet.colorado.edu',
-    likes: 56789,
-    height: 450,
-    description: 'Free interactive math and science simulations',
-    tags: ['simulation', 'physics', 'math', 'education']
-  },
-  {
-    id: 'virtual-lab',
-    title: 'Virtual Chemistry Lab',
-    creator: 'ChemCollective',
-    category: 'Simulation',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://chemcollective.org/vlabs',
-    likes: 15678,
-    height: 380,
-    description: 'Perform virtual chemistry experiments online',
-    tags: ['simulation', 'chemistry', 'lab', 'education']
-  },
-  {
-    id: 'flight-simulator',
-    title: 'Flight Simulator',
-    creator: 'GeoFS',
-    category: 'Simulation',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.geo-fs.com',
-    likes: 34567,
-    height: 450,
-    description: 'Fly a plane in a realistic flight simulator',
-    tags: ['simulation', 'flight', 'plane', '3D']
-  },
-  
-  // Visual Experiments (2)
-  {
-    id: 'rotating-snakes',
-    title: 'Rotating Snakes',
-    creator: 'Kitaoka Akiyoshi',
-    category: 'Visual Experiment',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.michaelbach.de/ot/snakes/index.html',
-    likes: 18901,
-    height: 340,
-    description: 'Optical illusion of rotating snakes',
-    tags: ['visual', 'optical illusion', 'psychology', 'experiment']
-  },
-  {
-    id: 'optical-illusions',
-    title: 'Optical Illusions Gallery',
-    creator: 'Michael Bach',
-    category: 'Visual Experiment',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.michaelbach.de/ot/index.html',
-    likes: 24567,
-    height: 400,
-    description: 'Collection of over 100 optical illusions',
-    tags: ['visual', 'optical illusion', 'psychology', 'science']
-  },
-  
-  // Educational (2)
-  {
-    id: 'brilliant',
-    title: 'Brilliant',
-    creator: 'Brilliant',
-    category: 'Education',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://brilliant.org',
-    likes: 34567,
-    height: 380,
-    description: 'Learn math, science, and computer science interactively',
-    tags: ['education', 'math', 'science', 'interactive']
-  },
-  {
-    id: 'scratch',
-    title: 'Scratch',
-    creator: 'MIT',
-    category: 'Education',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://scratch.mit.edu',
-    likes: 189012,
-    height: 420,
-    description: 'Program interactive stories, games, and animations',
-    tags: ['education', 'programming', 'games', 'creative']
-  },
-  
-  // Fun & Novelty (2)
-  {
-    id: 'endless-paper',
-    title: 'Endless Paper',
-    creator: 'Endless Paper',
-    category: 'Interactive Experiment',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://endlesspaper.com',
-    likes: 15678,
-    height: 360,
-    description: 'Endless scroll of grid paper',
-    tags: ['interactive', 'paper', 'scroll', 'oddly-satisfying']
-  },
-  {
-    id: 'longest-webpage',
-    title: 'The Longest Page on the Internet',
-    creator: 'Longest Page',
-    category: 'Interactive Experiment',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://thelongest.page',
-    likes: 12345,
-    height: 400,
-    description: 'Scroll through the longest webpage ever',
-    tags: ['interactive', 'scroll', 'fun', 'novelty']
-  },
-  
-  // Music Tools (1)
-  {
-    id: 'soundtrap',
-    title: 'Soundtrap',
-    creator: 'Spotify',
-    category: 'Music',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.soundtrap.com',
-    likes: 21345,
-    height: 380,
-    description: 'Online music and audio recording studio',
-    tags: ['music', 'audio', 'studio', 'collaboration']
   },
 ];
 
-const PINTERST_RED = '#E60023';
+// Pinterest-style category icons
+const CATEGORY_ICONS: Record<string, string> = {
+  'Music': 'music-note',
+  'Generative Art': 'palette',
+  'Game': 'games',
+  'Puzzle': 'extension',
+  'Interactive Experiment': 'touch-app',
+  'Visual Essay': 'photo-library',
+  'Simulation': 'graphic-eq',
+  'Tool': 'build',
+  'AI': 'smart-toy',
+  'Creative Tool': 'color-lens',
+  'Education': 'school',
+  'Visual Experiment': 'remove-red-eye',
+};
+
+// Pinterest-style navigation icons
+const PINTEREST_NAV_ICONS: Record<string, string> = {
+  'home': 'home',
+  'explore': 'explore',
+  'create': 'add',
+  'messages': 'message',
+  'profile': 'person',
+  'search': 'search',
+  'notifications': 'notifications',
+};
 
 export default function App() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -682,15 +601,15 @@ export default function App() {
   const isMobile = width < 1024;
   const isTablet = width >= 768 && width < 1024;
 
-  // Layout constants
-  const SIDEBAR_WIDTH = 80;
-  const MIN_PIN_WIDTH = 200;
-  const MAX_PIN_WIDTH = 250;
+  // Layout constants - Pinterest-style
+  const SIDEBAR_WIDTH = isMobile ? 0 : 240;
+  const MIN_PIN_WIDTH = 220;
+  const MAX_PIN_WIDTH = 280;
   const GAP = 16;
-  const SIDEBAR_PADDING = 24;
+  const PADDING = isMobile ? 16 : 24;
 
   // Calculate available width for grid
-  const availableWidth = width - (isMobile ? 0 : SIDEBAR_WIDTH) - SIDEBAR_PADDING * 2;
+  const availableWidth = width - SIDEBAR_WIDTH - PADDING * 2;
   
   // Calculate number of columns
   const numColumns = Math.max(1, Math.floor(availableWidth / (MIN_PIN_WIDTH + GAP)));
@@ -737,17 +656,6 @@ export default function App() {
 
   const masonryColumns = getMasonryLayout();
 
-  // Navigation icons - minimal line style using Material Icons
-  const navItems = [
-    { id: 'home', icon: 'home', label: 'Home' },
-    { id: 'search', icon: 'search', label: 'Search' },
-    { id: 'explore', icon: 'explore', label: 'Explore' },
-    { id: 'notifications', icon: 'notifications', label: 'Notifications' },
-    { id: 'messages', icon: 'message', label: 'Messages' },
-    { id: 'create', icon: 'add', label: 'Create' },
-    { id: 'profile', icon: 'person', label: 'Profile' },
-  ];
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClick = () => {
@@ -765,8 +673,82 @@ export default function App() {
     };
   }, []);
 
+  // Pinterest Top Navigation Component
+  const PinterestTopNav = () => (
+    <View style={styles.pinterestTopNav}>
+      <View style={styles.pinterestNavContent}>
+        {/* Pinterest Logo */}
+        <TouchableOpacity onPress={() => setActiveNav('home')} style={styles.pinterestLogo}>
+          <MaterialIcons name="push-pin" size={28} color={PINTERST_RED} />
+          <Text style={styles.pinterestLogoText}>Pinterest</Text>
+        </TouchableOpacity>
+
+        {/* Top Navigation Items */}
+        <View style={styles.pinterestNavItems}>
+          {PINTEREST_TOP_NAV.map(item => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => setActiveNav(item.id)}
+              style={[styles.pinterestNavItem, activeNav === item.id && styles.pinterestNavItemActive]}
+            >
+              <Text style={[styles.pinterestNavText, activeNav === item.id && styles.pinterestNavTextActive]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.pinterestSearchContainer}>
+          <View style={styles.pinterestSearchBar}>
+            <MaterialIcons name="search" size={20} color={PINTERST_TEXT_SECONDARY} style={styles.pinterestSearchIcon} />
+            <TextInput
+              placeholder="Search"
+              value={search}
+              onChangeText={setSearch}
+              style={styles.pinterestSearchInput}
+              placeholderTextColor={PINTERST_TEXT_SECONDARY}
+            />
+          </View>
+        </View>
+
+        {/* Profile and Notifications */}
+        <View style={styles.pinterestNavActions}>
+          <TouchableOpacity style={styles.pinterestActionButton}>
+            <MaterialIcons name="notifications" size={24} color={PINTERST_TEXT} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.pinterestActionButton}>
+            <MaterialIcons name="message" size={24} color={PINTERST_TEXT} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.pinterestActionButton, styles.pinterestProfileButton]}>
+            <MaterialIcons name="person" size={24} color={PINTERST_TEXT} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
+  // Pinterest Bottom Navigation for Mobile
+  const PinterestBottomNav = () => (
+    <View style={styles.pinterestBottomNav}>
+      {PINTEREST_MOBILE_NAV.map(item => (
+        <TouchableOpacity
+          key={item.id}
+          onPress={() => setActiveNav(item.id)}
+          style={[styles.pinterestBottomNavItem, activeNav === item.id && styles.pinterestBottomNavItemActive]}
+        >
+          <MaterialIcons
+            name={item.icon as any}
+            size={item.size || 24}
+            color={activeNav === item.id ? PINTERST_RED : PINTERST_TEXT_SECONDARY}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
   return (
-    <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
+    <View style={[styles.container, { backgroundColor: PINTERST_BG }]}>
       {/* Global scrollbar hiding for web */}
       {Platform.OS === 'web' && (
         <style>{`
@@ -784,356 +766,146 @@ export default function App() {
             -ms-overflow-style: none !important;
             scroll-behavior: smooth !important;
             overflow: hidden !important;
+            overscroll-behavior: none !important;
           }
           #root {
             overflow: auto !important;
             -webkit-overflow-scrolling: touch !important;
             scroll-behavior: smooth !important;
+            overscroll-behavior: none !important;
           }
         `}</style>
       )}
-      {!isMobile && (
-        <>
-          {/* Left Sidebar */}
-          <View style={[styles.sidebar, { width: SIDEBAR_WIDTH }]}>
-            <View style={styles.sidebarContent}>
-              {/* Pinterest Logo */}
-              <View style={styles.logoContainer}>
-                <View style={[styles.logo, { backgroundColor: PINTERST_RED }]}>
-                  <MaterialIcons name="push-pin" size={22} color="white" />
-                </View>
-              </View>
-              
-              {/* Navigation Icons */}
-              <View style={styles.navContainer}>
-                {navItems.map(item => (
-                  <TouchableOpacity
-                    key={item.id}
-                    onPress={() => setActiveNav(item.id)}
-                    style={[styles.navItem, activeNav === item.id ? styles.navItemActive : null]}
-                  >
-                    <MaterialIcons 
-                      name={item.icon} 
-                      size={24} 
-                      color="#000" 
-                    />
-                    {activeNav === item.id && <View style={styles.navIndicator} />}
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              {/* Settings Icon */}
-              <TouchableOpacity style={styles.settingsButton}>
-                <MaterialIcons name="settings" size={24} color="#000" />
-              </TouchableOpacity>
-            </View>
-          </View>
 
-          {/* Main Content Area */}
-          <View style={styles.mainContent}>
-            {/* Top Search Bar */}
-            <View style={styles.searchBarContainer}>
-              <View style={styles.searchBar}>
-                <TextInput
-                  placeholder="Search"
-                  value={search}
-                  onChangeText={setSearch}
-                  style={styles.searchInput}
-                  placeholderTextColor="#999"
-                />
-              </View>
-            </View>
+      {/* Desktop: Pinterest Top Navigation */}
+      {!isMobile && <PinterestTopNav />}
 
-            {/* Masonry Grid */}
-            <ScrollView 
-              contentContainerStyle={[styles.gridContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
-              showsVerticalScrollIndicator={false}
-              style={[styles.hideScrollbar, styles.scrollContainer]}
-              nestedScrollEnabled={false}
-              keyboardShouldPersistTaps="handled"
-              scrollEventThrottle={16}
-              decelerationRate="normal"
-              snapToAlignment="start"
-              bounces={true}
-              alwaysBounceVertical={true}
-            >
-              <View style={[styles.grid, { width: '100%' }]}>
-                {masonryColumns.map((column, colIndex) => (
-                  <View key={colIndex} style={[styles.column, { width: pinWidth }]}>
-                    {column.items.map(pin => {
-                      const isSaved = savedIds.includes(pin.id);
-                      const isMenuOpen = activeMenuId === pin.id;
-
-                      return (
-                        <TouchableOpacity
-                          key={pin.id}
-                          onPress={() => setSelectedPin(pin)}
-                          style={[
-                            styles.card,
-                            { width: pinWidth, height: pin.calculatedHeight },
-                            hoveredPinId === pin.id && styles.cardHover
-                          ]}
-                          activeOpacity={0.95}
-                          delayPressIn={0}
-                          delayPressOut={0}
-                          pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
-                          onMouseEnter={() => setHoveredPinId(pin.id)}
-                          onMouseLeave={() => setHoveredPinId(null)}
-                          // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
-                        >
-                            {/* Pin Image */}
-                            <View style={[styles.cardImageContainer, { width: pinWidth, height: pin.calculatedHeight }]}>
-                              <Image 
-                                source={{ uri: pin.image }} 
-                                style={[styles.cardImage, { width: pinWidth, height: pin.calculatedHeight }]}
-                              />
-                              
-                              {/* Top Right Menu with Bookmark on Hover */}
-                              <TouchableOpacity
-                                onPress={(e) => { 
-                                  e.stopPropagation(); 
-                                  if (hoveredPinId === pin.id) {
-                                    toggleSave(pin.id);
-                                  } else {
-                                    setActiveMenuId(isMenuOpen ? null : pin.id);
-                                  }
-                                }}
-                                style={[styles.menuButton, { right: 12 }]}
-                              >
-                                {hoveredPinId === pin.id ? (
-                                  <MaterialIcons 
-                                    name={isSaved ? 'bookmark' : 'bookmark-border'} 
-                                    size={20} 
-                                    color="white" 
-                                  />
-                                ) : (
-                                  <MaterialIcons name="more-vert" size={20} color="white" />
-                                )}
-                              </TouchableOpacity>
-                            
-                            {isMenuOpen && (
-                              <View style={[styles.dropdownMenu, { width: 200 }]}>
-                                <TouchableOpacity
-                                  onPress={(e) => { 
-                                    e.stopPropagation(); 
-                                    toggleSave(pin.id); 
-                                    setActiveMenuId(null); 
-                                  }}
-                                  style={styles.dropdownItem}
-                                >
-                                  <Text style={styles.dropdownItemText}>{isSaved ? 'Unsave' : 'Save'}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                  onPress={(e) => { 
-                                    e.stopPropagation(); 
-                                    alert(`Shared "${pin.title}"!\n\n${pin.url}`); 
-                                    setActiveMenuId(null); 
-                                  }}
-                                  style={styles.dropdownItem}
-                                >
-                                  <Text style={styles.dropdownItemText}>Share</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                  onPress={(e) => { 
-                                    e.stopPropagation(); 
-                                    // @ts-ignore
-                                    if (Platform.OS === 'web') {
-                                      window.open(pin.url, '_blank');
-                                    } else {
-                                      alert(`Opening: ${pin.url}`);
-                                    }
-                                    setActiveMenuId(null); 
-                                  }}
-                                  style={styles.dropdownItem}
-                                >
-                                  <Text style={styles.dropdownItemText}>Visit Website</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                  onPress={(e) => { 
-                                    e.stopPropagation(); 
-                                    // @ts-ignore
-                                    if (Platform.OS === 'web') {
-                                      navigator.clipboard.writeText(pin.url);
-                                      alert('Link copied to clipboard!');
-                                    } else {
-                                      alert(`Link: ${pin.url}`);
-                                    }
-                                    setActiveMenuId(null); 
-                                  }}
-                                  style={styles.dropdownItem}
-                                >
-                                  <Text style={styles.dropdownItemText}>Copy Link</Text>
-                                </TouchableOpacity>
-                              </View>
-                            )}
-                          </View>
-                          
-                          {/* Pin Info */}
-                          <View style={styles.cardContent}>
-                            <Text style={styles.cardTitle} numberOfLines={2}>{pin.title}</Text>
-                            <View style={styles.creatorRow}>
-                              <Text style={styles.creatorName}>{pin.creator}</Text>
-                            </View>
-                            <View style={styles.statsRow}>
-                              <Text style={styles.statText}>{pin.likes.toLocaleString()} saves</Text>
-                            </View>
-                          </View>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
-
-            {/* Modal */}
-            <Modal
-              visible={selectedPin !== null}
-              transparent={true}
-              animationType="fade"
-              onRequestClose={() => setSelectedPin(null)}
-            >
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                  <TouchableOpacity
-                    onPress={() => setSelectedPin(null)}
-                    style={styles.modalClose}
-                  >
-                    <MaterialIcons name="close" size={24} color="#000" />
-                  </TouchableOpacity>
-                  
-                  <View style={styles.modalImageContainer}>
-                    <Image 
-                      source={{ uri: selectedPin?.image || '' }} 
-                      style={styles.modalImage}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  
-                  <View style={styles.modalDetails}>
-                    <View style={styles.modalHeader}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          if (selectedPin) toggleSave(selectedPin.id);
-                        }}
-                        style={[styles.modalSaveButton, selectedPin && savedIds.includes(selectedPin.id) ? styles.modalSaveButtonSaved : styles.modalSaveButtonDefault]}
-                      >
-                        <MaterialIcons 
-                          name={selectedPin && savedIds.includes(selectedPin.id) ? 'bookmark' : 'bookmark-border'} 
-                          size={18} 
-                          color="white" 
-                        />
-                        <Text style={[styles.modalSaveButtonText, { marginLeft: 8 }]}>
-                          {selectedPin && savedIds.includes(selectedPin.id) ? 'Saved' : 'Save'}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    
-                    <Text style={styles.modalTitle}>{selectedPin?.title}</Text>
-                    <Text style={styles.modalDescription}>
-                      {selectedPin?.creator} · {selectedPin?.category}
-                    </Text>
-                    
-                    {selectedPin?.description && (
-                      <Text style={styles.modalTagline}>{selectedPin.description}</Text>
-                    )}
-                    
-                    <Text style={styles.modalLikes}>❤️ {selectedPin?.likes.toLocaleString()} saves</Text>
-                    
-                    <TouchableOpacity
-                      onPress={() => {
-                        // @ts-ignore
-                        if (Platform.OS === 'web') {
-                          window.open(selectedPin?.url, '_blank');
-                        } else {
-                          alert(`Opening: ${selectedPin?.url}`);
-                        }
-                        setSelectedPin(null);
-                      }}
-                      style={styles.modalVisitButton}
-                    >
-                      <Text style={styles.modalVisitButtonText}>Visit Website</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </Modal>
-          </View>
-        </>
-      )}
-      
+      {/* Mobile: Pinterest Header */}
       {isMobile && (
-        <View style={styles.mobileContainer}>
-          {/* Mobile Header */}
-          <View style={styles.mobileHeader}>
-            <View style={styles.mobileLogo}>
-              <Text style={styles.logoText}>P</Text>
-            </View>
-            <Text style={styles.mobileHeaderTitle}>Pinterest</Text>
-            <TouchableOpacity 
-              onPress={() => { /* Search action */ }}
-              style={styles.mobileSearch}
-            >
-              <MaterialIcons name="search" size={24} color="#000" />
+        <View style={styles.mobilePinterestHeader}>
+          <View style={styles.mobilePinterestNav}>
+            <TouchableOpacity onPress={() => setActiveNav('home')} style={styles.mobilePinterestLogo}>
+              <MaterialIcons name="push-pin" size={28} color={PINTERST_RED} />
+              <Text style={styles.mobilePinterestLogoText}>Pinterest</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {}} style={styles.mobileSearchIcon}>
+              <MaterialIcons name="search" size={24} color={PINTERST_TEXT} />
             </TouchableOpacity>
           </View>
-          
-          {/* Mobile Search */}
+        </View>
+      )}
+
+      <View style={[styles.contentArea, isMobile ? styles.mobileContentArea : styles.desktopContentArea]}>
+        {/* Desktop: Search Bar */}
+        {!isMobile && (
+          <View style={styles.desktopSearchContainer}>
+            <View style={styles.desktopSearchBar}>
+              <MaterialIcons name="search" size={20} color={PINTERST_TEXT_SECONDARY} style={styles.desktopSearchIcon} />
+              <TextInput
+                placeholder="Search for ideas"
+                value={search}
+                onChangeText={setSearch}
+                style={styles.desktopSearchInput}
+                placeholderTextColor={PINTERST_TEXT_SECONDARY}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Mobile: Search Bar */}
+        {isMobile && (
           <View style={styles.mobileSearchContainer}>
             <View style={styles.mobileSearchBar}>
+              <MaterialIcons name="search" size={20} color={PINTERST_TEXT_SECONDARY} style={styles.mobileSearchInputIcon} />
               <TextInput
                 placeholder="Search"
                 value={search}
                 onChangeText={setSearch}
                 style={styles.mobileSearchInput}
-                placeholderTextColor="#999"
+                placeholderTextColor={PINTERST_TEXT_SECONDARY}
               />
             </View>
           </View>
-          
-          {/* Mobile Grid */}
-          <ScrollView 
-            contentContainerStyle={styles.mobileGridContainer}
-            showsVerticalScrollIndicator={false}
-            style={[styles.hideScrollbar, styles.scrollContainer]}
-            nestedScrollEnabled={false}
-            keyboardShouldPersistTaps="handled"
-            scrollEventThrottle={16}
-            decelerationRate="normal"
-            snapToAlignment="start"
-            bounces={true}
-            alwaysBounceVertical={true}
+        )}
+
+        {/* Category Filters */}
+        <View style={styles.categoryFilters}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryFiltersContent}
           >
-            <View style={[styles.mobileGrid, { gap: GAP }]}>
-              {filteredPins.map(pin => {
-                const isSaved = savedIds.includes(pin.id);
-                const cols = isTablet ? 3 : 2;
-                const mobilePinWidth = (width - (cols + 1) * GAP) / cols;
-                const aspectRatio = (pin.height || 300) / 300;
-                const pinHeight = mobilePinWidth * aspectRatio;
-                
-                return (
-                  <TouchableOpacity
-                    key={pin.id}
-                    onPress={() => setSelectedPin(pin)}
-                    style={[
-                      styles.mobileCard,
-                      { width: mobilePinWidth, height: pinHeight },
-                      hoveredPinId === pin.id && styles.cardHover
-                    ]}
-                    activeOpacity={0.95}
-                    delayPressIn={0}
-                    delayPressOut={0}
-                    pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
-                    onMouseEnter={() => setHoveredPinId(pin.id)}
-                    onMouseLeave={() => setHoveredPinId(null)}
-                    // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
-                  >
-                      <View style={[styles.cardImageContainer, { width: mobilePinWidth, height: pinHeight }]}>
+            <TouchableOpacity
+              onPress={() => setSearch('')}
+              style={[styles.categoryFilter, !search && styles.categoryFilterActive]}
+            >
+              <Text style={[styles.categoryFilterText, !search && styles.categoryFilterTextActive]}>
+                All
+              </Text>
+            </TouchableOpacity>
+            {Array.from(new Set(ALL_PINS.map(p => p.category))).map(category => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => setSearch(`category:${category}`)}
+                style={[styles.categoryFilter, search === `category:${category}` && styles.categoryFilterActive]}
+              >
+                <Text style={[styles.categoryFilterText, search === `category:${category}` && styles.categoryFilterTextActive]}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Masonry Grid */}
+        <ScrollView 
+          contentContainerStyle={[styles.gridContainer, { paddingHorizontal: PADDING, paddingBottom: isMobile ? 80 : 48 }]}
+          showsVerticalScrollIndicator={false}
+          style={[styles.hideScrollbar, styles.scrollContainer]}
+          nestedScrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          scrollEventThrottle={16}
+          decelerationRate="normal"
+          snapToAlignment="start"
+          bounces={true}
+          alwaysBounceVertical={true}
+        >
+          <View style={[styles.grid, { width: '100%' }]}>
+            {masonryColumns.map((column, colIndex) => (
+              <View key={colIndex} style={[styles.column, { width: pinWidth }]}>
+                {column.items.map(pin => {
+                  const isSaved = savedIds.includes(pin.id);
+                  const isMenuOpen = activeMenuId === pin.id;
+
+                  return (
+                    <View
+                      key={pin.id}
+                      style={[
+                        styles.card,
+                        { width: pinWidth, height: pin.calculatedHeight },
+                        hoveredPinId === pin.id && styles.cardHover
+                      ]}
+                      // @ts-ignore - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
+                      onMouseEnter={() => setHoveredPinId(pin.id)}
+                      // @ts-ignore - onMouseLeave is web-only
+                      onMouseLeave={() => setHoveredPinId(null)}
+                    >
+                      <TouchableOpacity
+                        onPress={() => setSelectedPin(pin)}
+                        activeOpacity={0.95}
+                        delayPressIn={0}
+                        delayPressOut={0}
+                        pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
+                        style={styles.cardTouchableArea}
+                      >
+                      {/* Pin Image */}
+                      <View style={{ width: pinWidth, height: pin.calculatedHeight, position: 'relative' }}>
                         <Image 
                           source={{ uri: pin.image }} 
-                          style={[styles.cardImage, { width: mobilePinWidth, height: pinHeight }]}
+                          style={{ width: pinWidth, height: pin.calculatedHeight, resizeMode: 'cover' }}
                         />
+                        
+                        {/* Top Right Menu with Save Button on Hover */}
                         <TouchableOpacity
                           onPress={(e) => { 
                             e.stopPropagation(); 
@@ -1143,82 +915,168 @@ export default function App() {
                               setActiveMenuId(isMenuOpen ? null : pin.id);
                             }
                           }}
-                          style={[styles.menuButton, { right: 12 }]}
+                          style={[styles.menuButton, { right: 12, top: 12 }]}
                         >
                           {hoveredPinId === pin.id ? (
-                            <MaterialIcons 
-                              name={isSaved ? 'bookmark' : 'bookmark-border'} 
-                              size={20} 
-                              color="white" 
-                            />
+                            <View style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}>
+                              <MaterialIcons 
+                                name={isSaved ? 'check' : 'add'}
+                                size={20}
+                                color={isSaved ? 'white' : PINTERST_RED}
+                              />
+                            </View>
                           ) : (
-                            <MaterialIcons name="more-vert" size={20} color="white" />
+                            <View style={styles.threeDotsContainer}>
+                              <MaterialIcons name="more-vert" size={20} color="white" />
+                            </View>
                           )}
                         </TouchableOpacity>
+
+                        {isMenuOpen && (
+                          <View style={[styles.dropdownMenu, { width: 200 }]}>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                toggleSave(pin.id);
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>{isSaved ? 'Unsave' : 'Save'}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                alert(`Shared "${pin.title}"!\n\n${pin.url}`); 
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>Share</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                // @ts-ignore
+                                if (Platform.OS === 'web') {
+                                  window.open(pin.url, '_blank');
+                                } else {
+                                  alert(`Opening: ${pin.url}`);
+                                }
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>Visit Website</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                // @ts-ignore
+                                if (Platform.OS === 'web') {
+                                  navigator.clipboard.writeText(pin.url);
+                                  alert('Link copied to clipboard!');
+                                } else {
+                                  alert(`Link: ${pin.url}`);
+                                }
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>Copy Link</Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
                       </View>
+                      
+                      {/* Pin Info */}
                       <View style={styles.cardContent}>
-                        <Text style={[styles.cardTitle, styles.mobileCardTitle]} numberOfLines={1}>{pin.title}</Text>
-                        <Text style={[styles.creatorName, styles.mobileCreatorName]}>{pin.creator}</Text>
+                        <Text style={styles.cardTitle} numberOfLines={2}>{pin.title}</Text>
+                        <View style={styles.creatorRow}>
+                          <Text style={styles.creatorName}>{pin.creator}</Text>
+                        </View>
+                        <View style={styles.statsRow}>
+                          <Text style={styles.statText}>{pin.likes.toLocaleString()} saves</Text>
+                        </View>
                       </View>
                     </TouchableOpacity>
-                );
-              })}
-            </View>
-          </ScrollView>
-          
-          {/* Mobile Modal */}
-          <Modal
-            visible={selectedPin !== null}
-            transparent={true}
-            animationType="slide"
-            onRequestClose={() => setSelectedPin(null)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={[styles.modalContent, styles.mobileModalContent]}>
-                <TouchableOpacity
-                  onPress={() => setSelectedPin(null)}
-                  style={styles.modalClose}
-                >
-                  <MaterialIcons name="close" size={24} color="#000" />
-                </TouchableOpacity>
-                
-                <View style={styles.mobileModalImageContainer}>
-                  <Image 
-                    source={{ uri: selectedPin?.image || '' }} 
-                    style={styles.mobileModalImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                
-                <View style={styles.mobileModalDetails}>
-                  <Text style={[styles.modalTitle, styles.mobileModalTitle]}>{selectedPin?.title}</Text>
-                  <Text style={[styles.modalDescription, styles.mobileModalDescription]}>
-                    {selectedPin?.creator} · {selectedPin?.category}
-                  </Text>
-                  {selectedPin?.description && (
-                    <Text style={styles.mobileModalTagline}>{selectedPin.description}</Text>
-                  )}
-                  <Text style={[styles.modalLikes, styles.mobileModalLikes]}>❤️ {selectedPin?.likes.toLocaleString()} saves</Text>
+                  </View>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Modal */}
+        <Modal
+          visible={selectedPin !== null}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setSelectedPin(null)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, isMobile && styles.mobileModalContent]}>
+              <TouchableOpacity
+                onPress={() => setSelectedPin(null)}
+                style={styles.modalClose}
+              >
+                <MaterialIcons name="close" size={24} color="#000" />
+              </TouchableOpacity>
+              
+              <View style={[styles.modalImageContainer, isMobile && styles.mobileModalImageContainer]}>
+                <Image 
+                  source={{ uri: selectedPin?.image || '' }} 
+                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                />
+              </View>
+              
+              <View style={[styles.modalDetails, isMobile && styles.mobileModalDetails]}>
+                <View style={styles.modalHeader}>
                   <TouchableOpacity
                     onPress={() => {
-                      // @ts-ignore
-                      if (Platform.OS === 'web') {
-                        window.open(selectedPin?.url, '_blank');
-                      } else {
-                        alert(`Opening: ${selectedPin?.url}`);
+                      if (selectedPin) {
+                        toggleSave(selectedPin.id);
                       }
-                      setSelectedPin(null);
                     }}
-                    style={[styles.modalVisitButton, styles.mobileVisitButton]}
+                    style={[styles.modalSaveButton, savedIds.includes(selectedPin?.id || '') ? styles.modalSaveButtonSaved : styles.modalSaveButtonDefault]}
                   >
-                    <Text style={styles.modalVisitButtonText}>Visit Website</Text>
+                    <Text style={styles.modalSaveButtonText}>
+                      {savedIds.includes(selectedPin?.id || '') ? 'Saved' : 'Save'}
+                    </Text>
                   </TouchableOpacity>
                 </View>
+                
+                <Text style={[styles.modalTitle, isMobile && styles.mobileModalTitle]} numberOfLines={2}>
+                  {selectedPin?.title}
+                </Text>
+                <Text style={[styles.modalTagline, isMobile && styles.mobileModalTagline]}>
+                  {selectedPin?.description}
+                </Text>
+                <Text style={[styles.modalLikes, isMobile && styles.mobileModalLikes]}>
+                  {selectedPin?.likes.toLocaleString()} saves
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    // @ts-ignore
+                    if (Platform.OS === 'web') {
+                      window.open(selectedPin?.url || '', '_blank');
+                    } else {
+                      alert(`Opening: ${selectedPin?.url}`);
+                    }
+                  }}
+                  style={[styles.modalVisitButton, isMobile && styles.mobileVisitButton]}
+                >
+                  <Text style={styles.modalVisitButtonText}>Visit Website</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        </View>
-      )}
+          </View>
+        </Modal>
+
+        {/* Mobile Bottom Navigation */}
+        {isMobile && <PinterestBottomNav />}
+      </View>
     </View>
   );
 }
@@ -1226,152 +1084,278 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
-    // @ts-expect-error - web-specific properties for smooth scrolling
-    overflow: 'hidden',
-    WebkitOverflowScrolling: 'touch',
+    backgroundColor: PINTERST_BG,
+  },
+  contentArea: {
+    flex: 1,
+  },
+  desktopContentArea: {
+    marginLeft: 0,
+  },
+  mobileContentArea: {
+    flex: 1,
   },
   // Hide scrollbars
   hideScrollbar: {
-    // For Firefox
+    // @ts-ignore - web-specific scrollbar properties
     scrollbarWidth: 'none',
-    // For IE and Edge
+    // @ts-ignore - web-specific scrollbar property
     msOverflowStyle: 'none',
   },
   // Scroll container for smooth scrolling
   scrollContainer: {
     flex: 1,
-    // @ts-expect-error - web-specific scroll behavior
+    // @ts-ignore - web-specific scroll behavior
     scrollBehavior: 'smooth',
-    // @ts-expect-error - web-specific CSS for smooth scrolling
+    // @ts-ignore - web-specific CSS for smooth scrolling
     WebkitOverflowScrolling: 'touch',
   },
-  // Main content area
-  mainContent: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    // @ts-expect-error - web-specific smooth scrolling
-    scrollBehavior: 'smooth',
-  },
-  // Sidebar
-  sidebar: {
-    backgroundColor: '#FFFFFF',
-    borderRightWidth: 1,
-    borderRightColor: '#EFEFEF',
-    paddingTop: 24,
-    height: '100%',
-  },
-  sidebarContent: {
-    height: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  logoContainer: {
-    paddingBottom: 24,
-  },
-  logo: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  navContainer: {
-    flex: 1,
-  },
-  navItem: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  navItemActive: {
-    backgroundColor: '#F0F0F0',
-  },
-  navIcon: {
-    fontSize: 24,
-  },
-  navIndicator: {
-    position: 'absolute',
-    left: 0,
-    top: '50%',
-    width: 4,
-    height: 24,
-    backgroundColor: '#E60023',
-    borderTopRightRadius: 2,
-    borderBottomRightRadius: 2,
-    transform: [{ translateY: -12 }],
-  },
-  settingsButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  // Main Content
-  mainContent: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  searchBarContainer: {
-    paddingVertical: 16,
+
+  // ============ PINTEREST TOP NAVIGATION ============
+  pinterestTopNav: {
+    backgroundColor: PINTERST_WHITE,
     borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
+    borderBottomColor: PINTERST_GRAY,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    // @ts-ignore - sticky position is supported in React Native Web
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
   },
-  searchBar: {
-    backgroundColor: '#EFEFEF',
+  pinterestNavContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    maxWidth: 1400,
+    marginHorizontal: 'auto',
+  },
+  pinterestLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pinterestLogoText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: PINTERST_RED,
+    letterSpacing: 0.5,
+  },
+  pinterestNavItems: {
+    flexDirection: 'row',
+    gap: 32,
+  },
+  pinterestNavItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  pinterestNavItemActive: {
+    borderBottomWidth: 3,
+    borderBottomColor: PINTERST_RED,
+  },
+  pinterestNavText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: PINTERST_TEXT,
+  },
+  pinterestNavTextActive: {
+    color: PINTERST_RED,
+  },
+  pinterestSearchContainer: {
+    flex: 1,
+    maxWidth: 400,
+    marginHorizontal: 32,
+  },
+  pinterestSearchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: PINTERST_GRAY,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  pinterestSearchIcon: {
+    marginRight: 12,
+  },
+  pinterestSearchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: PINTERST_TEXT,
+  },
+  pinterestNavActions: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  pinterestActionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pinterestProfileButton: {
+    backgroundColor: PINTERST_GRAY,
+  },
+
+  // ============ MOBILE PINTEREST HEADER ============
+  mobilePinterestHeader: {
+    backgroundColor: PINTERST_WHITE,
+    borderBottomWidth: 1,
+    borderBottomColor: PINTERST_GRAY,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    // @ts-ignore - sticky position is supported in React Native Web
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+  },
+  mobilePinterestNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  mobilePinterestLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  mobilePinterestLogoText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: PINTERST_RED,
+    letterSpacing: 0.5,
+  },
+  mobileSearchIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  // ============ SEARCH BARS ============
+  desktopSearchContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  desktopSearchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: PINTERST_GRAY,
     borderRadius: 24,
     paddingHorizontal: 20,
     paddingVertical: 12,
     maxWidth: 560,
-    marginLeft: 24,
+    marginHorizontal: 'auto',
   },
-  searchInput: {
+  desktopSearchIcon: {
+    marginRight: 12,
+  },
+  desktopSearchInput: {
+    flex: 1,
     fontSize: 16,
-    color: '#111',
-    width: '100%',
+    color: PINTERST_TEXT,
   },
-  // Categories (kept for potential future use)
-  // Grid
+
+  mobileSearchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  mobileSearchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: PINTERST_GRAY,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  mobileSearchInputIcon: {
+    marginRight: 12,
+  },
+  mobileSearchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: PINTERST_TEXT,
+  },
+
+  // ============ CATEGORY FILTERS ============
+  categoryFilters: {
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  categoryFiltersContent: {
+    gap: 16,
+    paddingHorizontal: 8,
+  },
+  categoryFilter: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: PINTERST_GRAY,
+  },
+  categoryFilterActive: {
+    backgroundColor: PINTERST_RED,
+  },
+  categoryFilterText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: PINTERST_TEXT,
+  },
+  categoryFilterTextActive: {
+    color: PINTERST_WHITE,
+  },
+
+  // ============ PINTEREST BOTTOM NAVIGATION ============
+  pinterestBottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: PINTERST_WHITE,
+    borderTopWidth: 1,
+    borderTopColor: PINTERST_GRAY,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    zIndex: 100,
+  },
+  pinterestBottomNavItem: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pinterestBottomNavItemActive: {
+    backgroundColor: PINTERST_GRAY,
+  },
+
+  // ============ GRID ============
   gridContainer: {
     paddingVertical: 24,
-    paddingBottom: 48, // Extra padding at bottom for better scrolling
   },
   grid: {
     flexDirection: 'row',
     gap: 16,
   },
   column: {
-    gap: 24, // Increased gap for better visual separation
+    gap: 24,
   },
-  // Mobile grid
-  mobileGridContainer: {
-    paddingVertical: 16,
-    paddingBottom: 48,
-    paddingHorizontal: 16,
-  },
-  // Card
+
+  // ============ CARD ============
   card: {
     borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: PINTERST_WHITE,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    // @ts-expect-error - transition is a web-specific CSS property
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  cardTouchableArea: {
+    width: '100%',
+    height: '100%',
   },
   cardHover: {
     transform: [{ translateY: -8 }],
@@ -1381,20 +1365,66 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
     zIndex: 1,
-    // @ts-expect-error - web-specific transform style
+    // @ts-ignore - web-specific transform style
     willChange: 'transform, box-shadow',
+    // Add backdrop filter for blur effect on hover
+    // @ts-ignore - web-specific property
+    backdropFilter: 'blur(12px)',
+    // @ts-ignore - web-specific property
+    WebkitBackdropFilter: 'blur(12px)',
   },
   cardImageContainer: {
     position: 'relative',
-    overflow: 'hidden',
   },
   cardImage: {
     resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
+  },
+  cardContent: {
+    padding: 12,
+    backgroundColor: PINTERST_WHITE,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: PINTERST_TEXT,
+    lineHeight: 20,
+  },
+  creatorRow: {
+    marginTop: 4,
+  },
+  creatorName: {
+    fontSize: 14,
+    color: PINTERST_TEXT_SECONDARY,
+    fontWeight: '400',
+  },
+  statsRow: {
+    marginTop: 8,
+  },
+  statText: {
+    fontSize: 12,
+    color: PINTERST_TEXT_SECONDARY,
+  },
+
+  // ============ MENU & SAVE BUTTON ============
+  menuButton: {
+    position: 'absolute',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    // @ts-ignore - web-specific transition
+    transition: 'all 0.2s ease',
+  },
+  threeDotsContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   saveButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -1410,32 +1440,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   saveButtonSaved: {
-    backgroundColor: '#E60023',
-  },
-  saveButtonText: {
-    fontSize: 18,
-  },
-  menuButton: {
-    position: 'absolute',
-    top: 12,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // @ts-expect-error - web-specific transition
-    transition: 'background-color 0.2s ease, transform 0.2s ease',
-  },
-  menuButtonHover: {
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    // @ts-expect-error - web-specific transform
-    transform: [{ scale: 1.1 }],
-  },
-  menuButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
+    backgroundColor: PINTERST_RED,
   },
   dropdownMenu: {
     position: 'absolute',
@@ -1459,37 +1464,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#111',
   },
-  cardContent: {
-    padding: 12,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111',
-    lineHeight: 20,
-  },
-  mobileCardTitle: {
-    fontSize: 14,
-  },
-  creatorRow: {
-    marginTop: 4,
-  },
-  creatorName: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '400',
-  },
-  mobileCreatorName: {
-    fontSize: 12,
-  },
-  statsRow: {
-    marginTop: 8,
-  },
-  statText: {
-    fontSize: 12,
-    color: '#666',
-  },
-  // Modal
+
+  // ============ MODAL ============
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -1523,10 +1499,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
   },
-  modalCloseText: {
-    fontSize: 24,
-    color: '#111',
-  },
   modalImageContainer: {
     flex: 1,
     backgroundColor: '#1a1a1a',
@@ -1547,11 +1519,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     maxHeight: 500,
+    resizeMode: 'contain',
   },
   mobileModalImage: {
     width: '100%',
     height: 300,
     maxHeight: 400,
+    resizeMode: 'contain',
   },
   modalDetails: {
     flex: 1,
@@ -1579,7 +1553,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   modalSaveButtonDefault: {
-    backgroundColor: '#E60023',
+    backgroundColor: PINTERST_RED,
   },
   modalSaveButtonSaved: {
     backgroundColor: '#111',
@@ -1592,37 +1566,28 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111',
+    color: PINTERST_TEXT,
     marginBottom: 8,
   },
   mobileModalTitle: {
     fontSize: 20,
     marginBottom: 6,
   },
-  modalDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
-  },
-  mobileModalDescription: {
-    fontSize: 14,
-    marginBottom: 12,
-  },
   modalTagline: {
     fontSize: 14,
-    color: '#666',
+    color: PINTERST_TEXT_SECONDARY,
     marginBottom: 20,
     lineHeight: 20,
   },
   mobileModalTagline: {
     fontSize: 12,
-    color: '#666',
+    color: PINTERST_TEXT_SECONDARY,
     marginBottom: 12,
     lineHeight: 18,
   },
   modalLikes: {
     fontSize: 14,
-    color: '#666',
+    color: PINTERST_TEXT_SECONDARY,
     marginBottom: 24,
   },
   mobileModalLikes: {
@@ -1632,7 +1597,7 @@ const styles = StyleSheet.create({
   modalVisitButton: {
     paddingHorizontal: 28,
     paddingVertical: 12,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: PINTERST_GRAY,
     borderRadius: 24,
     alignSelf: 'flex-start',
   },
@@ -1643,81 +1608,6 @@ const styles = StyleSheet.create({
   modalVisitButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111',
-  },
-  // Mobile Styles
-  mobileContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    // @ts-expect-error - web-specific touch scrolling
-    WebkitOverflowScrolling: 'touch',
-  },
-  mobileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
-  },
-  mobileLogo: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#E60023',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  mobileHeaderTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111',
-  },
-  mobileSearch: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: 20,
-  },
-  mobileSearchContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
-  },
-  mobileSearchBar: {
-    backgroundColor: '#EFEFEF',
-    borderRadius: 24,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  mobileSearchInput: {
-    fontSize: 16,
-    color: '#111',
-    width: '100%',
-  },
-  mobileGridContainer: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  mobileGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  mobileCard: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    // @ts-expect-error - transition is a web-specific CSS property
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    color: PINTERST_TEXT,
   },
 });
