@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, Image, TouchableOpacity, ScrollView, Modal, Dimensions } from 'react-native';
 
 interface Pin {
   id: string;
@@ -21,6 +22,10 @@ const PINS: Pin[] = [
   { id: '8', title: 'Falling Sand Cellular Automata', creator: 'Max Bittker', category: 'Simulation', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80', url: 'https://sandspiel.club', likes: 480 },
 ];
 
+const CATEGORIES = ['All', 'Productivity', 'Wallpaper', 'Planner', 'Audio', 'Analytics', 'Art', 'Simulation'];
+const { width } = Dimensions.get('window');
+const isMobile = width < 768;
+
 export default function App() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
@@ -32,198 +37,745 @@ export default function App() {
     setSavedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  const filteredPins = PINS.filter(p => (activeCategory === 'All' || p.category === activeCategory) && (p.title.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())));
+  const filteredPins = PINS.filter(p => 
+    (activeCategory === 'All' || p.category === activeCategory) && 
+    (p.title.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  // Calculate number of columns based on screen width
+  const getColumns = () => {
+    if (width >= 1200) return 4;
+    if (width >= 768) return 3;
+    return 2;
+  };
+
+  // Masonry grid layout
+  const renderMasonryGrid = () => {
+    const columns = getColumns();
+    const columnItems: Pin[][] = Array.from({ length: columns }, () => []);
+    
+    filteredPins.forEach((pin, index) => {
+      columnItems[index % columns].push(pin);
+    });
+
+    return (
+      <View style={styles.gridContainer}>
+        {columnItems.map((column, colIndex) => (
+          <View key={colIndex} style={styles.column}>
+            {column.map(pin => {
+              const isSaved = savedIds.includes(pin.id);
+              const isMenuOpen = activeMenuId === pin.id;
+
+              return (
+                <TouchableOpacity
+                  key={pin.id}
+                  onPress={() => setSelectedPin(pin)}
+                  style={styles.card}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.cardImageContainer}>
+                    <Image source={{ uri: pin.image }} style={styles.cardImage} />
+                    
+                    {/* Overlay on hover (web) */}
+                    <View style={styles.overlay}>
+                      <View style={styles.overlayTop}>
+                        <View style={styles.categoryBadge}>
+                          <Text style={styles.categoryText}>{pin.category}</Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={(e) => { 
+                            e.stopPropagation(); 
+                            setActiveMenuId(isMenuOpen ? null : pin.id); 
+                          }}
+                          style={styles.menuButton}
+                        >
+                          <Text style={styles.menuButtonText}>•••</Text>
+                        </TouchableOpacity>
+                        
+                        {isMenuOpen && (
+                          <View style={styles.dropdownMenu}>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                toggleSave(pin.id); 
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>{isSaved ? '📌 Saved' : '🔖 Save'}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                alert(`Shared ${pin.title}!`); 
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>🔗 Share</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={(e) => { 
+                                e.stopPropagation(); 
+                                // @ts-ignore - window is available in web
+                                window.open(pin.url, '_blank'); 
+                                setActiveMenuId(null); 
+                              }}
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>🌐 Visit Web</Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                      </View>
+                      
+                      <View style={styles.overlayBottom}>
+                        <View style={styles.urlBadge}>
+                          <Text style={styles.urlText}>🔗 {pin.url.replace('https://', '').split('/')[0]}</Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={(e) => { 
+                            e.stopPropagation(); 
+                            toggleSave(pin.id); 
+                          }}
+                          style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
+                        >
+                          <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Save'}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle} numberOfLines={2}>{pin.title}</Text>
+                    <View style={styles.creatorRow}>
+                      <Image source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&auto=format&fit=crop&q=80' }} style={styles.creatorAvatar} />
+                      <Text style={styles.creatorName} numberOfLines={1}>{pin.creator}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] text-[#111] font-sans selection:bg-[#E60023] selection:text-white">
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-6 py-3 flex items-center justify-between border-b border-gray-100 shadow-xs">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-[#E60023] flex items-center justify-center text-white font-bold text-xl shadow-md">
-            O
-          </div>
-          <span className="font-extrabold text-lg tracking-tight text-[#E60023]">Odyssey Pinterest Feed</span>
-          <nav className="hidden md:flex items-center gap-1 ml-4">
-            <button className="px-4 py-2.5 rounded-full bg-[#111] text-white font-semibold text-sm">Home</button>
-            <button className="px-4 py-2.5 rounded-full hover:bg-gray-100 text-[#111] font-semibold text-sm transition">Explore</button>
-            <button className="px-4 py-2.5 rounded-full hover:bg-gray-100 text-[#111] font-semibold text-sm transition">Create</button>
-          </nav>
-        </div>
-        <div className="flex-1 max-w-2xl mx-6 hidden sm:block">
-          <div className="relative flex items-center">
-            <span className="absolute left-4 text-gray-400 font-bold">🔍</span>
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <View style={styles.logo}>
+            <Text style={styles.logoText}>O</Text>
+          </View>
+          <Text style={styles.headerTitle}>Odyssey Pinterest Feed</Text>
+          {!isMobile && (
+            <View style={styles.nav}>
+              <TouchableOpacity style={styles.navButtonActive}>
+                <Text style={styles.navButtonTextActive}>Home</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.navButton}>
+                <Text style={styles.navButtonText}>Explore</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.navButton}>
+                <Text style={styles.navButtonText}>Create</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        
+        {!isMobile && (
+          <View style={styles.searchContainer}>
+            <TextInput
               placeholder="Search minimalist habit widgets, day planners, wallpapers..."
-              className="w-full bg-[#E9E9E9] hover:bg-[#DEDEDE] focus:bg-white focus:ring-2 focus:ring-[#111] rounded-full py-3 pl-12 pr-4 text-sm outline-none transition"
+              value={search}
+              onChangeText={setSearch}
+              style={styles.searchInput}
+              placeholderTextColor="#999"
             />
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-lg transition">🔔</button>
-          <button className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-lg transition">💬</button>
-          <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden border border-gray-200 cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" className="w-full h-full object-cover" />
-          </div>
-        </div>
-      </header>
+          </View>
+        )}
+        
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.headerIcon}>
+            <Text>🔔</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerIcon}>
+            <Text>💬</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }} style={styles.profileAvatar} />
+        </View>
+      </View>
 
-      {/* Pinterest Category Filter Pills */}
-      <div className="max-w-7xl mx-auto px-6 pt-4 pb-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
-        {['All', 'Productivity', 'Wallpaper', 'Planner', 'Audio', 'Analytics', 'Art', 'Simulation'].map((cat) => (
-          <button
+      {/* Category Filters */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContainer}>
+        {CATEGORIES.map((cat) => (
+          <TouchableOpacity
             key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-2 rounded-full font-bold text-xs whitespace-nowrap transition ${
-              activeCategory === cat ? 'bg-[#111] text-white' : 'bg-gray-100 hover:bg-gray-200 text-[#111]'
-            }`}
+            onPress={() => setActiveCategory(cat)}
+            style={[styles.categoryButton, activeCategory === cat ? styles.categoryButtonActive : styles.categoryButtonInactive]}
           >
-            {cat}
-          </button>
+            <Text style={[styles.categoryButtonText, activeCategory === cat ? styles.categoryButtonTextActive : styles.categoryButtonTextInactive]}>
+              {cat}
+            </Text>
+          </TouchableOpacity>
         ))}
-      </div>
+      </ScrollView>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-4 gap-5 [column-fill:_balance]">
-          {filteredPins.map((pin) => {
-            const isSaved = savedIds.includes(pin.id);
-            const isMenuOpen = activeMenuId === pin.id;
+      {/* Main Content */}
+      <ScrollView contentContainerStyle={styles.content}>
+        {filteredPins.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>No pins found</Text>
+          </View>
+        ) : (
+          renderMasonryGrid()
+        )}
+      </ScrollView>
 
-            return (
-              <div
-                key={pin.id}
-                onClick={() => setSelectedPin(pin)}
-                className="break-inside-avoid mb-5 group relative cursor-pointer rounded-3xl overflow-hidden bg-white shadow-xs hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="relative w-full h-80 overflow-hidden bg-gray-100">
-                  <img
-                    src={pin.image}
-                    alt={pin.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold px-3 py-1.5 bg-white/90 backdrop-blur rounded-full text-black shadow">
-                        {pin.category}
-                      </span>
-                      <div className="relative">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setActiveMenuId(isMenuOpen ? null : pin.id); }}
-                          className="w-9 h-9 rounded-full bg-black/50 backdrop-blur border border-white/20 flex items-center justify-center text-white hover:bg-black/70 shadow transition"
-                        >
-                          •••
-                        </button>
-
-                        {isMenuOpen && (
-                          <div className="absolute right-0 top-11 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 w-36 z-30">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); toggleSave(pin.id); setActiveMenuId(null); }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-gray-100 flex items-center gap-2 text-gray-800"
-                            >
-                              <span>{isSaved ? '📌' : '🔖'}</span> {isSaved ? 'Saved' : 'Save'}
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); alert(`Shared ${pin.title}!`); setActiveMenuId(null); }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-gray-100 flex items-center gap-2 text-gray-800"
-                            >
-                              <span>🔗</span> Share
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); window.open(pin.url, '_blank'); setActiveMenuId(null); }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-gray-100 flex items-center gap-2 text-gray-800"
-                            >
-                              <span>🌐</span> Visit Web
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <span className="text-white text-xs font-bold bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-md">
-                        🔗 {pin.url.replace('https://', '').replace('/', '')}
-                      </span>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); toggleSave(pin.id); }}
-                        className={`px-5 py-2.5 rounded-full font-bold text-xs shadow-lg transition ${
-                          isSaved ? 'bg-black text-white' : 'bg-[#E60023] text-white hover:bg-[#AD081B]'
-                        }`}
-                      >
-                        {isSaved ? 'Saved' : 'Save'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3.5">
-                  <h3 className="font-bold text-xs text-[#111] truncate">{pin.title}</h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="w-5 h-5 rounded-full bg-gray-200 overflow-hidden">
-                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&auto=format&fit=crop&q=80" alt={pin.creator} className="w-full h-full object-cover" />
-                    </div>
-                    <span className="text-[11px] text-gray-500 font-medium truncate">{pin.creator}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </main>
-
-      {selectedPin && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]">
-            <div className="md:w-1/2 bg-gray-950 flex items-center justify-center overflow-hidden relative">
-              <img src={selectedPin.image} alt={selectedPin.title} className="w-full h-full object-cover max-h-[70vh] md:max-h-[90vh]" />
-            </div>
-            <div className="md:w-1/2 p-8 flex flex-col justify-between overflow-y-auto">
-              <div>
-                <div className="flex justify-between items-center mb-8">
-                  <div className="flex items-center gap-3">
-                    <button className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-lg font-bold">•••</button>
-                    <button onClick={() => window.open(selectedPin.url, '_blank')} className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-lg">🔗</button>
-                  </div>
-                  <button
-                    onClick={() => toggleSave(selectedPin.id)}
-                    className={`px-7 py-3.5 rounded-full font-bold text-sm shadow-md transition ${
-                      savedIds.includes(selectedPin.id) ? 'bg-black text-white' : 'bg-[#E60023] text-white hover:bg-[#AD081B]'
-                    }`}
+      {/* Modal */}
+      <Modal
+        visible={selectedPin !== null}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSelectedPin(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              onPress={() => setSelectedPin(null)}
+              style={styles.modalClose}
+            >
+              <Text style={styles.modalCloseText}>×</Text>
+            </TouchableOpacity>
+            
+            <View style={styles.modalImageContainer}>
+              <Image source={{ uri: selectedPin?.image || '' }} style={styles.modalImage} />
+            </View>
+            
+            <View style={styles.modalDetails}>
+              <View style={styles.modalHeader}>
+                <View style={styles.modalActions}>
+                  <TouchableOpacity
+                    onPress={() => toggleSave(selectedPin?.id || '')}
+                    style={[styles.modalSaveButton, savedIds.includes(selectedPin?.id || '') ? styles.modalSaveButtonSaved : styles.modalSaveButtonDefault]}
                   >
-                    {savedIds.includes(selectedPin.id) ? 'Saved' : 'Save'}
-                  </button>
-                </div>
-
-                <span className="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-700">{selectedPin.category}</span>
-                <h2 className="text-3xl font-extrabold text-[#111] mt-3 mb-3">{selectedPin.title}</h2>
-                <p className="text-sm text-gray-600 leading-relaxed mb-6">Experience the live interactive widget and seamless day planning experience built for Odyssey creators.</p>
-
-                <div className="flex items-center gap-4 py-5 border-t border-b border-gray-100 mb-6">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt={selectedPin.creator} className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-[#111]">{selectedPin.creator}</h4>
-                    <p className="text-xs text-gray-400">14.2K Followers</p>
-                  </div>
-                  <button className="ml-auto px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-gray-800 font-bold text-xs transition">Follow</button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-xs font-bold text-gray-500">❤️ {selectedPin.likes} Likes</span>
-                <button
-                  onClick={() => setSelectedPin(null)}
-                  className="px-6 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 font-bold text-xs transition"
+                    <Text style={styles.modalSaveButtonText}>
+                      {savedIds.includes(selectedPin?.id || '') ? 'Saved' : 'Save'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              
+              <Text style={styles.modalCategory}>{selectedPin?.category}</Text>
+              <Text style={styles.modalTitle}>{selectedPin?.title}</Text>
+              <Text style={styles.modalDescription}>
+                Experience the live interactive widget and seamless day planning experience built for Odyssey creators.
+              </Text>
+              
+              <View style={styles.modalCreator}>
+                <Image source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }} style={styles.modalCreatorAvatar} />
+                <View style={styles.modalCreatorInfo}>
+                  <Text style={styles.modalCreatorName}>{selectedPin?.creator}</Text>
+                  <Text style={styles.modalCreatorFollowers}>14.2K Followers</Text>
+                </View>
+                <TouchableOpacity style={styles.modalFollowButton}>
+                  <Text style={styles.modalFollowButtonText}>Follow</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.modalFooter}>
+                <Text style={styles.modalLikes}>❤️ {selectedPin?.likes} Likes</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    // @ts-ignore
+                    window.open(selectedPin?.url, '_blank');
+                    setSelectedPin(null);
+                  }}
+                  style={styles.modalVisitButton}
                 >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+                  <Text style={styles.modalVisitButtonText}>Visit Website</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9F9F9',
+  },
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E60023',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  logoText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#E60023',
+  },
+  nav: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  navButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F0F0F0',
+  },
+  navButtonActive: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#111',
+  },
+  navButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111',
+  },
+  navButtonTextActive: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'white',
+  },
+  searchContainer: {
+    flex: 1,
+    maxWidth: 400,
+  },
+  searchInput: {
+    width: '100%',
+    paddingHorizontal: 40,
+    paddingVertical: 10,
+    backgroundColor: '#E9E9E9',
+    borderRadius: 20,
+    fontSize: 14,
+    color: '#111',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  headerIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 18,
+  },
+  profileAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  // Categories
+  categoryContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  categoryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  categoryButtonActive: {
+    backgroundColor: '#111',
+  },
+  categoryButtonInactive: {
+    backgroundColor: '#F0F0F0',
+  },
+  categoryButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  categoryButtonTextActive: {
+    color: 'white',
+  },
+  categoryButtonTextInactive: {
+    color: '#111',
+  },
+  // Content
+  content: {
+    padding: 16,
+  },
+  // Grid
+  gridContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 16,
+  },
+  column: {
+    flex: 1,
+    gap: 16,
+  },
+  // Card
+  card: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardImageContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  overlayTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  categoryBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backdropFilter: 'blur(10px)',
+  },
+  categoryText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#111',
+  },
+  menuButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  menuButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    right: 0,
+    top: 44,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    paddingVertical: 8,
+    width: 144,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 100,
+  },
+  dropdownItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  dropdownItemText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111',
+  },
+  overlayBottom: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  urlBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backdropFilter: 'blur(10px)',
+  },
+  urlText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'white',
+  },
+  saveButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  saveButtonDefault: {
+    backgroundColor: '#E60023',
+  },
+  saveButtonSaved: {
+    backgroundColor: '#111',
+  },
+  saveButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'white',
+  },
+  cardContent: {
+    padding: 14,
+  },
+  cardTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111',
+  },
+  creatorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  creatorAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#F0F0F0',
+  },
+  creatorName: {
+    fontSize: 11,
+    color: '#666',
+    fontWeight: '500',
+  },
+  // Empty State
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 800,
+    maxHeight: '90%',
+    backgroundColor: 'white',
+    borderRadius: 24,
+    overflow: 'hidden',
+    flexDirection: 'row',
+  },
+  modalClose: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  modalCloseText: {
+    fontSize: 24,
+    color: '#111',
+    fontWeight: '300',
+  },
+  modalImageContainer: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    maxHeight: 400,
+  },
+  modalDetails: {
+    flex: 1,
+    padding: 32,
+    justifyContent: 'space-between',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 24,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalSaveButton: {
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  modalSaveButtonDefault: {
+    backgroundColor: '#E60023',
+  },
+  modalSaveButtonSaved: {
+    backgroundColor: '#111',
+  },
+  modalSaveButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'white',
+  },
+  modalCategory: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#666',
+    backgroundColor: '#F0F0F0',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#111',
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  modalDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalCreator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E5E5E5',
+    marginBottom: 24,
+  },
+  modalCreatorAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F0F0F0',
+  },
+  modalCreatorInfo: {
+    flex: 1,
+  },
+  modalCreatorName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111',
+  },
+  modalCreatorFollowers: {
+    fontSize: 12,
+    color: '#666',
+  },
+  modalFollowButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: '#111',
+    borderRadius: 20,
+  },
+  modalFollowButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'white',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 16,
+  },
+  modalLikes: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#666',
+  },
+  modalVisitButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 20,
+  },
+  modalVisitButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111',
+  },
+});
