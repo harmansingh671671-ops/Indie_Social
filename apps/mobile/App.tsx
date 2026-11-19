@@ -669,6 +669,22 @@ export default function App() {
 
   return (
     <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
+      {/* Global scrollbar hiding for web */}
+      {Platform.OS === 'web' && (
+        <style>{`
+          ::-webkit-scrollbar {
+            display: none !important;
+          }
+          html {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+          body {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+        `}</style>
+      )}
       {!isMobile && (
         <>
           {/* Left Sidebar */}
@@ -720,8 +736,9 @@ export default function App() {
             {/* Category Filters */}
             <ScrollView 
               horizontal 
-              showsHorizontalScrollIndicator={false} 
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
+              style={styles.hideScrollbar}
             >
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
@@ -739,7 +756,8 @@ export default function App() {
             {/* Masonry Grid */}
             <ScrollView 
               contentContainerStyle={[styles.gridContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
-              showsVerticalScrollIndicator={true}
+              showsVerticalScrollIndicator={false}
+              style={styles.hideScrollbar}
             >
               <View style={[styles.grid, { width: '100%' }]}>
                 {masonryColumns.map((column, colIndex) => (
@@ -964,8 +982,9 @@ export default function App() {
           {/* Mobile Categories */}
           <ScrollView 
             horizontal 
-            showsHorizontalScrollIndicator={false} 
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: 16 }]}
+            style={styles.hideScrollbar}
           >
             {CATEGORIES.map((cat) => (
               <TouchableOpacity
@@ -983,7 +1002,8 @@ export default function App() {
           {/* Mobile Grid */}
           <ScrollView 
             contentContainerStyle={styles.mobileGridContainer}
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator={false}
+            style={styles.hideScrollbar}
           >
             <View style={[styles.mobileGrid, { gap: GAP }]}>
               {filteredPins.map(pin => {
@@ -1088,6 +1108,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
+  },
+  // Hide scrollbars
+  hideScrollbar: {
+    // For Firefox
+    scrollbarWidth: 'none',
+    // For IE and Edge
+    msOverflowStyle: 'none',
   },
   // Sidebar
   sidebar: {
