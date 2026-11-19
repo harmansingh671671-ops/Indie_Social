@@ -849,26 +849,19 @@ export default function App() {
                       const isMenuOpen = activeMenuId === pin.id;
 
                       return (
-                        <View
+                        <TouchableOpacity
                           key={pin.id}
-                          // @ts-ignore - web-specific hover props
-                          onMouseEnter={() => {
-                            setHoveredPinId(pin.id);
-                          }}
-                          // @ts-ignore - web-specific hover props
-                          onMouseLeave={() => {
-                            setHoveredPinId(null);
-                          }}
+                          onPress={() => setSelectedPin(pin)}
+                          style={[
+                            styles.card,
+                            { width: pinWidth, height: pin.calculatedHeight },
+                            hoveredPinId === pin.id && styles.cardHover
+                          ]}
+                          activeOpacity={0.9}
+                          onMouseEnter={() => setHoveredPinId(pin.id)}
+                          onMouseLeave={() => setHoveredPinId(null)}
+                          // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
                         >
-                          <TouchableOpacity
-                            onPress={() => setSelectedPin(pin)}
-                            style={[
-                              styles.card,
-                              { width: pinWidth, height: pin.calculatedHeight },
-                              hoveredPinId === pin.id && styles.cardHover
-                            ]}
-                            activeOpacity={0.9}
-                          >
                             {/* Pin Image */}
                             <View style={[styles.cardImageContainer, { width: pinWidth, height: pin.calculatedHeight }]}>
                               <Image 
@@ -1094,26 +1087,19 @@ export default function App() {
                 const pinHeight = mobilePinWidth * aspectRatio;
                 
                 return (
-                  <View
+                  <TouchableOpacity
                     key={pin.id}
-                    // @ts-ignore - web-specific hover props
-                    onMouseEnter={() => {
-                      setHoveredPinId(pin.id);
-                    }}
-                    // @ts-ignore - web-specific hover props
-                    onMouseLeave={() => {
-                      setHoveredPinId(null);
-                    }}
+                    onPress={() => setSelectedPin(pin)}
+                    style={[
+                      styles.mobileCard,
+                      { width: mobilePinWidth, height: pinHeight },
+                      hoveredPinId === pin.id && styles.cardHover
+                    ]}
+                    activeOpacity={0.9}
+                    onMouseEnter={() => setHoveredPinId(pin.id)}
+                    onMouseLeave={() => setHoveredPinId(null)}
+                    // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
                   >
-                    <TouchableOpacity
-                      onPress={() => setSelectedPin(pin)}
-                      style={[
-                        styles.mobileCard,
-                        { width: mobilePinWidth, height: pinHeight },
-                        hoveredPinId === pin.id && styles.cardHover
-                      ]}
-                      activeOpacity={0.9}
-                    >
                       <View style={[styles.cardImageContainer, { width: mobilePinWidth, height: pinHeight }]}>
                         <Image 
                           source={{ uri: pin.image }} 
@@ -1331,7 +1317,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    // @ts-expect-error - transition is a web-specific CSS property
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease',
   },
   cardHover: {
     transform: [{ translateY: -8 }],
@@ -1670,6 +1657,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    // @ts-expect-error - transition is a web-specific CSS property
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease',
   },
 });
