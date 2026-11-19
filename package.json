@@ -1,0 +1,16 @@
+{
+  "name": "indiesocial",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Scroll — a visual discovery feed for the indie web",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/web",
+    "build": "npm run build --workspace apps/web",
+    "preview": "npm run preview --workspace apps/web",
+    "typecheck": "npm run typecheck --workspace apps/web",
+    "posters": "node scripts/fetch-posters.mjs"
+  }
+}

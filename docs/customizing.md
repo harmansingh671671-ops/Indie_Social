@@ -1,0 +1,89 @@
+# Customising Scroll
+
+A short map of the edits you are most likely to make. No build configuration needs to change for any of these.
+
+## 1. Add a site
+
+Open `apps/web/src/data/sites.ts` and copy an existing object. Only `id` must be unique.
+
+```ts
+{
+  id: 'my-site',
+  title: 'My Site',
+  creator: 'Your Name',
+  creatorHandle: 'yourhandle',
+  category: 'Experiments',      // Art | Music | Games | Experiments | Worlds | Tools
+  description: 'One or two sentences about the experience.',
+  url: 'https://example.com',
+  accent: '#e60023',            // used for the fallback poster and detail tint
+  ratio: 0.8,                   // image width / height. 0.75 = portrait, 1.25 = landscape
+  tags: ['drawing', 'calm'],
+  likes: 1200,
+  saves: 300,
+  addedDaysAgo: 3,
+  poster: '/posters/my-site.webp', // optional
+}
+```
+
+The home feed interleaves categories automatically, so you do not need to worry about ordering. Mark a site `featured: true` to surface it earlier within its category. Categories are declared in `CATEGORIES` at the bottom of the same file. Add a new category there and it appears in every chip row.
+
+## 2. Use your own posters
+
+Every site already ships with a local screenshot in `apps/web/public/posters/`, listed in `data/posters.ts`. To replace one:
+
+1. Save the image to `apps/web/public/posters/` (640px wide works well).
+2. Point the site at it with `poster: '/posters/file-name.jpg'` in `data/sites.ts`.
+
+Recommended size: 640px wide, portrait orientation. WebP or AVIF keeps the feed fast.
+
+To regenerate the automatic screenshots after adding sites, run `npm run posters`. It writes a new file for every site without a `poster` and rewrites `data/posters.ts`, then you can hand-tune any card by adding the `poster` field.
+
+## 3. Change the look
+
+All global values live in `apps/web/src/styles/tokens.css`:
+
+```css
+:root {
+  --red: #e60023;       /* primary action colour */
+  --ink: #111111;       /* text and active pills */
+  --surface-2: #f1f1f1; /* search field, chips */
+  --radius-md: 16px;    /* pin cards */
+  --header-h: 80px;
+  --rail-w: 80px;
+  --font: -apple-system, ...;
+}
+```
+
+Per-area stylesheets:
+
+| File | Covers |
+|---|---|
+| `layout.css` | top bar, side rail, mobile nav, page frame |
+| `components.css` | buttons, avatars, menus, modal, toast, forms, empty states |
+| `feed.css` | masonry, pin cards, action overlays, category chips |
+| `pin.css` | pin detail page, creator row, comments, related grid |
+| `pages.css` | page headers, trending, sort toggle, boards, profile |
+
+## 4. Change branding and the demo profile
+
+`apps/web/src/config/site.ts` holds the product name, the letter inside the red logo badge, and the profile shown on `/profile`. The document title and meta description are in `apps/web/index.html`.
+
+## 5. Add a page
+
+1. Create `apps/web/src/pages/MyPage.tsx`.
+2. Add a route in `apps/web/src/App.tsx`.
+3. Add a link in `components/layout/SideRail.tsx` (desktop) and `MobileNav.tsx` (mobile).
+
+## 6. Swap local state for an API
+
+`state/AppState.tsx` is the only place that reads and writes saved pins, likes, follows and comments. Replace `usePersistedState` with server calls and keep the same exposed functions; every page will keep working unchanged.
+
+Posters, search and formatting are isolated in `lib/`, so they can be replaced independently.
+
+## 7. Deploy
+
+```bash
+npm run build
+```
+
+The output is a static SPA in `apps/web/dist`. Host it on Cloudflare Pages, Netlify or Vercel. Because routing is client-side, configure a fallback rewrite to `/index.html` (Vercel and Netlify do this for SPAs; on Cloudflare Pages add a `_redirects` file containing `/* /index.html 200`).

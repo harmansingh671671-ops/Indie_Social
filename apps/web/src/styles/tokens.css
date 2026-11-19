@@ -1,0 +1,36 @@
+/* ──────────────────────────────────────────────────────────────
+   Design tokens. Change colours, spacing and type scale here.
+   ────────────────────────────────────────────────────────────── */
+:root {
+  --red: #e60023;
+  --red-hover: #ad081b;
+  --red-press: #8a0616;
+
+  --ink: #111111;
+  --ink-2: #333333;
+  --muted: #767676;
+  --line: #e1e1e1;
+
+  --surface: #ffffff;
+  --surface-2: #f1f1f1;
+  --surface-3: #e9e9e9;
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  --header-h: 80px;
+  --rail-w: 80px;
+  --mobile-nav-h: 64px;
+
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 12px 40px rgba(0, 0, 0, 0.18);
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Helvetica, Arial, sans-serif;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
