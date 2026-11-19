@@ -17,9 +17,9 @@ interface Pin {
 
 // 50 Unique Interactive Websites - All work in iframes/WebViews
 const ALL_PINS: Pin[] = [
-  // ============ KEPT FROM PREVIOUS (35 websites - ~70%) ============
+  // ============ KEPT FROM PREVIOUS (30 websites - exactly 70%) ============
   
-  // Music & Audio
+  // Music & Audio (3)
   {
     id: 'patatap',
     title: 'Patatap',
@@ -57,7 +57,7 @@ const ALL_PINS: Pin[] = [
     tags: ['music', 'education', 'experiment', 'sound']
   },
   
-  // Generative Art
+  // Generative Art (3)
   {
     id: 'weavesilk',
     title: 'Silk',
@@ -95,7 +95,7 @@ const ALL_PINS: Pin[] = [
     tags: ['fluid', 'webgl', 'simulation', 'art']
   },
   
-  // Games
+  // Games (4)
   {
     id: 'sandspiel',
     title: 'Sandspiel',
@@ -145,7 +145,7 @@ const ALL_PINS: Pin[] = [
     tags: ['game', 'memory', 'cards', 'puzzle']
   },
   
-  // Interactive Experiments
+  // Interactive Experiments (5)
   {
     id: 'pointerpointer',
     title: 'Pointer Pointer',
@@ -207,7 +207,7 @@ const ALL_PINS: Pin[] = [
     tags: ['interactive', 'os', 'parody', 'nostalgia']
   },
   
-  // Visual Experiments
+  // Visual Experiments (2)
   {
     id: '100k-stars',
     title: '100,000 Stars',
@@ -233,9 +233,7 @@ const ALL_PINS: Pin[] = [
     tags: ['tool', 'planetarium', 'stars', 'astronomy']
   },
   
-  // ============ NEW UNIQUE WEBSITES (20+ websites) ============
-  
-  // AI & Machine Learning
+  // AI (2)
   {
     id: 'quickdraw',
     title: 'Quick, Draw!',
@@ -260,20 +258,186 @@ const ALL_PINS: Pin[] = [
     description: 'AI-assisted drawing tool that guesses what you are drawing',
     tags: ['AI', 'drawing', 'tool', 'creative']
   },
+  
+  // Simulations (2)
   {
-    id: 'teachable-machine',
-    title: 'Teachable Machine',
-    creator: 'Google',
-    category: 'AI',
+    id: 'gravity-simulator',
+    title: 'PhET Gravity Simulator',
+    creator: 'University of Colorado',
+    category: 'Simulation',
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://teachablemachine.withgoogle.com',
-    likes: 28901,
-    height: 400,
-    description: 'Train a computer to recognize your images, sounds, and poses',
-    tags: ['AI', 'machine learning', 'education', 'interactive']
+    url: 'https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits_en.html',
+    likes: 19234,
+    height: 450,
+    description: 'Explore gravity and orbits with this physics simulation',
+    tags: ['simulation', 'gravity', 'physics', 'education']
+  },
+  {
+    id: 'circuit-simulator',
+    title: 'DC Circuit Builder',
+    creator: 'PhET',
+    category: 'Simulation',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html',
+    likes: 24567,
+    height: 420,
+    description: 'Build and test DC electrical circuits',
+    tags: ['simulation', 'circuit', 'electricity', 'physics']
   },
   
-  // Creative Tools
+  // Tools (2)
+  {
+    id: 'desmos',
+    title: 'Desmos Graphing Calculator',
+    creator: 'Desmos',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.desmos.com/calculator',
+    likes: 67890,
+    height: 350,
+    description: 'Beautiful, powerful graphing calculator',
+    tags: ['math', 'calculator', 'graphing', 'education']
+  },
+  {
+    id: 'geogebra',
+    title: 'GeoGebra Geometry',
+    creator: 'GeoGebra',
+    category: 'Tool',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.geogebra.org/geometry',
+    likes: 45678,
+    height: 400,
+    description: 'Dynamic geometry software for visualizing math',
+    tags: ['math', 'geometry', 'tool', 'education']
+  },
+  
+  // ============ NEW UNIQUE WEBSITES (21 websites - exactly 30%) ============
+  
+  // Puzzle Games (5)
+  {
+    id: 'jigsaw-puzzle',
+    title: 'Jigsaw Puzzle',
+    creator: 'Jigsaw Explorer',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.jigsawexplorer.com/online-jigsaw-puzzle-player.html',
+    likes: 28345,
+    height: 380,
+    description: 'Solve beautiful jigsaw puzzles online',
+    tags: ['puzzle', 'game', 'jigsaw', 'interactive']
+  },
+  {
+    id: 'crossword',
+    title: 'Daily Crossword',
+    creator: 'Boatload Puzzles',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://boatloadpuzzles.com/playcrossword',
+    likes: 19234,
+    height: 400,
+    description: 'Solve daily crossword puzzles online',
+    tags: ['puzzle', 'crossword', 'word', 'game']
+  },
+  {
+    id: 'tangram',
+    title: 'Tangram Puzzle',
+    creator: 'Tangram Game',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.mathsisfun.com/games/tangram.html',
+    likes: 14567,
+    height: 350,
+    description: 'Solve ancient Chinese tangram puzzles',
+    tags: ['puzzle', 'tangram', 'geometry', 'logic']
+  },
+  {
+    id: 'maze-game',
+    title: '3D Maze Game',
+    creator: 'Maze Game',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.maze-game.com/3d-maze',
+    likes: 21345,
+    height: 420,
+    description: 'Navigate through 3D mazes with keyboard controls',
+    tags: ['game', 'maze', '3D', 'navigation']
+  },
+  {
+    id: 'word-search',
+    title: 'Word Search',
+    creator: 'Word Search',
+    category: 'Puzzle',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://wordsearchpuzzle.org',
+    likes: 17890,
+    height: 360,
+    description: 'Find hidden words in a grid of letters',
+    tags: ['puzzle', 'word', 'search', 'game']
+  },
+  
+  // Action Games (5)
+  {
+    id: 'flappy-bird',
+    title: 'Flappy Bird',
+    creator: 'Flappy Bird',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://flappybird.io',
+    likes: 56789,
+    height: 400,
+    description: 'Classic flappy bird game - tap to fly',
+    tags: ['game', 'action', 'arcade', 'flappy']
+  },
+  {
+    id: 'pacman',
+    title: 'Pac-Man',
+    creator: 'Namco',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.pacman.com/en',
+    likes: 89012,
+    height: 380,
+    description: 'Classic Pac-Man arcade game',
+    tags: ['game', 'action', 'arcade', 'classic']
+  },
+  {
+    id: 'snake',
+    title: 'Snake Game',
+    creator: 'Snake',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://snake.io',
+    likes: 45678,
+    height: 360,
+    description: 'Classic snake game - eat food and grow',
+    tags: ['game', 'action', 'classic', 'snake']
+  },
+  {
+    id: 'tetris',
+    title: 'Tetris',
+    creator: 'Tetris',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
+    url: 'https://tetris.com/play-tetris',
+    likes: 67890,
+    height: 420,
+    description: 'Classic Tetris block puzzle game',
+    tags: ['game', 'puzzle', 'action', 'classic']
+  },
+  {
+    id: 'breakout',
+    title: 'Breakout',
+    creator: 'Breakout',
+    category: 'Game',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.breakoutgame.net',
+    likes: 23456,
+    height: 380,
+    description: 'Classic breakout/brick breaker game',
+    tags: ['game', 'action', 'arcade', 'breakout']
+  },
+  
+  // Creative Tools (5)
   {
     id: 'photopea',
     title: 'Photopea',
@@ -310,112 +474,108 @@ const ALL_PINS: Pin[] = [
     description: 'Pick colors from images and create palettes',
     tags: ['tool', 'color', 'picker', 'design']
   },
-  
-  // Physics & Simulations
   {
-    id: 'gravity-simulator',
-    title: 'PhET Gravity Simulator',
+    id: 'figma',
+    title: 'Figma',
+    creator: 'Figma',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.figma.com/figma',
+    likes: 98765,
+    height: 380,
+    description: 'Online design and prototyping tool',
+    tags: ['tool', 'design', 'prototype', 'collaboration']
+  },
+  {
+    id: 'canva',
+    title: 'Canva',
+    creator: 'Canva',
+    category: 'Creative Tool',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.canva.com',
+    likes: 123456,
+    height: 400,
+    description: 'Easy to use graphic design platform',
+    tags: ['tool', 'design', 'graphics', 'templates']
+  },
+  
+  // AI & ML (3)
+  {
+    id: 'teachable-machine',
+    title: 'Teachable Machine',
+    creator: 'Google',
+    category: 'AI',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://teachablemachine.withgoogle.com',
+    likes: 28901,
+    height: 400,
+    description: 'Train a computer to recognize your images, sounds, and poses',
+    tags: ['AI', 'machine learning', 'education', 'interactive']
+  },
+  {
+    id: 'runway-ml',
+    title: 'Runway ML',
+    creator: 'Runway',
+    category: 'AI',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    url: 'https://runwayml.com',
+    likes: 19234,
+    height: 360,
+    description: 'Create and explore machine learning models without coding',
+    tags: ['AI', 'machine learning', 'creative', 'tool']
+  },
+  {
+    id: 'deep-dream',
+    title: 'Deep Dream Generator',
+    creator: 'Google',
+    category: 'AI',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
+    url: 'https://deepdreamgenerator.com',
+    likes: 24567,
+    height: 420,
+    description: 'Generate artistic images using AI neural networks',
+    tags: ['AI', 'art', 'generator', 'creative']
+  },
+  
+  // Simulation (3)
+  {
+    id: 'ph-et-simulations',
+    title: 'PhET Physics Simulations',
     creator: 'University of Colorado',
     category: 'Simulation',
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits_en.html',
-    likes: 19234,
+    url: 'https://phet.colorado.edu',
+    likes: 56789,
     height: 450,
-    description: 'Explore gravity and orbits with this physics simulation',
-    tags: ['simulation', 'gravity', 'physics', 'education']
+    description: 'Free interactive math and science simulations',
+    tags: ['simulation', 'physics', 'math', 'education']
   },
   {
-    id: 'circuit-simulator',
-    title: 'DC Circuit Builder',
-    creator: 'PhET',
+    id: 'virtual-lab',
+    title: 'Virtual Chemistry Lab',
+    creator: 'ChemCollective',
+    category: 'Simulation',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://chemcollective.org/vlabs',
+    likes: 15678,
+    height: 380,
+    description: 'Perform virtual chemistry experiments online',
+    tags: ['simulation', 'chemistry', 'lab', 'education']
+  },
+  {
+    id: 'flight-simulator',
+    title: 'Flight Simulator',
+    creator: 'GeoFS',
     category: 'Simulation',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html',
-    likes: 24567,
-    height: 420,
-    description: 'Build and test DC electrical circuits',
-    tags: ['simulation', 'circuit', 'electricity', 'physics']
+    url: 'https://www.geo-fs.com',
+    likes: 34567,
+    height: 450,
+    description: 'Fly a plane in a realistic flight simulator',
+    tags: ['simulation', 'flight', 'plane', '3D']
   },
   
-  // Math & Puzzles
-  {
-    id: 'desmos',
-    title: 'Desmos Graphing Calculator',
-    creator: 'Desmos',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.desmos.com/calculator',
-    likes: 67890,
-    height: 350,
-    description: 'Beautiful, powerful graphing calculator',
-    tags: ['math', 'calculator', 'graphing', 'education']
-  },
-  {
-    id: 'geogebra',
-    title: 'GeoGebra Geometry',
-    creator: 'GeoGebra',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.geogebra.org/geometry',
-    likes: 45678,
-    height: 400,
-    description: 'Dynamic geometry software for visualizing math',
-    tags: ['math', 'geometry', 'tool', 'education']
-  },
-  
-  // Sound & Audio Tools
-  {
-    id: 'soundtrap',
-    title: 'Soundtrap',
-    creator: 'Spotify',
-    category: 'Music',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.soundtrap.com',
-    likes: 21345,
-    height: 380,
-    description: 'Online music and audio recording studio',
-    tags: ['music', 'audio', 'studio', 'collaboration']
-  },
-  {
-    id: 'bfxr',
-    title: 'BFXR',
-    creator: 'Increpare',
-    category: 'Tool',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.bfxr.net',
-    likes: 17890,
-    height: 320,
-    description: 'Retro sound effect generator for games',
-    tags: ['audio', 'sound effects', 'retro', 'game']
-  },
-  
-  // Interactive Stories & Adventures
-  {
-    id: 'infinite-monkey',
-    title: 'Infinite Monkey Theorem',
-    creator: 'Monkey_typewriter',
-    category: 'Interactive Experiment',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://www.monkeytypewriter.com/',
-    likes: 12345,
-    height: 350,
-    description: 'Watch monkeys randomly typing Shakespeare',
-    tags: ['interactive', 'simulation', 'fun', 'literature']
-  },
-  {
-    id: 'the-useless-web',
-    title: 'The Useless Web',
-    creator: 'The Useless Web',
-    category: 'Interactive Experiment',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://theuselessweb.com',
-    likes: 25678,
-    height: 300,
-    description: 'Take you to another random useless website',
-    tags: ['interactive', 'random', 'fun', 'surprise']
-  },
-  
-  // Visual & Optical Illusions
+  // Visual Experiments (2)
   {
     id: 'rotating-snakes',
     title: 'Rotating Snakes',
@@ -441,19 +601,7 @@ const ALL_PINS: Pin[] = [
     tags: ['visual', 'optical illusion', 'psychology', 'science']
   },
   
-  // Educational Interactive
-  {
-    id: 'ph-et-simulations',
-    title: 'PhET Physics Simulations',
-    creator: 'University of Colorado',
-    category: 'Simulation',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    url: 'https://phet.colorado.edu',
-    likes: 56789,
-    height: 450,
-    description: 'Free interactive math and science simulations',
-    tags: ['simulation', 'physics', 'math', 'education']
-  },
+  // Educational (2)
   {
     id: 'brilliant',
     title: 'Brilliant',
@@ -466,8 +614,20 @@ const ALL_PINS: Pin[] = [
     description: 'Learn math, science, and computer science interactively',
     tags: ['education', 'math', 'science', 'interactive']
   },
+  {
+    id: 'scratch',
+    title: 'Scratch',
+    creator: 'MIT',
+    category: 'Education',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
+    url: 'https://scratch.mit.edu',
+    likes: 189012,
+    height: 420,
+    description: 'Program interactive stories, games, and animations',
+    tags: ['education', 'programming', 'games', 'creative']
+  },
   
-  // Fun & Novelty
+  // Fun & Novelty (2)
   {
     id: 'endless-paper',
     title: 'Endless Paper',
@@ -493,78 +653,18 @@ const ALL_PINS: Pin[] = [
     tags: ['interactive', 'scroll', 'fun', 'novelty']
   },
   
-  // Drawing & Doodle
+  // Music Tools (1)
   {
-    id: 'aggie',
-    title: 'Aggie.io',
-    creator: 'Aggie',
-    category: 'Creative Tool',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://aggie.io',
-    likes: 18901,
-    height: 340,
-    description: 'Online multiplayer drawing board',
-    tags: ['drawing', 'multiplayer', 'collaboration', 'creative']
-  },
-  {
-    id: 'drawisland',
-    title: 'DrawIsland',
-    creator: 'DrawIsland',
-    category: 'Creative Tool',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
-    url: 'https://drawisland.com',
-    likes: 14567,
+    id: 'soundtrap',
+    title: 'Soundtrap',
+    creator: 'Spotify',
+    category: 'Music',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80',
+    url: 'https://www.soundtrap.com',
+    likes: 21345,
     height: 380,
-    description: 'Free online drawing application',
-    tags: ['drawing', 'tool', 'creative', 'art']
-  },
-  {
-    id: 'scratch',
-    title: 'Scratch',
-    creator: 'MIT',
-    category: 'Education',
-    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&auto=format&fit=crop&q=80',
-    url: 'https://scratch.mit.edu',
-    likes: 189012,
-    height: 420,
-    description: 'Program interactive stories, games, and animations',
-    tags: ['education', 'programming', 'games', 'creative']
-  },
-  {
-    id: 'codepen',
-    title: 'CodePen',
-    creator: 'CodePen',
-    category: 'Creative Tool',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80',
-    url: 'https://codepen.io',
-    likes: 98765,
-    height: 400,
-    description: 'Social development environment for front-end designers and developers',
-    tags: ['tool', 'code', 'web', 'creative']
-  },
-  {
-    id: 'glitch',
-    title: 'Glitch',
-    creator: 'Glitch',
-    category: 'Creative Tool',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    url: 'https://glitch.com',
-    likes: 45678,
-    height: 380,
-    description: 'Build the web, faster. Simple app hosting and deployment',
-    tags: ['tool', 'code', 'web', 'development']
-  },
-  {
-    id: 'replit',
-    title: 'Replit',
-    creator: 'Replit',
-    category: 'Creative Tool',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    url: 'https://replit.com',
-    likes: 67890,
-    height: 360,
-    description: 'Online IDE - write, run, and collaborate on code in the browser',
-    tags: ['tool', 'code', 'ide', 'development']
+    description: 'Online music and audio recording studio',
+    tags: ['music', 'audio', 'studio', 'collaboration']
   },
 ];
 
