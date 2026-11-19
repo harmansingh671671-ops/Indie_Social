@@ -567,8 +567,6 @@ const ALL_PINS: Pin[] = [
   },
 ];
 
-const CATEGORIES = ['All', 'Music', 'Audio', 'Generative Art', 'Game', 'Puzzle', 'Interactive Experiment', 'Visual Essay', 'Simulation', 'Tool', 'AI', 'Creative Tool', 'Education', 'Visual Experiment'];
-
 const PINTERST_RED = '#E60023';
 
 export default function App() {
@@ -576,7 +574,6 @@ export default function App() {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('All');
   const [activeNav, setActiveNav] = useState('home');
 
   const { width, height } = Dimensions.get('window');
@@ -604,13 +601,12 @@ export default function App() {
   };
 
   const filteredPins = ALL_PINS.filter(p => {
-    const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
     const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) || 
                           p.creator.toLowerCase().includes(search.toLowerCase()) ||
                           p.category.toLowerCase().includes(search.toLowerCase()) ||
                           (p.description && p.description.toLowerCase().includes(search.toLowerCase())) ||
                           (p.tags && p.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase())));
-    return matchesCategory && matchesSearch;
+    return matchesSearch;
   });
 
   // Masonry layout algorithm
@@ -732,26 +728,6 @@ export default function App() {
                 />
               </View>
             </View>
-
-            {/* Category Filters */}
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
-              style={styles.hideScrollbar}
-            >
-              {CATEGORIES.map((cat) => (
-                <TouchableOpacity
-                  key={cat}
-                  onPress={() => setActiveCategory(cat)}
-                  style={[styles.categoryButton, activeCategory === cat ? styles.categoryButtonActive : styles.categoryButtonInactive]}
-                >
-                  <Text style={[styles.categoryButtonText, activeCategory === cat ? styles.categoryButtonTextActive : styles.categoryButtonTextInactive]}>
-                    {cat}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
 
             {/* Masonry Grid */}
             <ScrollView 
@@ -979,26 +955,6 @@ export default function App() {
             </View>
           </View>
           
-          {/* Mobile Categories */}
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={[styles.categoryContainer, { paddingHorizontal: 16 }]}
-            style={styles.hideScrollbar}
-          >
-            {CATEGORIES.map((cat) => (
-              <TouchableOpacity
-                key={cat}
-                onPress={() => setActiveCategory(cat)}
-                style={[styles.categoryButton, styles.categoryButtonMobile, activeCategory === cat ? styles.categoryButtonActive : styles.categoryButtonInactive]}
-              >
-                <Text style={[styles.categoryButtonText, activeCategory === cat ? styles.categoryButtonTextActive : styles.categoryButtonTextInactive]}>
-                  {cat}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          
           {/* Mobile Grid */}
           <ScrollView 
             contentContainerStyle={styles.mobileGridContainer}
@@ -1204,37 +1160,7 @@ const styles = StyleSheet.create({
     color: '#111',
     width: '100%',
   },
-  // Categories
-  categoryContainer: {
-    paddingVertical: 12,
-    gap: 8,
-    flexDirection: 'row',
-  },
-  categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  categoryButtonMobile: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  categoryButtonActive: {
-    backgroundColor: '#E60023',
-  },
-  categoryButtonInactive: {
-    backgroundColor: '#F0F0F0',
-  },
-  categoryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  categoryButtonTextActive: {
-    color: 'white',
-  },
-  categoryButtonTextInactive: {
-    color: '#111',
-  },
+  // Categories (kept for potential future use)
   // Grid
   gridContainer: {
     paddingVertical: 16,
