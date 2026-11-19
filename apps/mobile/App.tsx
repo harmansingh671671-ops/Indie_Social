@@ -1132,7 +1132,6 @@ export default function App() {
                         <Text style={[styles.creatorName, styles.mobileCreatorName]}>{pin.creator}</Text>
                       </View>
                     </TouchableOpacity>
-                  </View>
                 );
               })}
             </View>
