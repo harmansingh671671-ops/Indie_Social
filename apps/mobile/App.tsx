@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Image, TouchableOpacity, ScrollView, Modal, Dimensions, Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface Pin {
   id: string;
@@ -635,15 +636,15 @@ export default function App() {
 
   const masonryColumns = getMasonryLayout();
 
-  // Navigation icons
+  // Navigation icons - minimal line style using Material Icons
   const navItems = [
-    { id: 'home', icon: '🏠', label: 'Home' },
-    { id: 'search', icon: '🔍', label: 'Search' },
-    { id: 'explore', icon: '🔭', label: 'Explore' },
-    { id: 'notifications', icon: '🔔', label: 'Notifications' },
-    { id: 'messages', icon: '💬', label: 'Messages' },
-    { id: 'create', icon: '➕', label: 'Create' },
-    { id: 'profile', icon: '👤', label: 'Profile' },
+    { id: 'home', icon: 'home', label: 'Home' },
+    { id: 'search', icon: 'search', label: 'Search' },
+    { id: 'explore', icon: 'explore', label: 'Explore' },
+    { id: 'notifications', icon: 'notifications', label: 'Notifications' },
+    { id: 'messages', icon: 'message', label: 'Messages' },
+    { id: 'create', icon: 'add', label: 'Create' },
+    { id: 'profile', icon: 'person', label: 'Profile' },
   ];
 
   // Close dropdown when clicking outside
@@ -689,7 +690,7 @@ export default function App() {
               {/* Pinterest Logo */}
               <View style={styles.logoContainer}>
                 <View style={[styles.logo, { backgroundColor: PINTERST_RED }]}>
-                  <Text style={styles.logoText}>P</Text>
+                  <MaterialIcons name="push-pin" size={22} color="white" />
                 </View>
               </View>
               
@@ -701,7 +702,11 @@ export default function App() {
                     onPress={() => setActiveNav(item.id)}
                     style={[styles.navItem, activeNav === item.id ? styles.navItemActive : null]}
                   >
-                    <Text style={styles.navIcon}>{item.icon}</Text>
+                    <MaterialIcons 
+                      name={item.icon} 
+                      size={24} 
+                      color="#000" 
+                    />
                     {activeNav === item.id && <View style={styles.navIndicator} />}
                   </TouchableOpacity>
                 ))}
@@ -709,7 +714,7 @@ export default function App() {
               
               {/* Settings Icon */}
               <TouchableOpacity style={styles.settingsButton}>
-                <Text style={styles.navIcon}>⚙️</Text>
+                <MaterialIcons name="settings" size={24} color="#000" />
               </TouchableOpacity>
             </View>
           </View>
@@ -764,9 +769,11 @@ export default function App() {
                               }}
                               style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
                             >
-                              <Text style={styles.saveButtonText}>
-                                {isSaved ? '●' : '○'}
-                              </Text>
+                              <MaterialIcons 
+                                name={isSaved ? 'bookmark' : 'bookmark-border'} 
+                                size={18} 
+                                color={isSaved ? 'white' : '#000'} 
+                              />
                             </TouchableOpacity>
                             
                             {/* Top Right Menu */}
@@ -777,7 +784,7 @@ export default function App() {
                               }}
                               style={[styles.menuButton, { right: 56 }]}
                             >
-                              <Text style={styles.menuButtonText}>•••</Text>
+                              <MaterialIcons name="more-vert" size={20} color="white" />
                             </TouchableOpacity>
                             
                             {isMenuOpen && (
@@ -868,7 +875,7 @@ export default function App() {
                     onPress={() => setSelectedPin(null)}
                     style={styles.modalClose}
                   >
-                    <Text style={styles.modalCloseText}>×</Text>
+                    <MaterialIcons name="close" size={24} color="#000" />
                   </TouchableOpacity>
                   
                   <View style={styles.modalImageContainer}>
@@ -887,7 +894,12 @@ export default function App() {
                         }}
                         style={[styles.modalSaveButton, selectedPin && savedIds.includes(selectedPin.id) ? styles.modalSaveButtonSaved : styles.modalSaveButtonDefault]}
                       >
-                        <Text style={styles.modalSaveButtonText}>
+                        <MaterialIcons 
+                          name={selectedPin && savedIds.includes(selectedPin.id) ? 'bookmark' : 'bookmark-border'} 
+                          size={18} 
+                          color="white" 
+                        />
+                        <Text style={[styles.modalSaveButtonText, { marginLeft: 8 }]}>
                           {selectedPin && savedIds.includes(selectedPin.id) ? 'Saved' : 'Save'}
                         </Text>
                       </TouchableOpacity>
@@ -938,7 +950,7 @@ export default function App() {
               onPress={() => { /* Search action */ }}
               style={styles.mobileSearch}
             >
-              <Text>🔍</Text>
+              <MaterialIcons name="search" size={24} color="#000" />
             </TouchableOpacity>
           </View>
           
@@ -988,9 +1000,11 @@ export default function App() {
                         }}
                         style={[styles.saveButton, isSaved ? styles.saveButtonSaved : styles.saveButtonDefault]}
                       >
-                        <Text style={styles.saveButtonText}>
-                          {isSaved ? '●' : '○'}
-                        </Text>
+                        <MaterialIcons 
+                          name={isSaved ? 'bookmark' : 'bookmark-border'} 
+                          size={18} 
+                          color={isSaved ? 'white' : '#000'} 
+                        />
                       </TouchableOpacity>
                     </View>
                     <View style={styles.cardContent}>
@@ -1016,7 +1030,7 @@ export default function App() {
                   onPress={() => setSelectedPin(null)}
                   style={styles.modalClose}
                 >
-                  <Text style={styles.modalCloseText}>×</Text>
+                  <MaterialIcons name="close" size={24} color="#000" />
                 </TouchableOpacity>
                 
                 <View style={styles.mobileModalImageContainer}>
