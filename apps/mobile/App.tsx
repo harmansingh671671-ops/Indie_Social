@@ -776,10 +776,19 @@ export default function App() {
           html {
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
+            scroll-behavior: smooth !important;
+            -webkit-text-size-adjust: 100% !important;
           }
           body {
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
+            scroll-behavior: smooth !important;
+            overflow: hidden !important;
+          }
+          #root {
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scroll-behavior: smooth !important;
           }
         `}</style>
       )}
@@ -839,7 +848,14 @@ export default function App() {
             <ScrollView 
               contentContainerStyle={[styles.gridContainer, { paddingHorizontal: SIDEBAR_PADDING }]}
               showsVerticalScrollIndicator={false}
-              style={styles.hideScrollbar}
+              style={[styles.hideScrollbar, styles.scrollContainer]}
+              nestedScrollEnabled={false}
+              keyboardShouldPersistTaps="handled"
+              scrollEventThrottle={16}
+              decelerationRate="normal"
+              snapToAlignment="start"
+              bounces={true}
+              alwaysBounceVertical={true}
             >
               <View style={[styles.grid, { width: '100%' }]}>
                 {masonryColumns.map((column, colIndex) => (
@@ -857,7 +873,10 @@ export default function App() {
                             { width: pinWidth, height: pin.calculatedHeight },
                             hoveredPinId === pin.id && styles.cardHover
                           ]}
-                          activeOpacity={0.9}
+                          activeOpacity={0.95}
+                          delayPressIn={0}
+                          delayPressOut={0}
+                          pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
                           onMouseEnter={() => setHoveredPinId(pin.id)}
                           onMouseLeave={() => setHoveredPinId(null)}
                           // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
@@ -1076,7 +1095,14 @@ export default function App() {
           <ScrollView 
             contentContainerStyle={styles.mobileGridContainer}
             showsVerticalScrollIndicator={false}
-            style={styles.hideScrollbar}
+            style={[styles.hideScrollbar, styles.scrollContainer]}
+            nestedScrollEnabled={false}
+            keyboardShouldPersistTaps="handled"
+            scrollEventThrottle={16}
+            decelerationRate="normal"
+            snapToAlignment="start"
+            bounces={true}
+            alwaysBounceVertical={true}
           >
             <View style={[styles.mobileGrid, { gap: GAP }]}>
               {filteredPins.map(pin => {
@@ -1095,7 +1121,10 @@ export default function App() {
                       { width: mobilePinWidth, height: pinHeight },
                       hoveredPinId === pin.id && styles.cardHover
                     ]}
-                    activeOpacity={0.9}
+                    activeOpacity={0.95}
+                    delayPressIn={0}
+                    delayPressOut={0}
+                    pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
                     onMouseEnter={() => setHoveredPinId(pin.id)}
                     onMouseLeave={() => setHoveredPinId(null)}
                     // @ts-expect-error - onMouseEnter/onMouseLeave are web-only props supported by react-native-web
@@ -1198,6 +1227,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
+    // @ts-expect-error - web-specific properties for smooth scrolling
+    overflow: 'hidden',
+    WebkitOverflowScrolling: 'touch',
   },
   // Hide scrollbars
   hideScrollbar: {
@@ -1205,6 +1237,21 @@ const styles = StyleSheet.create({
     scrollbarWidth: 'none',
     // For IE and Edge
     msOverflowStyle: 'none',
+  },
+  // Scroll container for smooth scrolling
+  scrollContainer: {
+    flex: 1,
+    // @ts-expect-error - web-specific scroll behavior
+    scrollBehavior: 'smooth',
+    // @ts-expect-error - web-specific CSS for smooth scrolling
+    WebkitOverflowScrolling: 'touch',
+  },
+  // Main content area
+  mainContent: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    // @ts-expect-error - web-specific smooth scrolling
+    scrollBehavior: 'smooth',
   },
   // Sidebar
   sidebar: {
@@ -1297,14 +1344,21 @@ const styles = StyleSheet.create({
   // Categories (kept for potential future use)
   // Grid
   gridContainer: {
-    paddingVertical: 16,
+    paddingVertical: 24,
+    paddingBottom: 48, // Extra padding at bottom for better scrolling
   },
   grid: {
     flexDirection: 'row',
     gap: 16,
   },
   column: {
-    gap: 16,
+    gap: 24, // Increased gap for better visual separation
+  },
+  // Mobile grid
+  mobileGridContainer: {
+    paddingVertical: 16,
+    paddingBottom: 48,
+    paddingHorizontal: 16,
   },
   // Card
   card: {
@@ -1317,16 +1371,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     // @ts-expect-error - transition is a web-specific CSS property
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   },
   cardHover: {
     transform: [{ translateY: -8 }],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 8,
     zIndex: 1,
+    // @ts-expect-error - web-specific transform style
+    willChange: 'transform, box-shadow',
   },
   cardImageContainer: {
     position: 'relative',
@@ -1368,10 +1424,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'background-color 0.3s ease',
+    // @ts-expect-error - web-specific transition
+    transition: 'background-color 0.2s ease, transform 0.2s ease',
   },
   menuButtonHover: {
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    // @ts-expect-error - web-specific transform
+    transform: [{ scale: 1.1 }],
   },
   menuButtonText: {
     color: 'white',
@@ -1590,6 +1649,8 @@ const styles = StyleSheet.create({
   mobileContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    // @ts-expect-error - web-specific touch scrolling
+    WebkitOverflowScrolling: 'touch',
   },
   mobileHeader: {
     flexDirection: 'row',
@@ -1657,6 +1718,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     // @ts-expect-error - transition is a web-specific CSS property
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   },
 });
