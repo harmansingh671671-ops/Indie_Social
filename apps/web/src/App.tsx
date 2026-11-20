@@ -7,6 +7,7 @@ import { SearchPage } from './pages/SearchPage';
 import { SavedPage } from './pages/SavedPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { PinDetailPage } from './pages/PinDetailPage';
+import { EngagePage } from './pages/EngagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AppStateProvider } from './state/AppState';
 import { ToastProvider } from './components/common/Toast';
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/saved" element={<SavedPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/pin/:id" element={<PinDetailPage />} />
+            <Route path="/engage/:id" element={<EngagePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </AppShell>

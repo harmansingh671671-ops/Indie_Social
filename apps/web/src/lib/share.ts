@@ -1,7 +1,7 @@
 import type { Site } from '../types';
 
 export function siteLink(site: Site): string {
-  return `${window.location.origin}/pin/${site.id}`;
+  return `${window.location.origin}/engage/${site.id}`;
 }
 
 export async function copyText(text: string): Promise<boolean> {

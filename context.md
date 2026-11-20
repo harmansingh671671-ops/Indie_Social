@@ -102,6 +102,18 @@ apps/web/src/
   blur; the whole dropdown is lightly frosted.
 - Search results page shows a "Did you mean …?" link when a query finds nothing.
 
+### Engage page (new vertical experience)
+- Clicking a website card now opens `/engage/:id`, an immersive full-screen vertical
+  snap-scroll feed. `/pin/:id` (the old Pinterest-style detail page) is kept but is no longer
+  the card destination; `siteLink()` also points to `/engage/:id`.
+- `AppShell` renders Engage without the header, rail or bottom nav. Layout: floating island
+  header (back, pulsing "Engage" label, avatar), right-edge dots, bottom-left creator meta +
+  "Untitled experience" (real naming comes later), bottom-right Save/Share/More/Visit stack,
+  swipe-up hint and bottom progress bar. Save/Follow/Like use the existing `AppState`.
+- Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
+  "Scroll — Engage", screen "Engage — Indie Discovery Feed"). The React implementation lives
+  in `pages/EngagePage.tsx` with styles in `styles/engage.css`.
+
 ### Navigation / pages
 - Desktop: fixed top island + 80px side rail (Home, Explore, Saved, Settings, Help) +
   masonry. Mobile: bottom nav (Home, Explore, Saved) + 2-column masonry.
@@ -154,6 +166,8 @@ apps/web/src/
   while other pages keep the title/creator row. Enabled Vite file polling and restarted the
   dev server because port 4000 was serving the stale pre-change `PinCard` transform.
 - Retired the 4001 preview server; all verification is done on the 4000 dev server.
+- Added Engage vertical feed (Stitch-generated design), routed card clicks to `/engage/:id`,
+  and hid the normal app shell on that route.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo

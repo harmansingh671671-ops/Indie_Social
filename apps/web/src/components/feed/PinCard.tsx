@@ -25,7 +25,7 @@ export function PinCard({ site, eager = false, showMeta = true }: PinCardProps) 
         />
 
         <Link
-          to={`/pin/${site.id}`}
+          to={`/engage/${site.id}`}
           className="pin-card__hitbox"
           aria-label={`${site.title} by ${site.creator}`}
         >
@@ -39,7 +39,7 @@ export function PinCard({ site, eager = false, showMeta = true }: PinCardProps) 
 
       {showMeta && (
         <div className="pin-card__meta">
-          <Link to={`/pin/${site.id}`} className="pin-card__title">
+          <Link to={`/engage/${site.id}`} className="pin-card__title">
             {site.title}
           </Link>
           <div className="pin-card__creator">
