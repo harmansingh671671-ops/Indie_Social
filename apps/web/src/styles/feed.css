@@ -14,7 +14,7 @@
   position: relative;
   z-index: 0;
   display: block;
-  transition: transform 0.2s var(--ease), filter 0.2s var(--ease);
+  transition: transform 0.08s var(--ease), filter 0.08s var(--ease);
 }
 
 /* While one card is active, soften the rest of the feed behind it. */
@@ -38,7 +38,7 @@
   background: rgb(255 255 255 / 0.18);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  transition: opacity 0.2s var(--ease);
+  transition: opacity 0.08s var(--ease);
 }
 
 .pin-card:hover,
