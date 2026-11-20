@@ -17,7 +17,7 @@ export function ExplorePage() {
         active={category}
         onChange={setCategory}
       />
-      <PinGrid sites={visible} />
+      <PinGrid sites={visible} showMeta={false} />
     </div>
   );
 }

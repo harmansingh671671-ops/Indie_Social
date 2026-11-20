@@ -8,9 +8,10 @@ import { accentGradient, placeholderFor, posterFor } from '../../lib/posters';
 interface PinCardProps {
   site: Site;
   eager?: boolean;
+  showMeta?: boolean;
 }
 
-export function PinCard({ site, eager = false }: PinCardProps) {
+export function PinCard({ site, eager = false, showMeta = true }: PinCardProps) {
   return (
     <article className="pin-card">
       <div className="pin-card__visual" style={{ aspectRatio: site.ratio }}>
@@ -36,15 +37,17 @@ export function PinCard({ site, eager = false }: PinCardProps) {
         </div>
       </div>
 
-      <div className="pin-card__meta">
-        <Link to={`/pin/${site.id}`} className="pin-card__title">
-          {site.title}
-        </Link>
-        <div className="pin-card__creator">
-          <Avatar name={site.creator} size={24} />
-          <span>{site.creator}</span>
+      {showMeta && (
+        <div className="pin-card__meta">
+          <Link to={`/pin/${site.id}`} className="pin-card__title">
+            {site.title}
+          </Link>
+          <div className="pin-card__creator">
+            <Avatar name={site.creator} size={24} />
+            <span>{site.creator}</span>
+          </div>
         </div>
-      </div>
+      )}
     </article>
   );
 }

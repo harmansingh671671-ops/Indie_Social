@@ -7,7 +7,7 @@ export function HomePage() {
 
   return (
     <div className="page page--feed">
-      <PinGrid sites={feed} />
+      <PinGrid sites={feed} showMeta={false} />
     </div>
   );
 }

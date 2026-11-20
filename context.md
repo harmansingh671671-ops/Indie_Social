@@ -59,6 +59,8 @@ apps/web/src/
 
 ### Feed and posters
 - Home = feed only (no category chips). Explore = title + category chips + feed only.
+  Both grids use `showMeta={false}`: cards show only the poster (no title/creator below).
+  Search/Saved/Profile/related grids still show the title + creator metadata.
 - Every poster is a local 560px-wide WebP (~14 KB each, ~430 KB total) in
   `apps/web/public/posters/`. Each has a ~150-byte inline blurred placeholder in
   `data/placeholders.ts`, so cards paint instantly with real colour; no blank/skeleton
@@ -145,3 +147,5 @@ apps/web/src/
 - Search blank-screen fix: remove all `onClearHistory` references after deleting the Clear
   link, harden `readSearchHistory()` against malformed `localStorage`, and **restart the dev
   server** — Vite on port 4000 was still serving the stale pre-fix module from memory.
+- `PinCard`/`PinGrid` gained `showMeta`; Home and Explore pass `false` so cards are image-only
+  while other pages keep the title/creator row.
