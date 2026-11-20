@@ -3,14 +3,15 @@ import {
   ArrowLeft,
   Bookmark,
   Check,
-  ChevronsUp,
+  ChevronDown,
+  ChevronUp,
   ExternalLink,
   Flag,
   Heart,
   MoreHorizontal,
   Share2,
 } from 'lucide-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SITES } from '../data/sites';
 import { buildHomeFeed } from '../lib/feed';
 import { posterFor } from '../lib/posters';
@@ -20,19 +21,14 @@ import { Avatar } from '../components/common/Avatar';
 import { ActionMenu } from '../components/common/ActionMenu';
 import { useToast } from '../components/common/Toast';
 
-/** Immersive full-screen vertical feed opened from a website card. */
+/** Immersive full-screen vertical feed of fully interactive websites. */
 export function EngagePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const {
-    isSaved,
-    toggleSave,
-    isFollowing,
-    toggleFollow,
-    toggleLike,
-  } = useAppState();
+  const { isSaved, toggleSave, isFollowing, toggleFollow, toggleLike } = useAppState();
 
+  // All available sites, starting with the one the user tapped. No artificial limit.
   const feed = useMemo(() => {
     const ordered = buildHomeFeed(SITES);
     const index = ordered.findIndex((site) => site.id === id);
@@ -41,7 +37,6 @@ export function EngagePage() {
 
   const [active, setActive] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const site = feed[active] ?? feed[0];
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -55,48 +50,63 @@ export function EngagePage() {
     return () => scroller.removeEventListener('scroll', onScroll);
   }, [feed.length]);
 
+  const goTo = (index: number) => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const next = (index + feed.length) % feed.length;
+    scroller.scrollTo({ top: next * scroller.clientHeight, behavior: 'smooth' });
+    setActive(next);
+  };
+
+  const step = (amount: number) => goTo(active + amount);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const step =
+      const direction =
         event.key === 'ArrowDown' || event.key === 'PageDown'
           ? 1
           : event.key === 'ArrowUp' || event.key === 'PageUp'
             ? -1
             : 0;
-      if (!step) return;
+      if (!direction) return;
       event.preventDefault();
-      const scroller = scrollerRef.current;
-      if (!scroller) return;
-      setActive((current) => {
-        const next = Math.max(0, Math.min(feed.length - 1, current + step));
-        scroller.scrollTo({ top: next * scroller.clientHeight, behavior: 'smooth' });
-        return next;
-      });
+      step(direction);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [feed.length]);
+  });
 
   const share = async (url: string) => {
     const ok = await copyText(url);
     showToast(ok ? 'Link copied' : 'Could not copy the link');
   };
 
-  const dotStart = Math.max(0, Math.min(active - 2, feed.length - 5));
-  const dots = feed.slice(dotStart, dotStart + 5).map((item, index) => ({
-    index: dotStart + index,
-    id: item.id,
-  }));
-
   return (
     <div className="engage">
       <div className="engage__scroller" ref={scrollerRef}>
         {feed.map((item, index) => {
+          // Only the current slide and its two neighbours load a real website.
+          const distance = Math.abs(index - active);
+          const loadWebsite = distance <= 2;
           const saved = isSaved(item.id);
           const following = isFollowing(item.creatorHandle);
+
           return (
             <section className="engage__slide" key={item.id}>
-              <img className="engage__poster" src={posterFor(item)} alt="" />
+              {loadWebsite ? (
+                <iframe
+                  className="engage__frame"
+                  src={item.url}
+                  title={`Interactive website: ${item.title}`}
+                  loading={distance <= 1 ? 'eager' : 'lazy'}
+                  allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <img className="engage__poster" src={posterFor(item)} alt="" />
+              )}
+
               <div className="engage__scrim engage__scrim--top" aria-hidden />
               <div className="engage__scrim engage__scrim--bottom" aria-hidden />
 
@@ -116,9 +126,6 @@ export function EngagePage() {
                   </button>
                 </div>
                 <h1 className="engage__title">Untitled experience</h1>
-                <span className="engage__badge">
-                  {item.category} · {item.tags.slice(0, 2).join(' · ')}
-                </span>
               </div>
 
               <div className="engage__actions">
@@ -181,56 +188,31 @@ export function EngagePage() {
                   Visit site <ExternalLink size={15} />
                 </button>
               </div>
-
-              {index === active && <span className="sr-only">Engaging with {item.title}</span>}
             </section>
           );
         })}
       </div>
 
-      <header className="engage__header">
-        <button
-          type="button"
-          className="engage__back"
-          aria-label="Back"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft size={19} />
-        </button>
-        <span className="engage__mode">
-          <span className="engage__pulse" aria-hidden />
-          Engage
-        </span>
-        <Link to="/profile" className="engage__profile" aria-label="Your profile">
-          <Avatar name="Harman Singh" size={28} />
-        </Link>
-      </header>
+      <button type="button" className="engage__back" aria-label="Back" onClick={() => navigate(-1)}>
+        <ArrowLeft size={20} />
+      </button>
 
-      <aside className="engage__dots" aria-label="Page stream indicator">
-        {dots.map((dot) => (
-          <button
-            key={dot.id}
-            type="button"
-            aria-label={`Go to experience ${dot.index + 1}`}
-            className={`engage__dot${dot.index === active ? ' is-active' : ''}`}
-            onClick={() => {
-              const scroller = scrollerRef.current;
-              if (!scroller) return;
-              scroller.scrollTo({ top: dot.index * scroller.clientHeight, behavior: 'smooth' });
-              setActive(dot.index);
-            }}
-          />
-        ))}
-      </aside>
-
-      <div className="engage__hint" aria-hidden>
-        <ChevronsUp size={18} />
-        Swipe up for next
-      </div>
-
-      <div className="engage__progress" aria-hidden>
-        <span style={{ width: `${((active + 1) / feed.length) * 100}%` }} />
-      </div>
+      <button
+        type="button"
+        className="engage__nav engage__nav--up"
+        aria-label="Previous website"
+        onClick={() => step(-1)}
+      >
+        <ChevronUp size={22} />
+      </button>
+      <button
+        type="button"
+        className="engage__nav engage__nav--down"
+        aria-label="Next website"
+        onClick={() => step(1)}
+      >
+        <ChevronDown size={22} />
+      </button>
     </div>
   );
 }

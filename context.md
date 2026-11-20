@@ -106,10 +106,15 @@ apps/web/src/
 - Clicking a website card now opens `/engage/:id`, an immersive full-screen vertical
   snap-scroll feed. `/pin/:id` (the old Pinterest-style detail page) is kept but is no longer
   the card destination; `siteLink()` also points to `/engage/:id`.
-- `AppShell` renders Engage without the header, rail or bottom nav. Layout: floating island
-  header (back, pulsing "Engage" label, avatar), right-edge dots, bottom-left creator meta +
-  "Untitled experience" (real naming comes later), bottom-right Save/Share/More/Visit stack,
-  swipe-up hint and bottom progress bar. Save/Follow/Like use the existing `AppState`.
+- `AppShell` renders Engage without the header, rail or bottom nav. Current layout: standalone
+  back arrow top-left, up/down arrow buttons at top/bottom centre (they wrap through all 30
+  sites), bottom-left creator meta + "Untitled experience" (real naming comes later), and a
+  bottom-right Save/Share/More/Visit stack. Save/Follow/Like use the existing `AppState`.
+  The old island header, dots, progress bar, category badge and swipe hint were removed.
+- Each active slide and its two neighbours render the real website in an `<iframe>` so it is
+  fully interactive; further slides show only the local poster. Only 3–5 iframes exist at
+  once. Some external sites refuse framing (X-Frame-Options/CSP), so "Visit site" opens the
+  real site in a new tab as a fallback.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
   "Scroll — Engage", screen "Engage — Indie Discovery Feed"). The React implementation lives
   in `pages/EngagePage.tsx` with styles in `styles/engage.css`.
@@ -167,7 +172,9 @@ apps/web/src/
   dev server because port 4000 was serving the stale pre-change `PinCard` transform.
 - Retired the 4001 preview server; all verification is done on the 4000 dev server.
 - Added Engage vertical feed (Stitch-generated design), routed card clicks to `/engage/:id`,
-  and hid the normal app shell on that route.
+  and hid the normal app shell on that route. Later switched slides to real interactive
+  iframes (±2 window), removed the island/dots/progress/badge, and added wrapping top/bottom
+  navigation arrows.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo
