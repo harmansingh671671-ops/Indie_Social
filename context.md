@@ -113,6 +113,9 @@ apps/web/src/
 - Use higher-specificity selectors when overriding component styles: `components.css` is
   imported after `layout.css`, so equal-specificity rules there win even inside media
   queries (this bit the mobile search toggle once).
+- If the dev server keeps serving an **old module** (e.g. an error about a prop that no
+  longer exists), its in-memory Vite transform cache is stale — restart `npm run dev`.
+  A browser hard refresh will not help because the server itself sends the old code.
 
 ## Deferred / deliberately not built
 
@@ -140,5 +143,5 @@ apps/web/src/
 - `PinImage` cache fix: detect already-complete images so Home/Explore cards show the real
   poster immediately after page switches instead of staying blurred.
 - Search blank-screen fix: remove all `onClearHistory` references after deleting the Clear
-  link (a transient dev-server HMR state had crashed `SearchSuggestions`), and harden
-  `readSearchHistory()` against malformed `localStorage`.
+  link, harden `readSearchHistory()` against malformed `localStorage`, and **restart the dev
+  server** — Vite on port 4000 was still serving the stale pre-fix module from memory.
