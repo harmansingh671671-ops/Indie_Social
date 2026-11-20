@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/format';
 
 interface PinImageProps {
@@ -12,9 +12,9 @@ interface PinImageProps {
 }
 
 /**
- * Image with an instant inline preview, a skeleton while loading and a
- * designed tinted fallback if the screenshot is unavailable. Nothing ever
- * renders as a broken image.
+ * Image with an instant inline preview and a designed tinted fallback. Cached
+ * images do not always fire `load` again when a page remounts, so we also check
+ * `complete` before paint — otherwise they stay invisible on the placeholder.
  */
 export function PinImage({
   src,
@@ -26,9 +26,14 @@ export function PinImage({
   className,
 }: PinImageProps) {
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setStatus('loading');
+    const img = imgRef.current;
+    if (img?.complete) {
+      setStatus(img.naturalWidth > 0 ? 'loaded' : 'error');
+    }
   }, [src]);
 
   const background = placeholder
@@ -43,6 +48,7 @@ export function PinImage({
     >
       {status !== 'error' && (
         <img
+          ref={imgRef}
           className={cn('pin-image__img', status === 'loaded' && 'is-loaded')}
           src={src}
           alt={alt}

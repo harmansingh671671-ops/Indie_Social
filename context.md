@@ -65,7 +65,9 @@ apps/web/src/
   flash and no layout shift.
 - First 6 cards are `eager` + high `fetchPriority`; the rest are lazy. All 30 load locally
   with no network fallback.
-- `PinImage` shows placeholder -> poster, with a designed gradient fallback on error.
+- `PinImage` shows placeholder -> poster, with a designed gradient fallback on error. It also
+  checks `img.complete` in a layout effect: cached images don't re-fire `load` on remount,
+  which previously left every card stuck on its blurred placeholder after route changes.
 - Replacing posters: drop a WebP in `public/posters/`, set `poster: '/posters/name.webp'`
   on the site in `data/sites.ts`. Regenerate with `npm run posters`.
 
@@ -134,3 +136,5 @@ apps/web/src/
 - `4af40e0` hide vertical scrollbars on all pages.
 - `context.md` + `AGENTS.md` added: mandatory once-per-session read, update before each
   commit, compress past 15K words.
+- `PinImage` cache fix: detect already-complete images so Home/Explore cards show the real
+  poster immediately after page switches instead of staying blurred.
