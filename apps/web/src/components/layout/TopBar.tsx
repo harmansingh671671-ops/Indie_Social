@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
-import { cn } from '../../lib/format';
 import { Avatar } from '../common/Avatar';
 import { IconButton } from '../common/IconButton';
 import { useToast } from '../common/Toast';
@@ -15,21 +14,11 @@ export function TopBar() {
 
   const urlQuery = params.get('q') ?? '';
   const [value, setValue] = useState(urlQuery);
-  const [scrolled, setScrolled] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setValue(urlQuery);
   }, [urlQuery, location.pathname]);
-
-  useEffect(() => {
-    // A negative scrollY means the page is rubber-banding above the top; keep
-    // the island on so the bar does not flicker between styles mid-stretch.
-    const onScroll = () => setScrolled(window.scrollY > 16 || window.scrollY < 0);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -54,7 +43,7 @@ export function TopBar() {
   };
 
   return (
-    <header className={cn('topbar', scrolled && 'topbar--island')}>
+    <header className="topbar">
       <Link to={ROUTES.home} className="logo" aria-label={`${siteConfig.name} home`}>
         <span className="logo__badge" aria-hidden>
           {siteConfig.logoLetter}
