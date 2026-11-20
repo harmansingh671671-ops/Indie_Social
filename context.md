@@ -93,7 +93,8 @@ apps/web/src/
   matches, icons, ↑/↓ + Enter keyboard navigation and Escape to close.
 - Recent searches persist in `scroll.v1.searchHistory` (max 8). Per-item X removes one —
   hidden until row hover on hover-capable devices, always visible on touch. Clear-all was
-  removed at the user's request.
+  removed at the user's request. `readSearchHistory()` sanitises bad stored values so a
+  corrupted entry cannot crash the search UI.
 - Hovering/arrow-selecting a suggestion lifts it 2px, adds a shadow and a slight backdrop
   blur; the whole dropdown is lightly frosted.
 - Search results page shows a "Did you mean …?" link when a query finds nothing.
@@ -138,3 +139,6 @@ apps/web/src/
   commit, compress past 15K words.
 - `PinImage` cache fix: detect already-complete images so Home/Explore cards show the real
   poster immediately after page switches instead of staying blurred.
+- Search blank-screen fix: remove all `onClearHistory` references after deleting the Clear
+  link (a transient dev-server HMR state had crashed `SearchSuggestions`), and harden
+  `readSearchHistory()` against malformed `localStorage`.

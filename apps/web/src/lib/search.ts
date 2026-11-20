@@ -25,7 +25,10 @@ const HISTORY_KEY = 'searchHistory';
 const HISTORY_LIMIT = 8;
 
 export function readSearchHistory(): string[] {
-  return readJSON<string[]>(HISTORY_KEY, []);
+  const stored = readJSON<unknown>(HISTORY_KEY, []);
+  return Array.isArray(stored)
+    ? stored.filter((item): item is string => typeof item === 'string')
+    : [];
 }
 
 export function rememberSearch(term: string): string[] {
