@@ -29,8 +29,9 @@ npm run posters:optimize  # re-compress existing JPGs to WebP + placeholders
 ```
 
 Always run `npm run typecheck` and `npm run build` before committing. Browser checks use
-Playwright; screenshots go to gitignored `shots/`. A preview server used during testing
-lives on port 4001 (dev on 4000). `sharp` is a devDependency used only by poster scripts.
+Playwright; screenshots go to gitignored `shots/`. **Only use port 4000** for all browser
+checks — the old 4001 preview server has been stopped and must not be used again. `sharp` is
+a devDependency used only by poster scripts.
 
 ## Code map
 
@@ -152,3 +153,4 @@ apps/web/src/
 - `PinCard`/`PinGrid` gained `showMeta`; Home and Explore pass `false` so cards are image-only
   while other pages keep the title/creator row. Enabled Vite file polling and restarted the
   dev server because port 4000 was serving the stale pre-change `PinCard` transform.
+- Retired the 4001 preview server; all verification is done on the 4000 dev server.
