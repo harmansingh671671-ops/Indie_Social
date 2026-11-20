@@ -342,16 +342,24 @@
 }
 
 @media (max-width: 700px) {
-  .topbar__actions > .icon-btn {
-    display: none;
-  }
-
+  .search,
   .search__hint {
     display: none;
   }
 
+  .topbar .search-toggle {
+    display: inline-grid;
+    margin-left: auto;
+    margin-right: 6px;
+  }
+
+  .topbar__actions .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+
   .topbar__avatar {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
   }
 }

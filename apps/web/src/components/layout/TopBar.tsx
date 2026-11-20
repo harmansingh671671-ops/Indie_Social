@@ -4,6 +4,7 @@ import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
 import { Avatar } from '../common/Avatar';
 import { IconButton } from '../common/IconButton';
+import { MobileSearch } from './MobileSearch';
 import { useToast } from '../common/Toast';
 
 export function TopBar() {
@@ -27,7 +28,11 @@ export function TopBar() {
         target?.tagName === 'INPUT' ||
         target?.tagName === 'TEXTAREA' ||
         target?.isContentEditable;
-      if (event.key === '/' && !typing) {
+      if (
+        event.key === '/' &&
+        !typing &&
+        !window.matchMedia('(max-width: 700px)').matches
+      ) {
         event.preventDefault();
         inputRef.current?.focus();
       }
@@ -49,6 +54,8 @@ export function TopBar() {
           {siteConfig.logoLetter}
         </span>
       </Link>
+
+      <MobileSearch />
 
       <form className="search" role="search" onSubmit={submit}>
         <Search size={18} className="search__icon" aria-hidden />
