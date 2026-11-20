@@ -3,7 +3,7 @@ import type { Site } from '../../types';
 import { PinImage } from '../common/PinImage';
 import { Avatar } from '../common/Avatar';
 import { PinActions } from '../pin/PinActions';
-import { accentGradient, posterFor } from '../../lib/posters';
+import { accentGradient, placeholderFor, posterFor } from '../../lib/posters';
 
 interface PinCardProps {
   site: Site;
@@ -19,6 +19,7 @@ export function PinCard({ site, eager = false }: PinCardProps) {
           alt={`Preview of ${site.title}`}
           label={site.title}
           gradient={accentGradient(site)}
+          placeholder={placeholderFor(site)}
           eager={eager}
         />
 

@@ -19,20 +19,20 @@ Open <http://localhost:4000>.
 | `npm run build` | Type-check and production build |
 | `npm run preview` | Preview the production build |
 | `npm run typecheck` | TypeScript only |
-| `npm run posters` | Refresh the local poster screenshots in `apps/web/public/posters/` |
+| `npm run posters` | Refresh and compress the local poster screenshots in `apps/web/public/posters/` |
+| `npm run posters:optimize` | Re-compress existing posters to WebP and rebuild inline placeholders |
 
 ## What's in v1
 
-- **Home feed** — responsive masonry, category chips, hover Save/Share/More actions
-- **Explore** — trending searches, category filters, Popular / Newest sorting
+- **Home feed** — responsive masonry, hover Save/Share/More actions
+- **Explore** — category filters over the curated catalogue
 - **Search** — full-text search over titles, makers, tags and descriptions
 - **Pin detail** — large preview, creator row with Follow, Like, Save, tags, comments (persisted locally), "Visit site", related pins
 - **Saved** — auto-generated boards grouped by category, with a stacked-image board preview
 - **Profile** — Saved / Likes / Created tabs, stats, share and edit-profile actions
-- **Submit a site** — Create flow that stores submissions in local storage
-- **Mobile** — Pinterest-style bottom navigation, 2-column masonry, sticky search
+- **Mobile** — bottom navigation, 2-column masonry, sticky search
 
-Saved pins, likes, follows, comments and submissions persist in `localStorage` under the `scroll.v1.*` keys. There is no backend yet.
+Saved pins, likes, follows and comments persist in `localStorage` under the `scroll.v1.*` keys. There is no backend yet.
 
 ## Project structure
 
@@ -43,11 +43,12 @@ apps/web/
 │   ├── config/site.ts        ← brand name, logo letter, demo profile
 │   ├── data/sites.ts         ← the 30 sites (edit this to change content)
 │   ├── data/posters.ts       ← generated map of local poster screenshots
+│   ├── data/placeholders.ts  ← generated inline blurred previews
 │   ├── types.ts
 │   ├── lib/                  ← search, formatting, posters, storage, sharing
 │   ├── state/AppState.tsx    ← saved / liked / followed / comments
 │   ├── components/
-│   │   ├── layout/           ← TopBar, SideRail, MobileNav, AppShell, CreateModal
+│   │   ├── layout/           ← TopBar, SideRail, MobileNav, AppShell (CreateModal kept for later)
 │   │   ├── feed/             ← Masonry, PinCard, PinGrid, CategoryChips
 │   │   ├── pin/              ← SaveButton, PinActions
 │   │   └── common/           ← Button, Avatar, Modal, Toast, ActionMenu, PinImage…
@@ -76,7 +77,7 @@ See `docs/customizing.md` for longer recipes.
 
 ## Posters
 
-Every card's screenshot is stored locally in `apps/web/public/posters/` and mapped in `apps/web/src/data/posters.ts`. `npm run posters` refreshes them from WordPress' free mShots service; sites with a hand-picked `poster` are skipped.
+Every card's screenshot is stored locally in `apps/web/public/posters/` and mapped in `apps/web/src/data/posters.ts`. They are cropped to the first screen and optimised to 560px-wide WebP files (~14 KB each, 430 KB for all 30), so the feed never loads full pages or heavy media and needs no network round-trip beyond one small file per card. Cards only show the image; the real website opens on "Visit site". `npm run posters` refreshes them from WordPress' free mShots service, converts them to WebP and rebuilds the placeholders; sites with a hand-picked `poster` are skipped.
 
 Poster resolution order:
 
@@ -84,13 +85,14 @@ Poster resolution order:
 2. A local poster from `data/posters.ts`.
 3. A live mShots screenshot.
 
-While images load, cards show a tinted skeleton; if a poster fails, they fall back to a designed gradient with the site's initial — no broken images.
+Each card also has a ~150-byte blurred placeholder inlined in the bundle (`data/placeholders.ts`), so the layout paints with real colours before the poster arrives. If a poster fails, the card falls back to a designed gradient with the site's initial — no broken images, no blank boxes, no layout shift.
 
 ## Notes and limits
 
 - The site list is curated demo content. Every site belongs to its maker; Scroll only links out.
 - Search, boards, likes and comments are local to the browser.
-- The Create flow stores submissions in `localStorage`; it is a placeholder for the real creator pipeline described in `plan.md`.
+- The Create / submit-a-site flow is deferred to `plan.md`; its modal component is kept in the codebase for later.
+- Cards show static landing-page screenshots only. Websites are never loaded inside the feed — use "Visit site" on a pin to open the real site.
 - The app is a web client. The native WebView lifecycle work in `docs/webview-lifecycle-spike.md` is still future work.
 
 ## Next steps

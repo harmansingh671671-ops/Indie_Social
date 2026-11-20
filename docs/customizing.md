@@ -25,18 +25,20 @@ Open `apps/web/src/data/sites.ts` and copy an existing object. Only `id` must be
 }
 ```
 
-The home feed interleaves categories automatically, so you do not need to worry about ordering. Mark a site `featured: true` to surface it earlier within its category. Categories are declared in `CATEGORIES` at the bottom of the same file. Add a new category there and it appears in every chip row.
+The home feed interleaves categories automatically, so you do not need to worry about ordering. Mark a site `featured: true` to surface it earlier within its category. Categories are declared in `CATEGORIES` at the bottom of the same file. Add a new category there and it appears in the Explore chip row.
 
 ## 2. Use your own posters
 
 Every site already ships with a local screenshot in `apps/web/public/posters/`, listed in `data/posters.ts`. To replace one:
 
-1. Save the image to `apps/web/public/posters/` (640px wide works well).
-2. Point the site at it with `poster: '/posters/file-name.jpg'` in `data/sites.ts`.
+1. Save the image to `apps/web/public/posters/` (560px wide works well).
+2. Point the site at it with `poster: '/posters/file-name.webp'` in `data/sites.ts`.
 
-Recommended size: 640px wide, portrait orientation. WebP or AVIF keeps the feed fast.
+Recommended size: 560px wide, portrait orientation, cropped to the landing page. WebP keeps the feed fast; the shipped set is 430 KB for all 30 cards.
 
-To regenerate the automatic screenshots after adding sites, run `npm run posters`. It writes a new file for every site without a `poster` and rewrites `data/posters.ts`, then you can hand-tune any card by adding the `poster` field.
+To regenerate the automatic screenshots after adding sites, run `npm run posters`. It screenshots every site without a `poster`, converts the result to WebP, rebuilds `data/posters.ts` and regenerates `data/placeholders.ts` (the tiny blurred previews that make cards appear instantly). Then hand-tune any card by adding the `poster` field.
+
+Already have JPEGs? Drop them in `apps/web/public/posters/` and run `npm run posters:optimize`. It converts every JPEG to WebP, writes the placeholders and deletes the originals.
 
 ## 3. Change the look
 

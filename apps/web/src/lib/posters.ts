@@ -1,5 +1,6 @@
 import type { Site } from '../types';
 import { LOCAL_POSTERS } from '../data/posters';
+import { POSTER_PLACEHOLDERS } from '../data/placeholders';
 
 /**
  * Poster resolution order:
@@ -17,6 +18,14 @@ export function posterFor(site: Site, width = 640): string {
 
   const height = Math.min(900, Math.max(420, Math.round(width / site.ratio)));
   return `${MSHOTS}${encodeURIComponent(site.url)}?w=${width}&h=${height}`;
+}
+
+/**
+ * A ~32px blurred inline preview. It paints instantly with the bundle, so a
+ * card never shows an empty box while its full poster downloads.
+ */
+export function placeholderFor(site: Site): string | undefined {
+  return POSTER_PLACEHOLDERS[site.id];
 }
 
 export function accentGradient(site: Site): string {

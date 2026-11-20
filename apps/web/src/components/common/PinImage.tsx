@@ -6,19 +6,22 @@ interface PinImageProps {
   alt: string;
   label: string;
   gradient: string;
+  placeholder?: string;
   eager?: boolean;
   className?: string;
 }
 
 /**
- * Image with a skeleton while loading and a designed tinted fallback if the
- * screenshot service is unavailable. Nothing ever renders as a broken image.
+ * Image with an instant inline preview, a skeleton while loading and a
+ * designed tinted fallback if the screenshot is unavailable. Nothing ever
+ * renders as a broken image.
  */
 export function PinImage({
   src,
   alt,
   label,
   gradient,
+  placeholder,
   eager = false,
   className,
 }: PinImageProps) {
@@ -28,10 +31,14 @@ export function PinImage({
     setStatus('loading');
   }, [src]);
 
+  const background = placeholder
+    ? `url("${placeholder}") center / cover no-repeat, ${gradient}`
+    : gradient;
+
   return (
     <span
       className={cn('pin-image', className)}
-      style={{ background: gradient }}
+      style={{ background }}
       aria-busy={status === 'loading'}
     >
       {status !== 'error' && (
@@ -40,12 +47,13 @@ export function PinImage({
           src={src}
           alt={alt}
           loading={eager ? 'eager' : 'lazy'}
+          fetchPriority={eager ? 'high' : 'low'}
           decoding="async"
           onLoad={() => setStatus('loaded')}
           onError={() => setStatus('error')}
         />
       )}
-      {status === 'loading' && <span className="pin-image__shimmer" aria-hidden />}
+      {status === 'loading' && !placeholder && <span className="pin-image__shimmer" aria-hidden />}
       {status === 'error' && (
         <span className="pin-image__fallback">
           <span className="pin-image__fallback-mark" aria-hidden>

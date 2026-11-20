@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
+import { cn } from '../../lib/format';
 import { Avatar } from '../common/Avatar';
 import { IconButton } from '../common/IconButton';
 import { useToast } from '../common/Toast';
@@ -14,11 +15,19 @@ export function TopBar() {
 
   const urlQuery = params.get('q') ?? '';
   const [value, setValue] = useState(urlQuery);
+  const [scrolled, setScrolled] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setValue(urlQuery);
   }, [urlQuery, location.pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -43,7 +52,7 @@ export function TopBar() {
   };
 
   return (
-    <header className="topbar">
+    <header className={cn('topbar', scrolled && 'topbar--island')}>
       <Link to={ROUTES.home} className="logo" aria-label={`${siteConfig.name} home`}>
         <span className="logo__badge" aria-hidden>
           {siteConfig.logoLetter}

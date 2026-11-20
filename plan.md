@@ -4,7 +4,7 @@
 > **Start date:** November 2026
 > **Working folder:** `C:\IndieSocial`
 > **Updated against:** `Scroll_Updated_Product_and_Execution_Plan.docx` (17 November 2026)
-> **Last updated:** 17 November 2026
+> **Last updated:** 20 November 2026
 
 ---
 
@@ -12,19 +12,23 @@
 
 ### What exists
 - **Monorepo** at `C:\IndieSocial` connected to GitHub (`harmansingh671671-ops/Indie_Social.git`)
-- **Expo React Native app** at `apps/mobile/` — runs on web via `npm run dev` (port 4000)
-- **Home screen** — 2-column grid of 15 sites with Save, Share, Open actions
-- **Usage page** — full-screen vertical paging through sites with back/save/share
-- **Local persistence** — saved sites stored via AsyncStorage
-- **Android project** generated at `apps/mobile/android/`
-- **WebView lifecycle spec** at `docs/webview-lifecycle-spike.md`
+- **Web prototype** at `apps/web/` — Vite + React + TypeScript, `npm run dev` on port 4000
+- **Pinterest-style visual feed** — masonry cards with local cover screenshots for 30 curated real websites
+- **Instant covers** — 560px WebP posters (~14 KB each, 430 KB total) plus ~150-byte inline blurred placeholders, so Home and Explore paint immediately without loading any live page
+- **Pages** — Home, Explore, Search, Pin detail, Saved boards, Profile
+- **Local persistence** — saves, likes, follows and comments in `localStorage`
+- **WebView lifecycle spec** at `docs/webview-lifecycle-spike.md` (implementation is still future work)
 
 ### What's fake / placeholder
-- All 15 "sites" are **local interactive mini-demos** (garden, orbit, palette, rhythm, tiles) — not real embedded websites
-- No actual WebView embedding — the previews are React Native components, not iframes or WebViews loading real URLs
+- Cards show static landing-page screenshots; the websites themselves never load inside the feed
 - No backend, no API, no database
-- No capture pipeline
-- No auth, no site registry
+- No capture pipeline beyond `npm run posters` (mShots screenshots, converted to 560px WebP with inline placeholders)
+- No auth, no site registry, no creator submission flow
+
+### Deferred from the web prototype (work on later)
+- **Create / "Submit a site" flow** — removed from the desktop side rail and mobile nav. `components/layout/CreateModal.tsx` is kept in the codebase so it can be wired back up once auth and site verification exist (Phase 1A).
+- **Explore refinements** — trending tag chips, Popular/Newest sorting, and the "Find something new" eyebrow + description were removed to keep the page simple. The styles (`.trending`, `.sort-toggle`) and optional `PageHeader` props remain so they can be restored quickly.
+- **Profile in the side rail** — removed because the profile avatar already lives in the top bar.
 
 ### What's next (immediate)
 1. **Replace fake demos with real website embedding** — use `<iframe>` (web) or `react-native-webview` (native) to load actual URLs

@@ -25,7 +25,7 @@ export const SITES: Site[] = [
     saves: 9600,
     featured: true,
     addedDaysAgo: 2,
-    poster: '/posters/patatap.jpg',
+    poster: '/posters/patatap.webp',
   },
   {
     id: 'typatone',
@@ -158,7 +158,7 @@ export const SITES: Site[] = [
     likes: 27500,
     saves: 10200,
     addedDaysAgo: 23,
-    poster: '/posters/autodraw.jpg',
+    poster: '/posters/autodraw.webp',
   },
   {
     id: 'jackson-pollock',
@@ -175,7 +175,7 @@ export const SITES: Site[] = [
     likes: 19700,
     saves: 6400,
     addedDaysAgo: 30,
-    poster: '/posters/jackson-pollock.jpg',
+    poster: '/posters/jackson-pollock.webp',
   },
 
   // ─────────────────────────────── Games ───────────────────────────────
@@ -194,7 +194,7 @@ export const SITES: Site[] = [
     likes: 43900,
     saves: 16500,
     addedDaysAgo: 3,
-    poster: '/posters/sandspiel.jpg',
+    poster: '/posters/sandspiel.webp',
   },
   {
     id: '2048',
@@ -357,7 +357,7 @@ export const SITES: Site[] = [
     likes: 45900,
     saves: 13200,
     addedDaysAgo: 12,
-    poster: '/posters/quick-draw.jpg',
+    poster: '/posters/quick-draw.webp',
   },
 
   // ───────────────────────────── Worlds & maps ──────────────────────────
@@ -441,7 +441,7 @@ export const SITES: Site[] = [
     saves: 22800,
     featured: true,
     addedDaysAgo: 13,
-    poster: '/posters/deep-sea.jpg',
+    poster: '/posters/deep-sea.webp',
   },
 
   // ─────────────────────────────── Tools ───────────────────────────────

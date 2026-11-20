@@ -11,6 +11,11 @@
     "build": "npm run build --workspace apps/web",
     "preview": "npm run preview --workspace apps/web",
     "typecheck": "npm run typecheck --workspace apps/web",
-    "posters": "node scripts/fetch-posters.mjs"
+    "posters": "node scripts/fetch-posters.mjs && node scripts/optimize-posters.mjs",
+    "posters:fetch": "node scripts/fetch-posters.mjs",
+    "posters:optimize": "node scripts/optimize-posters.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
   }
 }

@@ -13,6 +13,45 @@
   height: var(--header-h);
   padding: 8px 16px;
   background: var(--surface);
+  transition: background 0.18s var(--ease), padding-inline 0.18s var(--ease);
+}
+
+/* A floating "island" replaces the solid bar once the page is scrolled. */
+.topbar::before {
+  content: '';
+  position: absolute;
+  inset: 6px 12px;
+  z-index: -1;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease), background 0.18s var(--ease);
+}
+
+.topbar--island {
+  padding-inline: 32px;
+  background: transparent;
+}
+
+.topbar--island::before {
+  opacity: 1;
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 8px 26px rgb(0 0 0 / 0.13), 0 0 0 1px rgb(0 0 0 / 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: topbar-pop 0.2s var(--ease);
+}
+
+@keyframes topbar-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .logo {
@@ -246,6 +285,14 @@
   .topbar {
     gap: 4px;
     padding: 8px 10px;
+  }
+
+  .topbar--island {
+    padding-inline: 18px;
+  }
+
+  .topbar::before {
+    inset: 6px 8px;
   }
 
   .mobile-nav {
