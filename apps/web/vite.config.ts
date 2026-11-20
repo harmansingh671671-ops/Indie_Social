@@ -8,6 +8,12 @@ export default defineConfig({
     port: 4000,
     host: true,
     open: false,
+    // Windows file watching can miss edits made by external tools, leaving the
+    // dev server serving stale transformed modules until it is restarted.
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
   },
   preview: {
     port: 4000,

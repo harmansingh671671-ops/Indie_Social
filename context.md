@@ -116,8 +116,10 @@ apps/web/src/
   imported after `layout.css`, so equal-specificity rules there win even inside media
   queries (this bit the mobile search toggle once).
 - If the dev server keeps serving an **old module** (e.g. an error about a prop that no
-  longer exists), its in-memory Vite transform cache is stale — restart `npm run dev`.
-  A browser hard refresh will not help because the server itself sends the old code.
+  longer exists, or old card markup), its in-memory Vite transform cache is stale — restart
+  `npm run dev`. A browser hard refresh will not help because the server sends the old code.
+  `vite.config.ts` now enables `server.watch.usePolling` so external file edits are picked up
+  reliably on Windows, but a restart is still the fallback.
 
 ## Deferred / deliberately not built
 
@@ -148,4 +150,5 @@ apps/web/src/
   link, harden `readSearchHistory()` against malformed `localStorage`, and **restart the dev
   server** — Vite on port 4000 was still serving the stale pre-fix module from memory.
 - `PinCard`/`PinGrid` gained `showMeta`; Home and Explore pass `false` so cards are image-only
-  while other pages keep the title/creator row.
+  while other pages keep the title/creator row. Enabled Vite file polling and restarted the
+  dev server because port 4000 was serving the stale pre-change `PinCard` transform.
