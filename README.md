@@ -26,11 +26,11 @@ Open <http://localhost:4000>.
 
 - **Home feed** — responsive masonry, hover Save/Share/More actions
 - **Explore** — category filters over the curated catalogue
-- **Search** — full-text search over titles, makers, tags and descriptions
+- **Search** — YouTube-style live suggestions after every keystroke (closest titles, makers, categories and tags, typo-tolerant), recent-search history, highlighted matches, arrow-key navigation and "Did you mean" on no-result pages
 - **Pin detail** — large preview, creator row with Follow, Like, Save, tags, comments (persisted locally), "Visit site", related pins
 - **Saved** — auto-generated boards grouped by category, with a stacked-image board preview
 - **Profile** — Saved / Likes / Created tabs, stats, share and edit-profile actions
-- **Mobile** — bottom navigation, 2-column masonry, compact search icon that opens a full search sheet with trending tags, categories and live suggestions (all header icons stay visible)
+- **Mobile** — bottom navigation, 2-column masonry, compact search icon that opens a full search sheet with recent/trending suggestions, categories and live results (all header icons stay visible)
 
 Saved pins, likes, follows and comments persist in `localStorage` under the `scroll.v1.*` keys. There is no backend yet.
 

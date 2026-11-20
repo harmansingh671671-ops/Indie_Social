@@ -1,28 +1,42 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, Search, Sparkles, X } from 'lucide-react';
-import { CATEGORIES, SITES, TRENDING_TAGS } from '../../data/sites';
+import { ArrowUpRight, Search, X } from 'lucide-react';
+import { CATEGORIES, SITES } from '../../data/sites';
 import { ROUTES } from '../../config/site';
-import { searchSites } from '../../lib/feed';
+import {
+  clearSearchHistory,
+  forgetSearch,
+  getSuggestions,
+  readSearchHistory,
+  rememberSearch,
+  type Suggestion,
+} from '../../lib/search';
 import { posterFor } from '../../lib/posters';
 import { IconButton } from '../common/IconButton';
+import { SearchSuggestions } from '../search/SearchSuggestions';
 
 /**
  * On phones the header shows just a search icon. Tapping it opens this sheet
- * with trending tags, categories and live suggestions.
+ * with recent searches, trending terms, categories and live suggestions.
  */
 export function MobileSearch() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
+  const [active, setActive] = useState(-1);
+  const [history, setHistory] = useState<string[]>(() => readSearchHistory());
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemo(() => searchSites(SITES, value).slice(0, 5), [value]);
+  const suggestions = useMemo(
+    () => getSuggestions(SITES, value, history),
+    [value, history],
+  );
   const popular = useMemo(() => SITES.filter((site) => site.featured).slice(0, 3), []);
 
   useEffect(() => {
     if (!open) return;
+    setHistory(readSearchHistory());
     document.body.classList.add('no-scroll');
     const frame = requestAnimationFrame(() => inputRef.current?.focus());
     const onKeyDown = (event: KeyboardEvent) => {
@@ -35,6 +49,10 @@ export function MobileSearch() {
       document.body.classList.remove('no-scroll');
     };
   }, [open]);
+
+  useEffect(() => {
+    setActive(-1);
+  }, [value]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -56,24 +74,32 @@ export function MobileSearch() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  const go = (path: string) => {
+  const runSearch = (term: string) => {
+    const query = term.trim();
+    setHistory(rememberSearch(query));
     setOpen(false);
     setValue('');
-    navigate(path);
+    navigate(query ? `${ROUTES.search}?q=${encodeURIComponent(query)}` : ROUTES.explore);
   };
 
-  const runSearch = () => {
-    const query = value.trim();
-    go(query ? `${ROUTES.search}?q=${encodeURIComponent(query)}` : ROUTES.explore);
-  };
+  const pick = (suggestion: Suggestion) => runSearch(suggestion.term);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    runSearch();
+    runSearch(value);
   };
 
-  const searchFor = (term: string) => {
-    go(`${ROUTES.search}?q=${encodeURIComponent(term)}`);
+  const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActive((index) => Math.min(index + 1, suggestions.length - 1));
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActive((index) => Math.max(index - 1, 0));
+    } else if (event.key === 'Enter' && active >= 0 && suggestions[active]) {
+      event.preventDefault();
+      pick(suggestions[active]);
+    }
   };
 
   return (
@@ -107,7 +133,9 @@ export function MobileSearch() {
                   placeholder="Search ideas, makers, feelings…"
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
+                  onKeyDown={onInputKeyDown}
                   aria-label="Search for ideas"
+                  aria-autocomplete="list"
                   autoComplete="off"
                 />
                 {value && (
@@ -129,61 +157,23 @@ export function MobileSearch() {
             </div>
 
             <div className="search-sheet__body">
+              <SearchSuggestions
+                suggestions={suggestions}
+                activeIndex={active}
+                query={value}
+                onPick={pick}
+                onHover={setActive}
+                onRemove={(suggestion) => setHistory(forgetSearch(suggestion.term))}
+                onClearHistory={() => setHistory(clearSearchHistory())}
+                inline
+              />
+
               {value ? (
-                results.length > 0 ? (
-                  <>
-                    <p className="search-sheet__label">Ideas for “{value.trim()}”</p>
-                    <ul className="search-results">
-                      {results.map((site) => (
-                        <li key={site.id}>
-                          <button
-                            type="button"
-                            className="search-result"
-                            onClick={() => go(`/pin/${site.id}`)}
-                          >
-                            <img src={posterFor(site, 120)} alt="" />
-                            <span className="search-result__text">
-                              <strong>{site.title}</strong>
-                              <span>{site.category} · {site.creator}</span>
-                            </span>
-                            <ArrowUpRight size={18} aria-hidden />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      className="search-sheet__all"
-                      onClick={runSearch}
-                    >
-                      See all results <ArrowUpRight size={16} aria-hidden />
-                    </button>
-                  </>
-                ) : (
-                  <div className="search-sheet__empty">
-                    <Search size={26} aria-hidden />
-                    <strong>No ideas matched “{value.trim()}”</strong>
-                    <span>Try “art”, “music”, “calm” or “space”.</span>
-                  </div>
-                )
+                <button type="button" className="search-sheet__all" onClick={() => runSearch(value)}>
+                  Search for “{value.trim()}” <ArrowUpRight size={16} aria-hidden />
+                </button>
               ) : (
                 <>
-                  <p className="search-sheet__label">
-                    <Sparkles size={15} aria-hidden /> Trending searches
-                  </p>
-                  <div className="search-sheet__chips">
-                    {TRENDING_TAGS.map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className="search-chip"
-                        onClick={() => searchFor(tag)}
-                      >
-                        #{tag}
-                      </button>
-                    ))}
-                  </div>
-
                   <p className="search-sheet__label">Browse a category</p>
                   <div className="search-sheet__chips">
                     {CATEGORIES.map((category) => (
@@ -191,7 +181,7 @@ export function MobileSearch() {
                         key={category}
                         type="button"
                         className="search-chip search-chip--dark"
-                        onClick={() => searchFor(category)}
+                        onClick={() => runSearch(category)}
                       >
                         {category}
                       </button>
@@ -205,7 +195,10 @@ export function MobileSearch() {
                         <button
                           type="button"
                           className="search-result"
-                          onClick={() => go(`/pin/${site.id}`)}
+                          onClick={() => {
+                            setOpen(false);
+                            navigate(`/pin/${site.id}`);
+                          }}
                         >
                           <img src={posterFor(site, 120)} alt="" />
                           <span className="search-result__text">

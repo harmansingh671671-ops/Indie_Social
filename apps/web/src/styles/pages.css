@@ -360,3 +360,15 @@
     font-size: 30px !important;
   }
 }
+/* Search: YouTube-style "Did you mean" hint */
+.did-you-mean {
+  margin: 0 auto 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: #fff;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+.did-you-mean a { color: var(--red); font-weight: 700; text-decoration: underline; }

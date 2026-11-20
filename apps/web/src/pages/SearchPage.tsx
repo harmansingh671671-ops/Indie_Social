@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { SearchX } from 'lucide-react';
 import { CATEGORIES, SITES } from '../data/sites';
 import { filterByCategory, searchSites } from '../lib/feed';
+import { getSuggestions } from '../lib/search';
 import { CategoryChips } from '../components/feed/CategoryChips';
 import { PinGrid } from '../components/feed/PinGrid';
 import { PageHeader } from '../components/layout/PageHeader';
@@ -18,6 +19,10 @@ export function SearchPage() {
 
   const results = useMemo(() => searchSites(SITES, query), [query]);
   const visible = useMemo(() => filterByCategory(results, category), [results, category]);
+  const didYouMean = useMemo(() => {
+    if (!query.trim() || results.length > 0) return undefined;
+    return getSuggestions(SITES, query, [], 6).find((item) => item.kind !== 'search');
+  }, [query, results.length]);
 
   return (
     <div className="page">
@@ -41,6 +46,16 @@ export function SearchPage() {
           />
           <PinGrid sites={visible} />
         </>
+      )}
+
+      {results.length === 0 && didYouMean && (
+        <p className="did-you-mean">
+          Did you mean{' '}
+          <Link to={`${ROUTES.search}?q=${encodeURIComponent(didYouMean.term)}`}>
+            {didYouMean.label}
+          </Link>
+          ?
+        </p>
       )}
 
       {results.length === 0 && (

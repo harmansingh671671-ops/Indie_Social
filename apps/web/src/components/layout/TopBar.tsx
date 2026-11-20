@@ -1,11 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
+import { SITES } from '../../data/sites';
+import {
+  clearSearchHistory,
+  forgetSearch,
+  getSuggestions,
+  readSearchHistory,
+  rememberSearch,
+  type Suggestion,
+} from '../../lib/search';
 import { Avatar } from '../common/Avatar';
 import { IconButton } from '../common/IconButton';
-import { MobileSearch } from './MobileSearch';
 import { useToast } from '../common/Toast';
+import { MobileSearch } from './MobileSearch';
+import { SearchSuggestions } from '../search/SearchSuggestions';
 
 export function TopBar() {
   const navigate = useNavigate();
@@ -15,11 +25,23 @@ export function TopBar() {
 
   const urlQuery = params.get('q') ?? '';
   const [value, setValue] = useState(urlQuery);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const [history, setHistory] = useState<string[]>(() => readSearchHistory());
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const suggestions = useMemo(
+    () => getSuggestions(SITES, value, history),
+    [value, history],
+  );
 
   useEffect(() => {
     setValue(urlQuery);
   }, [urlQuery, location.pathname]);
+
+  useEffect(() => {
+    setActive(-1);
+  }, [value]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -41,10 +63,38 @@ export function TopBar() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  const runSearch = (term: string) => {
+    const query = term.trim();
+    setHistory(rememberSearch(query));
+    setOpen(false);
+    setActive(-1);
+    navigate(query ? `${ROUTES.search}?q=${encodeURIComponent(query)}` : ROUTES.explore);
+  };
+
+  const pick = (suggestion: Suggestion) => {
+    runSearch(suggestion.term);
+  };
+
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    const query = value.trim();
-    navigate(query ? `${ROUTES.search}?q=${encodeURIComponent(query)}` : ROUTES.explore);
+    runSearch(value);
+  };
+
+  const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setOpen(true);
+      setActive((index) => Math.min(index + 1, suggestions.length - 1));
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActive((index) => Math.max(index - 1, 0));
+    } else if (event.key === 'Escape') {
+      setOpen(false);
+      setActive(-1);
+    } else if (event.key === 'Enter' && active >= 0 && suggestions[active]) {
+      event.preventDefault();
+      pick(suggestions[active]);
+    }
   };
 
   return (
@@ -65,8 +115,18 @@ export function TopBar() {
           type="search"
           placeholder="Search for ideas"
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => {
+            setValue(event.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => {
+            setHistory(readSearchHistory());
+            setOpen(true);
+          }}
+          onBlur={() => setOpen(false)}
+          onKeyDown={onInputKeyDown}
           aria-label="Search for ideas"
+          aria-autocomplete="list"
           autoComplete="off"
         />
         {value && (
@@ -81,6 +141,17 @@ export function TopBar() {
           >
             <X size={16} />
           </IconButton>
+        )}
+        {open && (
+          <SearchSuggestions
+            suggestions={suggestions}
+            activeIndex={active}
+            query={value}
+            onPick={pick}
+            onHover={setActive}
+            onRemove={(suggestion) => setHistory(forgetSearch(suggestion.term))}
+            onClearHistory={() => setHistory(clearSearchHistory())}
+          />
         )}
       </form>
 
