@@ -21,7 +21,7 @@
 @media (hover: hover) {
   .masonry:has(.pin-card:hover) .pin-card:not(:hover),
   .masonry:has(.pin-card:focus-within) .pin-card:not(:focus-within) {
-    filter: blur(1px);
+    filter: blur(0.5px);
   }
 }
 

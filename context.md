@@ -155,5 +155,5 @@ apps/web/src/
   dev server because port 4000 was serving the stale pre-change `PinCard` transform.
 - Retired the 4001 preview server; all verification is done on the 4000 dev server.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
-  behind it; the other cards in the feed blur 1px while one is hovered/focused; removed the
+  behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright).
