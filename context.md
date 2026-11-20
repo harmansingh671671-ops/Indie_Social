@@ -154,5 +154,5 @@ apps/web/src/
   while other pages keep the title/creator row. Enabled Vite file polling and restarted the
   dev server because port 4000 was serving the stale pre-change `PinCard` transform.
 - Retired the 4001 preview server; all verification is done on the 4000 dev server.
-- Card hover: the whole card lifts 4px with a blurred halo behind it; removed the inner image
-  zoom and the dark dimming overlay (posters stay bright on hover).
+- Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
+  behind it; removed the inner image zoom and the dark dimming overlay (posters stay bright).

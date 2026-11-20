@@ -36,7 +36,7 @@
 .pin-card:hover,
 .pin-card:focus-within {
   z-index: 2;
-  transform: translateY(-4px);
+  transform: scale(1.02);
 }
 
 .pin-card:hover::before,
