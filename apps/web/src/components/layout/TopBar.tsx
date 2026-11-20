@@ -23,7 +23,9 @@ export function TopBar() {
   }, [urlQuery, location.pathname]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
+    // A negative scrollY means the page is rubber-banding above the top; keep
+    // the island on so the bar does not flicker between styles mid-stretch.
+    const onScroll = () => setScrolled(window.scrollY > 16 || window.scrollY < 0);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
