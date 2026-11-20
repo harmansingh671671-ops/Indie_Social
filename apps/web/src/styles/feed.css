@@ -14,7 +14,15 @@
   position: relative;
   z-index: 0;
   display: block;
-  transition: transform 0.2s var(--ease);
+  transition: transform 0.2s var(--ease), filter 0.2s var(--ease);
+}
+
+/* While one card is active, soften the rest of the feed behind it. */
+@media (hover: hover) {
+  .masonry:has(.pin-card:hover) .pin-card:not(:hover),
+  .masonry:has(.pin-card:focus-within) .pin-card:not(:focus-within) {
+    filter: blur(2px);
+  }
 }
 
 /* A soft frosted halo behind the lifted card blurs its surroundings without
