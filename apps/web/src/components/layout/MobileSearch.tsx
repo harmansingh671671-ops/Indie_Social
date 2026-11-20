@@ -2,23 +2,21 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Search, X } from 'lucide-react';
-import { CATEGORIES, SITES } from '../../data/sites';
+import { SITES } from '../../data/sites';
 import { ROUTES } from '../../config/site';
 import {
-  clearSearchHistory,
   forgetSearch,
   getSuggestions,
   readSearchHistory,
   rememberSearch,
   type Suggestion,
 } from '../../lib/search';
-import { posterFor } from '../../lib/posters';
 import { IconButton } from '../common/IconButton';
 import { SearchSuggestions } from '../search/SearchSuggestions';
 
 /**
  * On phones the header shows just a search icon. Tapping it opens this sheet
- * with recent searches, trending terms, categories and live suggestions.
+ * with recent searches, trending terms and live suggestions.
  */
 export function MobileSearch() {
   const navigate = useNavigate();
@@ -32,8 +30,6 @@ export function MobileSearch() {
     () => getSuggestions(SITES, value, history),
     [value, history],
   );
-  const popular = useMemo(() => SITES.filter((site) => site.featured).slice(0, 3), []);
-
   useEffect(() => {
     if (!open) return;
     setHistory(readSearchHistory());
@@ -164,53 +160,13 @@ export function MobileSearch() {
                 onPick={pick}
                 onHover={setActive}
                 onRemove={(suggestion) => setHistory(forgetSearch(suggestion.term))}
-                onClearHistory={() => setHistory(clearSearchHistory())}
                 inline
               />
 
-              {value ? (
+              {value && (
                 <button type="button" className="search-sheet__all" onClick={() => runSearch(value)}>
                   Search for “{value.trim()}” <ArrowUpRight size={16} aria-hidden />
                 </button>
-              ) : (
-                <>
-                  <p className="search-sheet__label">Browse a category</p>
-                  <div className="search-sheet__chips">
-                    {CATEGORIES.map((category) => (
-                      <button
-                        key={category}
-                        type="button"
-                        className="search-chip search-chip--dark"
-                        onClick={() => runSearch(category)}
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="search-sheet__label">Popular right now</p>
-                  <ul className="search-results">
-                    {popular.map((site) => (
-                      <li key={site.id}>
-                        <button
-                          type="button"
-                          className="search-result"
-                          onClick={() => {
-                            setOpen(false);
-                            navigate(`/pin/${site.id}`);
-                          }}
-                        >
-                          <img src={posterFor(site, 120)} alt="" />
-                          <span className="search-result__text">
-                            <strong>{site.title}</strong>
-                            <span>{site.category} · {site.creator}</span>
-                          </span>
-                          <ArrowUpRight size={18} aria-hidden />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
               )}
             </div>
           </div>

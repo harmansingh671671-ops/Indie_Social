@@ -42,7 +42,6 @@ interface SearchSuggestionsProps {
   onPick: (suggestion: Suggestion) => void;
   onHover: (index: number) => void;
   onRemove?: (suggestion: Suggestion) => void;
-  onClearHistory?: () => void;
   inline?: boolean;
 }
 
@@ -53,7 +52,6 @@ export function SearchSuggestions({
   onPick,
   onHover,
   onRemove,
-  onClearHistory,
   inline = false,
 }: SearchSuggestionsProps) {
   if (suggestions.length === 0) return null;
@@ -104,11 +102,6 @@ export function SearchSuggestions({
         <>
           <div className="suggestions__head">
             <span>Recent searches</span>
-            {onClearHistory && (
-              <button type="button" className="suggestions__clear" onClick={onClearHistory}>
-                Clear
-              </button>
-            )}
           </div>
           {recent.map((suggestion, index) => row(suggestion, index))}
         </>

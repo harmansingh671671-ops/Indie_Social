@@ -4,7 +4,6 @@ import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
 import { SITES } from '../../data/sites';
 import {
-  clearSearchHistory,
   forgetSearch,
   getSuggestions,
   readSearchHistory,
@@ -150,7 +149,6 @@ export function TopBar() {
             onPick={pick}
             onHover={setActive}
             onRemove={(suggestion) => setHistory(forgetSearch(suggestion.term))}
-            onClearHistory={() => setHistory(clearSearchHistory())}
           />
         )}
       </form>
