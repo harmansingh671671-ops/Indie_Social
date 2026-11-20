@@ -622,3 +622,13 @@
   text-transform: none;
 }
 .suggestions__divider { height: 1px; margin: 6px 10px; background: var(--line); }
+/* Keep search panels scrollable but hide the scrollbar track. */
+.search-sheet__body,
+.suggestions {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.search-sheet__body::-webkit-scrollbar,
+.suggestions::-webkit-scrollbar {
+  display: none;
+}
