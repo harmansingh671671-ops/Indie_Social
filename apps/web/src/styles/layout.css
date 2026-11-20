@@ -19,46 +19,52 @@
   height: var(--header-h);
   padding: 8px 16px;
   background-color: transparent;
-  /* Blurs page content in the gaps that open around the pill (including the
-     strip above it) once the bar morphs into an island. */
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   transition: padding-inline 0.32s var(--ease);
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .topbar {
-    backdrop-filter: blur(12px);
-  }
+.topbar > * {
+  position: relative;
+  z-index: 2;
 }
 
-/* Frosted bottom edge: content sliding under the solid bar gets blurred and
-   faded instead of ending on a hard line. Hidden when the island is active. */
+/* A blur band behind the island: strongest at the very top of the screen and
+   fading to nothing just below the island. The island pill sits on top. */
 .topbar::after {
   content: '';
   position: absolute;
-  top: 100%;
+  top: 0;
   right: 0;
   left: 0;
-  height: 24px;
-  z-index: -1;
+  height: calc(var(--header-h) + 28px);
+  z-index: 0;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  opacity: 0;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.85) 45%,
+    rgb(0 0 0 / 0.35) 75%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.85) 45%,
+    rgb(0 0 0 / 0.35) 75%,
+    transparent 100%
+  );
   transition: opacity 0.28s var(--ease);
 }
 
-/* The bar itself is this surface: full-bleed and solid at the top, morphing
-   into a floating pill on scroll. It stays opaque the whole time so the
-   transition never flashes transparent. */
+/* The bar surface: full and solid at the top, morphing into the floating
+   island pill on scroll. It stays opaque throughout so nothing flashes. */
 .topbar::before {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   border-radius: 0;
   background: var(--surface);
   box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.28);
@@ -78,7 +84,7 @@
 }
 
 .topbar--island::after {
-  opacity: 0;
+  opacity: 1;
 }
 
 .logo {
