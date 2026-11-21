@@ -10,9 +10,9 @@ import {
   ArrowLeft,
   Bookmark,
   Check,
-  ChevronDown,
-  ChevronUp,
   ExternalLink,
+  Eye,
+  EyeOff,
   Flag,
   MoreHorizontal,
   Share2,
@@ -41,6 +41,8 @@ interface PendingScroll {
   preserved?: number;
 }
 
+const NAV_ITEM_H = 40;
+
 /** Immersive full-screen vertical feed of fully interactive websites. */
 export function EngagePage() {
   const { id } = useParams();
@@ -60,14 +62,29 @@ export function EngagePage() {
   );
   const [active, setActive] = useState(0);
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
+  const [chromeHidden, setChromeHidden] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
   const pendingRef = useRef<PendingScroll | null>(null);
   const targetRef = useRef(0);
   const animatingRef = useRef(false);
+  const navigatorSyncRef = useRef(false);
   const copyTimerRef = useRef<number | null>(null);
   const settleRef = useRef<{ top: number; until: number } | null>(null);
   const settleTimerRef = useRef<number | null>(null);
+
+  const activeEntry = entries[active] ?? entries[0];
+  const activeSite = activeEntry.site;
+  const saved = isSaved(activeSite.id);
+  const liked = isLiked(activeSite.id);
+  const following = isFollowing(activeSite.creatorHandle);
+
+  // Keep latest values reachable from listeners attached once.
+  const activeRef = useRef(active);
+  activeRef.current = active;
+  const entriesRef = useRef(entries);
+  entriesRef.current = entries;
 
   const makeCycle = useCallback(
     (): FeedEntry[] => {
@@ -224,10 +241,10 @@ export function EngagePage() {
     setActive(index);
     animateStep(index);
   };
+  const goToRef = useRef(goTo);
+  goToRef.current = goTo;
 
-  const step = (amount: number) => {
-    goTo(targetRef.current + amount);
-  };
+  const step = (amount: number) => goTo(targetRef.current + amount);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -244,6 +261,34 @@ export function EngagePage() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   });
+
+  // Keep the thumbnail navigator centred on the active website.
+  useEffect(() => {
+    const strip = navigatorRef.current;
+    if (!strip) return undefined;
+    navigatorSyncRef.current = true;
+    strip.scrollTo({ top: active * NAV_ITEM_H, behavior: 'smooth' });
+    const timer = window.setTimeout(() => {
+      navigatorSyncRef.current = false;
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [active, entries.length, chromeHidden]);
+
+  // Let the navigator drive the feed when the user scrolls or flings it.
+  useEffect(() => {
+    const strip = navigatorRef.current;
+    if (!strip) return undefined;
+    const onEnd = () => {
+      if (navigatorSyncRef.current) return;
+      const index = Math.round(strip.scrollTop / NAV_ITEM_H);
+      const list = entriesRef.current;
+      if (index >= 0 && index < list.length && index !== activeRef.current) {
+        goToRef.current(index);
+      }
+    };
+    strip.addEventListener('scrollend', onEnd);
+    return () => strip.removeEventListener('scrollend', onEnd);
+  }, [chromeHidden]);
 
   const pop = (element: HTMLElement) => {
     element.classList.remove('is-popping');
@@ -262,165 +307,176 @@ export function EngagePage() {
   return (
     <div className="engage">
       <div className="engage__scroller" ref={scrollerRef}>
-        {entries.map((entry, index) => {
-          const item = entry.site;
-          // Only the current slide and its two neighbours load a real website.
-          const distance = Math.abs(index - active);
-          const loadWebsite = distance <= 2;
-          const saved = isSaved(item.id);
-          const liked = isLiked(item.id);
-          const following = isFollowing(item.creatorHandle);
-
-          return (
-            <section className="engage__slide" key={entry.uid}>
-              {loadWebsite ? (
-                <iframe
-                  className="engage__frame"
-                  src={item.url}
-                  title={`Interactive website: ${item.title}`}
-                  inert={distance !== 0}
-                  loading={distance <= 1 ? 'eager' : 'lazy'}
-                  allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              ) : (
-                <img className="engage__poster" src={posterFor(item)} alt="" />
-              )}
-
-              <div className="engage__meta">
-                <div className="engage__creator">
-                  <Avatar name={item.creator} size={32} />
-                  <span className="engage__handle">@{item.creatorHandle}</span>
-                  <button
-                    type="button"
-                    className="engage__follow"
-                    onClick={(event) => {
-                      toggleFollow(item.creatorHandle);
-                      pop(event.currentTarget);
-                    }}
-                  >
-                    {following ? 'Following' : 'Follow'}
-                  </button>
-                </div>
-                <h1 className="engage__title">Untitled experience</h1>
-              </div>
-
-              <div className="engage__actions">
-                <div className="engage__tool">
-                  <button
-                    type="button"
-                    className="engage__action"
-                    aria-label={liked ? 'Unlike this site' : 'Like this site'}
-                    aria-pressed={liked}
-                    onClick={() => toggleLike(item.id)}
-                  >
-                    <span className="engage__icon-swap" key={liked ? 'liked' : 'like'}>
-                      <Star size={23} fill={liked ? 'currentColor' : 'none'} />
-                    </span>
-                  </button>
-                  <span className="engage__tool-label">
-                    {formatCount(item.likes + (liked ? 1 : 0))}
-                  </span>
-                </div>
-
-                <div className="engage__tool">
-                  <button
-                    type="button"
-                    className="engage__action"
-                    aria-label="Save to your sites"
-                    aria-pressed={saved}
-                    onClick={(event) => {
-                      toggleSave(item.id);
-                      pop(event.currentTarget);
-                    }}
-                  >
-                    <span className="engage__icon-swap" key={saved ? 'saved' : 'save'}>
-                      {saved ? <Check size={23} /> : <Bookmark size={23} />}
-                    </span>
-                  </button>
-                  <span className="engage__tool-label">{saved ? 'Saved' : 'Save'}</span>
-                </div>
-
-                <div className="engage__tool">
-                  <button
-                    type="button"
-                    className="engage__action"
-                    aria-label="Share site"
-                    onClick={(event) => {
-                      pop(event.currentTarget);
-                      void share(siteLink(item), entry.uid);
-                    }}
-                  >
-                    <span className="engage__icon-swap" key={copiedUid === entry.uid ? 'copied' : 'share'}>
-                      {copiedUid === entry.uid ? <Check size={23} /> : <Share2 size={23} />}
-                    </span>
-                  </button>
-                  <span className="engage__tool-label">
-                    {copiedUid === entry.uid ? 'Copied' : 'Share'}
-                  </span>
-                </div>
-
-                <div className="engage__tool">
-                  <ActionMenu
-                    label="More options"
-                    align="right"
-                    direction="up"
-                    iconVariant="light"
-                    trigger={<MoreHorizontal size={23} />}
-                    items={[
-                      {
-                        label: 'Open website',
-                        icon: <ExternalLink size={17} />,
-                        onSelect: () => openSite(item.url),
-                      },
-                      {
-                        label: 'Report',
-                        icon: <Flag size={17} />,
-                        danger: true,
-                        onSelect: () => undefined,
-                      },
-                    ]}
-                  />
-                  <span className="engage__tool-label">More</span>
-                </div>
-
-                <div className="engage__tool">
-                  <button
-                    type="button"
-                    className="engage__action"
-                    aria-label="Visit website"
-                    onClick={() => openSite(item.url)}
-                  >
-                    <ExternalLink size={23} />
-                  </button>
-                  <span className="engage__tool-label">Visit</span>
-                </div>
-              </div>
-            </section>
-          );
-        })}
+        {entries.map((entry) => (
+          <section className="engage__slide" key={entry.uid}>
+            {Math.abs(entries.indexOf(entry) - active) <= 2 ? (
+              <iframe
+                className="engage__frame"
+                src={entry.site.url}
+                title={`Interactive website: ${entry.site.title}`}
+                inert={Math.abs(entries.indexOf(entry) - active) !== 0}
+                loading={Math.abs(entries.indexOf(entry) - active) <= 1 ? 'eager' : 'lazy'}
+                allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <img className="engage__poster" src={posterFor(entry.site)} alt="" />
+            )}
+          </section>
+        ))}
       </div>
 
-      <button type="button" className="engage__back" aria-label="Back" onClick={() => navigate(-1)}>
-        <ArrowLeft size={20} />
-      </button>
+      {!chromeHidden && (
+        <>
+          <div className="engage__meta">
+            <div className="engage__creator">
+              <Avatar name={activeSite.creator} size={32} />
+              <span className="engage__handle">@{activeSite.creatorHandle}</span>
+              <button
+                type="button"
+                className="engage__follow"
+                onClick={(event) => {
+                  toggleFollow(activeSite.creatorHandle);
+                  pop(event.currentTarget);
+                }}
+              >
+                {following ? 'Following' : 'Follow'}
+              </button>
+            </div>
+            <h1 className="engage__title">Untitled experience</h1>
+          </div>
+
+          <div className="engage__rail">
+            <div className="engage__navigator" ref={navigatorRef} aria-label="Website navigator">
+              {entries.map((entry, index) => (
+                <button
+                  key={entry.uid}
+                  type="button"
+                  className={`engage__nav-item${index === active ? ' is-current' : ''}`}
+                  aria-label={`Go to ${entry.site.title}`}
+                  onClick={() => goTo(index)}
+                >
+                  <img src={posterFor(entry.site, 96)} alt="" />
+                </button>
+              ))}
+            </div>
+
+            <div className="engage__actions">
+              <div className="engage__tool">
+                <button
+                  type="button"
+                  className="engage__action"
+                  aria-label={liked ? 'Unlike this site' : 'Like this site'}
+                  aria-pressed={liked}
+                  onClick={() => toggleLike(activeSite.id)}
+                >
+                  <span className="engage__icon-swap" key={liked ? 'liked' : 'like'}>
+                    <Star size={23} fill={liked ? 'currentColor' : 'none'} />
+                  </span>
+                </button>
+                <span className="engage__tool-label">
+                  {formatCount(activeSite.likes + (liked ? 1 : 0))}
+                </span>
+              </div>
+
+              <div className="engage__tool">
+                <button
+                  type="button"
+                  className="engage__action"
+                  aria-label="Save to your sites"
+                  aria-pressed={saved}
+                  onClick={(event) => {
+                    toggleSave(activeSite.id);
+                    pop(event.currentTarget);
+                  }}
+                >
+                  <span className="engage__icon-swap" key={saved ? 'saved' : 'save'}>
+                    {saved ? <Check size={23} /> : <Bookmark size={23} />}
+                  </span>
+                </button>
+                <span className="engage__tool-label">{saved ? 'Saved' : 'Save'}</span>
+              </div>
+
+              <div className="engage__tool">
+                <button
+                  type="button"
+                  className="engage__action"
+                  aria-label="Share site"
+                  onClick={(event) => {
+                    pop(event.currentTarget);
+                    void share(siteLink(activeSite), activeEntry.uid);
+                  }}
+                >
+                  <span
+                    className="engage__icon-swap"
+                    key={copiedUid === activeEntry.uid ? 'copied' : 'share'}
+                  >
+                    {copiedUid === activeEntry.uid ? <Check size={23} /> : <Share2 size={23} />}
+                  </span>
+                </button>
+                <span className="engage__tool-label">
+                  {copiedUid === activeEntry.uid ? 'Copied' : 'Share'}
+                </span>
+              </div>
+
+              <div className="engage__tool">
+                <ActionMenu
+                  label="More options"
+                  align="right"
+                  direction="up"
+                  iconVariant="light"
+                  trigger={<MoreHorizontal size={23} />}
+                  items={[
+                    {
+                      label: 'Open website',
+                      icon: <ExternalLink size={17} />,
+                      onSelect: () => openSite(activeSite.url),
+                    },
+                    {
+                      label: 'Report',
+                      icon: <Flag size={17} />,
+                      danger: true,
+                      onSelect: () => undefined,
+                    },
+                  ]}
+                />
+                <span className="engage__tool-label">More</span>
+              </div>
+
+              <div className="engage__tool">
+                <button
+                  type="button"
+                  className="engage__action"
+                  aria-label="Visit website"
+                  onClick={() => openSite(activeSite.url)}
+                >
+                  <ExternalLink size={23} />
+                </button>
+                <span className="engage__tool-label">Visit</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="engage__back"
+            aria-label="Back"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </>
+      )}
 
       <button
         type="button"
-        className="engage__nav engage__nav--up"
-        aria-label="Previous website"
-        onClick={() => step(-1)}
+        className="engage__hide"
+        aria-label={chromeHidden ? 'Show controls' : 'Hide controls'}
+        aria-pressed={chromeHidden}
+        onClick={() => setChromeHidden((value) => !value)}
       >
-        <ChevronUp size={22} />
-      </button>
-      <button
-        type="button"
-        className="engage__nav engage__nav--down"
-        aria-label="Next website"
-        onClick={() => step(1)}
-      >
-        <ChevronDown size={22} />
+        {chromeHidden ? <Eye size={19} /> : <EyeOff size={19} />}
       </button>
     </div>
   );

@@ -201,6 +201,13 @@ apps/web/src/
   after a copy). The expanding glow/wave was removed. The star uses its own `engage-star-spin`
   the Share tool label changes to "Copied" for the same 1.6s; the star uses the same
   `engage-icon-in` change animation as Save. The Report menu item is a no-op.
+- Engage navigation redesigned: removed the top/bottom arrows. A single page-level right rail
+  now holds a pill-shaped, snap-scrolling thumbnail navigator (previous / current / next,
+  cropped local posters) above the action buttons. Scrolling or flinging the strip drives the
+  feed via `scrollend`; clicking a thumbnail jumps to that site. The main website can still be
+  scrolled/swiped directly and stays in sync. A top-right hide button toggles all overlays
+  (back arrow, meta, rail/actions, navigator); only the hide button remains when hidden.
+  The per-slide meta/action controls were moved out of the slides into one page-level overlay.
 - Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
   snapping is temporarily disabled). The earlier CSS-transform version made cross-origin
   iframes render dark until repaint, so it was replaced. A short `focusin` guard blurs iframes
