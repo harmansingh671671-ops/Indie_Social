@@ -27,7 +27,7 @@ Open <http://localhost:4000>.
 - **Home feed** — responsive masonry, hover Save/Share/More actions
 - **Explore** — category filters over the curated catalogue
 - **Search** — YouTube-style live suggestions after every keystroke (closest titles, makers, categories and tags, typo-tolerant), recent-search history, highlighted matches, arrow-key navigation and "Did you mean" on no-result pages
-- **Engage** — full-screen vertical stream opened from any card. The active site and its two neighbours load in iframes so they are fully interactive; other cards show their local poster
+- **Engage** — full-screen vertical stream opened from any card. The active site and its two neighbours load in iframes so they are fully interactive; other cards show their local poster. The side rail also has a shuffle button that opens a random site in Engage
 - **Saved** — auto-generated collections grouped by category, with a stacked-image preview
 - **Profile** — Saved / Likes / Created tabs, stats, share and edit-profile actions
 - **Mobile** — bottom navigation, 2-column masonry, compact search icon that opens a full search sheet with recent/trending suggestions and live results (all header icons stay visible)

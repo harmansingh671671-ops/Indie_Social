@@ -26,6 +26,7 @@ export const siteConfig = {
 
 export const ROUTES = {
   home: '/',
+  engage: '/engage',
   explore: '/explore',
   search: '/search',
   saved: '/saved',

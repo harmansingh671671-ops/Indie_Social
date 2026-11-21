@@ -1,6 +1,15 @@
-import { NavLink } from 'react-router-dom';
-import { Bookmark, Compass, HelpCircle, Home, Settings } from 'lucide-react';
+import { Fragment } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  Bookmark,
+  Compass,
+  HelpCircle,
+  Home,
+  Settings,
+  Shuffle,
+} from 'lucide-react';
 import { ROUTES } from '../../config/site';
+import { SITES } from '../../data/sites';
 import { cn } from '../../lib/format';
 
 const NAV_ITEMS = [
@@ -10,20 +19,41 @@ const NAV_ITEMS = [
 ];
 
 export function SideRail() {
+  const navigate = useNavigate();
+
+  const openRandomSite = () => {
+    const site = SITES[Math.floor(Math.random() * SITES.length)];
+    navigate(`${ROUTES.engage}/${site.id}`);
+  };
+
   return (
     <aside className="rail" aria-label="Primary">
       <div className="rail__group">
-        {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) => cn('rail__item', isActive && 'is-active')}
-            title={item.label}
-          >
-            <item.icon size={24} strokeWidth={1.8} />
-            <span className="rail__tooltip">{item.label}</span>
-          </NavLink>
+        {NAV_ITEMS.map((item, index) => (
+          <Fragment key={item.to}>
+            <NavLink
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) => cn('rail__item', isActive && 'is-active')}
+              title={item.label}
+            >
+              <item.icon size={24} strokeWidth={1.8} />
+              <span className="rail__tooltip">{item.label}</span>
+            </NavLink>
+
+            {index === 1 && (
+              <button
+                type="button"
+                className="rail__item"
+                onClick={openRandomSite}
+                title="Engage — open a random site"
+                aria-label="Engage — open a random site"
+              >
+                <Shuffle size={24} strokeWidth={1.8} />
+                <span className="rail__tooltip">Engage</span>
+              </button>
+            )}
+          </Fragment>
         ))}
       </div>
 
