@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   ArrowLeft,
   Bookmark,
@@ -17,9 +24,25 @@ import { buildHomeFeed } from '../lib/feed';
 import { posterFor } from '../lib/posters';
 import { copyText, openSite, siteLink } from '../lib/share';
 import { useAppState } from '../state/AppState';
+import type { Site } from '../types';
 import { Avatar } from '../components/common/Avatar';
 import { ActionMenu } from '../components/common/ActionMenu';
 import { useToast } from '../components/common/Toast';
+
+interface FeedEntry {
+  site: Site;
+  /** Stable across prepends/appends so the iframe for the current site never remounts. */
+  uid: string;
+}
+
+type ScrollBehavior = 'auto' | 'smooth';
+
+interface PendingScroll {
+  target: number;
+  /** Where the currently visible site lands after a cycle is prepended. */
+  preserved?: number;
+  behavior: ScrollBehavior;
+}
 
 /** Immersive full-screen vertical feed of fully interactive websites. */
 export function EngagePage() {
@@ -35,30 +58,125 @@ export function EngagePage() {
     return index < 0 ? ordered : [...ordered.slice(index), ...ordered.slice(0, index)];
   }, [id]);
 
+  const [entries, setEntries] = useState<FeedEntry[]>(() =>
+    feed.map((site) => ({ site, uid: `0:${site.id}` })),
+  );
   const [active, setActive] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const cycleIdRef = useRef(0);
+  const pendingRef = useRef<PendingScroll | null>(null);
+  const targetRef = useRef(0);
 
+  const makeCycle = useCallback(
+    (): FeedEntry[] => {
+      cycleIdRef.current += 1;
+      const cycle = cycleIdRef.current;
+      return feed.map((site) => ({ site, uid: `${cycle}:${site.id}` }));
+    },
+    [feed],
+  );
+
+  // A new starting site resets the stream to a single cycle.
+  useEffect(() => {
+    cycleIdRef.current = 0;
+    pendingRef.current = null;
+    targetRef.current = 0;
+    setEntries(feed.map((site) => ({ site, uid: `0:${site.id}` })));
+    setActive(0);
+    const scroller = scrollerRef.current;
+    if (scroller) scroller.scrollTop = 0;
+  }, [feed]);
+
+  // Apply a prepend (which shifts every index) before the browser paints.
+  useLayoutEffect(() => {
+    const pending = pendingRef.current;
+    const scroller = scrollerRef.current;
+    if (!pending || !scroller) return;
+    pendingRef.current = null;
+    if (pending.preserved !== undefined) {
+      scroller.scrollTop = pending.preserved * scroller.clientHeight;
+    }
+    scroller.scrollTo({
+      top: pending.target * scroller.clientHeight,
+      behavior: pending.behavior,
+    });
+    targetRef.current = pending.target;
+    setActive(pending.target);
+  }, [entries]);
+
+  // Keep one extra cycle buffered above and below so reaching either edge extends
+  // the stream instead of jumping back to the beginning.
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return undefined;
+
     const onScroll = () => {
-      setActive(
-        Math.min(feed.length - 1, Math.round(scroller.scrollTop / scroller.clientHeight)),
-      );
+      if (pendingRef.current) return;
+      const index = Math.round(scroller.scrollTop / scroller.clientHeight);
+      setActive(index);
+
+      if (index >= entries.length - 1) {
+        const next = makeCycle();
+        setEntries((current) => [...current, ...next]);
+      } else if (index <= 0 && entries.length > feed.length) {
+        const previous = makeCycle();
+        pendingRef.current = {
+          target: index + feed.length,
+          preserved: index + feed.length,
+          behavior: 'auto',
+        };
+        setEntries((current) => [...previous, ...current]);
+      }
     };
+
+    const onScrollEnd = () => {
+      targetRef.current = Math.round(scroller.scrollTop / scroller.clientHeight);
+    };
+
     scroller.addEventListener('scroll', onScroll, { passive: true });
-    return () => scroller.removeEventListener('scroll', onScroll);
-  }, [feed.length]);
+    scroller.addEventListener('scrollend', onScrollEnd);
+    return () => {
+      scroller.removeEventListener('scroll', onScroll);
+      scroller.removeEventListener('scrollend', onScrollEnd);
+    };
+  }, [entries, feed.length, makeCycle]);
 
   const goTo = (index: number) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const next = (index + feed.length) % feed.length;
-    scroller.scrollTo({ top: next * scroller.clientHeight, behavior: 'smooth' });
-    setActive(next);
+
+    if (index < 0) {
+      const previous = makeCycle();
+      const target = index + feed.length;
+      pendingRef.current = {
+        target,
+        preserved: active + feed.length,
+        behavior: 'auto',
+      };
+      targetRef.current = target;
+      setEntries((current) => [...previous, ...current]);
+      return;
+    }
+
+    if (index >= entries.length) {
+      const next = makeCycle();
+      pendingRef.current = { target: index, behavior: 'auto' };
+      targetRef.current = index;
+      setEntries((current) => [...current, ...next]);
+      return;
+    }
+
+    targetRef.current = index;
+    scroller.scrollTo({
+      top: index * scroller.clientHeight,
+      behavior: 'auto',
+    });
+    setActive(index);
   };
 
-  const step = (amount: number) => goTo(active + amount);
+  const step = (amount: number) => {
+    goTo(targetRef.current + amount);
+  };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -84,7 +202,8 @@ export function EngagePage() {
   return (
     <div className="engage">
       <div className="engage__scroller" ref={scrollerRef}>
-        {feed.map((item, index) => {
+        {entries.map((entry, index) => {
+          const item = entry.site;
           // Only the current slide and its two neighbours load a real website.
           const distance = Math.abs(index - active);
           const loadWebsite = distance <= 2;
@@ -92,12 +211,13 @@ export function EngagePage() {
           const following = isFollowing(item.creatorHandle);
 
           return (
-            <section className="engage__slide" key={item.id}>
+            <section className="engage__slide" key={entry.uid}>
               {loadWebsite ? (
                 <iframe
                   className="engage__frame"
                   src={item.url}
                   title={`Interactive website: ${item.title}`}
+                  inert={distance !== 0}
                   loading={distance <= 1 ? 'eager' : 'lazy'}
                   allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
                   allowFullScreen

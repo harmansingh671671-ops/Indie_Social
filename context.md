@@ -191,6 +191,10 @@ apps/web/src/
   changed the accent to indigo (`--accent: #4f46e5`), and made the favicon a black "SH".
 - Added a shuffle/Engage button to the desktop side rail that opens a random website in the
   Engage stream.
+- Engage is now a continuous loop: instead of wrapping by jumping to `scrollTop = 0`, reaching
+  either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
+  current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
+  prevents the browser from shifting the view when a cycle is prepended.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo

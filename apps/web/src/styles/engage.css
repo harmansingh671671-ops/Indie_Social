@@ -18,6 +18,8 @@
 
 .engage__scroller {
   height: 100%;
+  /* Prepend/append cycles must not let the browser shift the scroll position itself. */
+  overflow-anchor: none;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   overscroll-behavior-y: contain;
