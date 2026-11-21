@@ -195,6 +195,10 @@ apps/web/src/
   either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
   current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
   prevents the browser from shifting the view when a cycle is prepended.
+- Engage action stack: all five tools (Like, Save, Share, More, Visit) now share the same
+  violet gradient circle, with a small stroked label underneath each one. Visit is an
+  icon-only button; the old wide "Visit site" pill and the count pill were removed (the like
+  count is now part of the Like label).
 - Engage action stack now has a YouTube-style Like star above Save: it toggles the shared
   `isLiked` state, fills violet when liked and shows a formatted like count. The old "Like"
   item was removed from the More menu. `ActionMenu` gained a `direction="up"` option, used by

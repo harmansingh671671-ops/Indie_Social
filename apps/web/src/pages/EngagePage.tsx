@@ -249,10 +249,10 @@ export function EngagePage() {
               </div>
 
               <div className="engage__actions">
-                <div className="engage__star">
+                <div className="engage__tool">
                   <button
                     type="button"
-                    className={`engage__action engage__action--star${liked ? ' is-liked' : ''}`}
+                    className="engage__action"
                     aria-label={liked ? 'Unlike this site' : 'Like this site'}
                     aria-pressed={liked}
                     onClick={() => {
@@ -260,60 +260,76 @@ export function EngagePage() {
                       showToast(next ? 'Liked' : 'Like removed');
                     }}
                   >
-                    <Star size={25} fill={liked ? 'currentColor' : 'none'} />
+                    <Star size={23} fill={liked ? 'currentColor' : 'none'} />
                   </button>
-                  <span className="engage__star-count">
-                    {formatCount(item.likes + (liked ? 1 : 0))}
+                  <span className="engage__tool-label">
+                    {liked ? 'Liked' : 'Like'} · {formatCount(item.likes + (liked ? 1 : 0))}
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  className={`engage__action engage__action--save${saved ? ' is-saved' : ''}`}
-                  aria-label="Save to your sites"
-                  aria-pressed={saved}
-                  onClick={() => {
-                    const next = toggleSave(item.id);
-                    showToast(next ? 'Saved to your sites' : 'Removed from saved sites');
-                  }}
-                >
-                  {saved ? <Check size={24} /> : <Bookmark size={24} />}
-                </button>
-                <button
-                  type="button"
-                  className="engage__action"
-                  aria-label="Share project"
-                  onClick={() => share(siteLink(item))}
-                >
-                  <Share2 size={22} />
-                </button>
-                <ActionMenu
-                  label="More options"
-                  align="right"
-                  direction="up"
-                  iconVariant="light"
-                  trigger={<MoreHorizontal size={22} />}
-                  items={[
-                    {
-                      label: 'Open website',
-                      icon: <ExternalLink size={17} />,
-                      onSelect: () => openSite(item.url),
-                    },
-                    {
-                      label: 'Report',
-                      icon: <Flag size={17} />,
-                      danger: true,
-                      onSelect: () => showToast('Thanks — this site is queued for review'),
-                    },
-                  ]}
-                />
-                <button
-                  type="button"
-                  className="engage__visit"
-                  onClick={() => openSite(item.url)}
-                >
-                  Visit site <ExternalLink size={15} />
-                </button>
+                <div className="engage__tool">
+                  <button
+                    type="button"
+                    className="engage__action"
+                    aria-label="Save to your sites"
+                    aria-pressed={saved}
+                    onClick={() => {
+                      const next = toggleSave(item.id);
+                      showToast(next ? 'Saved to your sites' : 'Removed from saved sites');
+                    }}
+                  >
+                    {saved ? <Check size={23} /> : <Bookmark size={23} />}
+                  </button>
+                  <span className="engage__tool-label">{saved ? 'Saved' : 'Save'}</span>
+                </div>
+
+                <div className="engage__tool">
+                  <button
+                    type="button"
+                    className="engage__action"
+                    aria-label="Share site"
+                    onClick={() => share(siteLink(item))}
+                  >
+                    <Share2 size={23} />
+                  </button>
+                  <span className="engage__tool-label">Share</span>
+                </div>
+
+                <div className="engage__tool">
+                  <ActionMenu
+                    label="More options"
+                    align="right"
+                    direction="up"
+                    iconVariant="light"
+                    trigger={<MoreHorizontal size={23} />}
+                    items={[
+                      {
+                        label: 'Open website',
+                        icon: <ExternalLink size={17} />,
+                        onSelect: () => openSite(item.url),
+                      },
+                      {
+                        label: 'Report',
+                        icon: <Flag size={17} />,
+                        danger: true,
+                        onSelect: () => showToast('Thanks — this site is queued for review'),
+                      },
+                    ]}
+                  />
+                  <span className="engage__tool-label">More</span>
+                </div>
+
+                <div className="engage__tool">
+                  <button
+                    type="button"
+                    className="engage__action"
+                    aria-label="Visit website"
+                    onClick={() => openSite(item.url)}
+                  >
+                    <ExternalLink size={23} />
+                  </button>
+                  <span className="engage__tool-label">Visit</span>
+                </div>
               </div>
             </section>
           );
