@@ -22,7 +22,7 @@
   z-index: 20;
   pointer-events: none;
   opacity: 1;
-  transition: opacity 0.7s var(--ease);
+  transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .engage__chrome.is-hidden { opacity: 0; }
 .engage__chrome > * { pointer-events: auto; }

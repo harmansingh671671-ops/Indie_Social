@@ -361,7 +361,7 @@ export function EngagePage() {
 
   useEffect(() => {
     if (chromeHidden) return undefined;
-    const timer = window.setTimeout(() => setChromeHidden(true), 5000);
+    const timer = window.setTimeout(() => setChromeHidden(true), 20000);
     return () => window.clearTimeout(timer);
   }, [chromeHidden, activityTick]);
 
