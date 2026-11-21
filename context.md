@@ -198,7 +198,9 @@ apps/web/src/
 - Engage no longer shows toasts for Like/Save/Follow/Share. Those actions animate their icons
   instead: `engage-pop` lifts, tilts, scales and settles the icon back (YouTube-like), and
   `engage-icon-in` drops a changed icon into place (Bookmark -> check, Share -> check for 1.6s
-  after a copy). The expanding glow/wave was removed. The Report menu item is a no-op.
+  after a copy). The expanding glow/wave was removed. The star uses its own `engage-star-spin`
+  (rotate 120°, smash back) instead of the generic pop; the Share tool label changes to
+  "Copied" for the same 1.6s. The Report menu item is a no-op.
 - Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
   snapping is temporarily disabled). The earlier CSS-transform version made cross-origin
   iframes render dark until repaint, so it was replaced. A short `focusin` guard blurs iframes

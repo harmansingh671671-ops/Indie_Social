@@ -310,7 +310,7 @@ export function EngagePage() {
                 <div className="engage__tool">
                   <button
                     type="button"
-                    className="engage__action"
+                    className="engage__action engage__action--star"
                     aria-label={liked ? 'Unlike this site' : 'Like this site'}
                     aria-pressed={liked}
                     onClick={(event) => {
@@ -357,7 +357,9 @@ export function EngagePage() {
                       {copiedUid === entry.uid ? <Check size={23} /> : <Share2 size={23} />}
                     </span>
                   </button>
-                  <span className="engage__tool-label">Share</span>
+                  <span className="engage__tool-label">
+                    {copiedUid === entry.uid ? 'Copied' : 'Share'}
+                  </span>
                 </div>
 
                 <div className="engage__tool">
