@@ -197,8 +197,8 @@ apps/web/src/
   prevents the browser from shifting the view when a cycle is prepended.
 - Engage action stack: all five tools (Like, Save, Share, More, Visit) now share the same
   violet gradient circle, with a small stroked label underneath each one. Visit is an
-  icon-only button; the old wide "Visit site" pill and the count pill were removed (the like
-  count is now part of the Like label).
+  icon-only button; the old wide "Visit site" pill and the count pill were removed. The Like
+  tool's label shows only the formatted like count (no "Like" word).
 - Engage action stack now has a YouTube-style Like star above Save: it toggles the shared
   `isLiked` state, fills violet when liked and shows a formatted like count. The old "Like"
   item was removed from the More menu. `ActionMenu` gained a `direction="up"` option, used by

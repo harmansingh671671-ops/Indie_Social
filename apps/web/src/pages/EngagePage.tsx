@@ -263,7 +263,7 @@ export function EngagePage() {
                     <Star size={23} fill={liked ? 'currentColor' : 'none'} />
                   </button>
                   <span className="engage__tool-label">
-                    {liked ? 'Liked' : 'Like'} · {formatCount(item.likes + (liked ? 1 : 0))}
+                    {formatCount(item.likes + (liked ? 1 : 0))}
                   </span>
                 </div>
 
