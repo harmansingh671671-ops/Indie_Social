@@ -195,9 +195,10 @@ apps/web/src/
   either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
   current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
   prevents the browser from shifting the view when a cycle is prepended.
-- Engage no longer shows toasts for Like/Save/Follow/Share. Those actions now animate their
-  icons instead: a pop + violet glow on the button, and the Share icon swaps to a check for
-  1.6s after a successful copy. The Report menu item is currently a no-op.
+- Engage no longer shows toasts for Like/Save/Follow/Share. Those actions animate their icons
+  instead: `engage-pop` lifts, tilts, scales and settles the icon back (YouTube-like), and
+  `engage-icon-in` drops a changed icon into place (Bookmark -> check, Share -> check for 1.6s
+  after a copy). The expanding glow/wave was removed. The Report menu item is a no-op.
 - Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
   snapping is temporarily disabled). The earlier CSS-transform version made cross-origin
   iframes render dark until repaint, so it was replaced. A short `focusin` guard blurs iframes

@@ -336,7 +336,9 @@ export function EngagePage() {
                       pop(event.currentTarget);
                     }}
                   >
-                    {saved ? <Check size={23} /> : <Bookmark size={23} />}
+                    <span className="engage__icon-swap" key={saved ? 'saved' : 'save'}>
+                      {saved ? <Check size={23} /> : <Bookmark size={23} />}
+                    </span>
                   </button>
                   <span className="engage__tool-label">{saved ? 'Saved' : 'Save'}</span>
                 </div>
