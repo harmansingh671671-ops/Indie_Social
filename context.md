@@ -209,7 +209,10 @@ apps/web/src/
   (back arrow, meta, rail/actions, navigator); only the hide button remains when hidden.
   After 5s of no app-chrome interaction the overlays fade out automatically (0.7s opacity
   transition); any pointer/key activity resets the timer. The navigator renders only a 4-site
-  window around the active site; overlay sizes were reduced slightly.
+  window around the active site, with the current site always in the 2nd slot (index 1). The
+  strip is re-anchored to that slot after every change; wheel/swipe only ever advances one
+  site in the chosen direction. The catalogue order is shuffled on every Engage mount, but
+  the site the user opened is always first. Overlay sizes were reduced slightly.
   The per-slide meta/action controls were moved out of the slides into one page-level overlay.
 - Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
   snapping is temporarily disabled). The earlier CSS-transform version made cross-origin

@@ -43,7 +43,7 @@ interface PendingScroll {
 
 const NAV_ITEM_H = 34;
 const NAV_WINDOW = 4;
-const NAV_CURRENT_SLOT = 2;
+const NAV_CURRENT_SLOT = 1;
 
 /** Immersive full-screen vertical feed of fully interactive websites. */
 export function EngagePage() {
@@ -56,7 +56,15 @@ export function EngagePage() {
   const feed = useMemo(() => {
     const ordered = buildHomeFeed(SITES);
     const index = ordered.findIndex((site) => site.id === id);
-    return index < 0 ? ordered : [...ordered.slice(index), ...ordered.slice(0, index)];
+    const first = index < 0 ? ordered[0] : ordered[index];
+    const rest = ordered.filter((site) => site.id !== first.id);
+    // Shuffle the remaining sites every time, but keep the opened one first so
+    // the user can always find the site they started from.
+    for (let i = rest.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rest[i], rest[j]] = [rest[j], rest[i]];
+    }
+    return [first, ...rest];
   }, [id]);
 
   const [entries, setEntries] = useState<FeedEntry[]>(() =>
@@ -73,6 +81,8 @@ export function EngagePage() {
   const targetRef = useRef(0);
   const animatingRef = useRef(false);
   const navigatorSyncRef = useRef(false);
+  const wheelLockRef = useRef(false);
+  const navScrollTimerRef = useRef<number | null>(null);
   const copyTimerRef = useRef<number | null>(null);
   const settleRef = useRef<{ top: number; until: number } | null>(null);
   const settleTimerRef = useRef<number | null>(null);
@@ -113,6 +123,12 @@ export function EngagePage() {
     setActive(0);
     const scroller = scrollerRef.current;
     if (scroller) scroller.scrollTop = 0;
+    settleRef.current = { top: 0, until: performance.now() + 2000 };
+    if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
+    settleTimerRef.current = window.setTimeout(() => {
+      settleRef.current = null;
+      settleTimerRef.current = null;
+    }, 2050);
   }, [feed]);
 
   // Animate by scrolling (not by transforming the scroller): CSS transforms on a
@@ -286,14 +302,33 @@ export function EngagePage() {
   useEffect(() => {
     const strip = navigatorRef.current;
     if (!strip) return undefined;
-    const onEnd = () => {
+    const onNavScroll = () => {
       if (navigatorSyncRef.current) return;
-      const slot = Math.round(strip.scrollTop / NAV_ITEM_H);
-      const delta = slot - NAV_CURRENT_SLOT;
-      if (delta !== 0) goToRef.current(activeRef.current + delta);
+      if (navScrollTimerRef.current) window.clearTimeout(navScrollTimerRef.current);
+      navScrollTimerRef.current = window.setTimeout(() => {
+        const slot = Math.round(strip.scrollTop / NAV_ITEM_H);
+        // Only ever move one website: the active site snaps back to its anchor slot.
+        const direction = slot > NAV_CURRENT_SLOT ? 1 : slot < NAV_CURRENT_SLOT ? -1 : 0;
+        if (direction !== 0) goToRef.current(activeRef.current + direction);
+      }, 140);
     };
-    strip.addEventListener('scrollend', onEnd);
-    return () => strip.removeEventListener('scrollend', onEnd);
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      if (wheelLockRef.current || event.deltaY === 0) return;
+      wheelLockRef.current = true;
+      window.setTimeout(() => {
+        wheelLockRef.current = false;
+      }, 450);
+      goToRef.current(activeRef.current + (event.deltaY > 0 ? 1 : -1));
+    };
+
+    strip.addEventListener('scroll', onNavScroll, { passive: true });
+    strip.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      if (navScrollTimerRef.current) window.clearTimeout(navScrollTimerRef.current);
+      strip.removeEventListener('scroll', onNavScroll);
+      strip.removeEventListener('wheel', onWheel);
+    };
   }, [chromeHidden]);
 
   const pop = (element: HTMLElement) => {
