@@ -195,6 +195,9 @@ apps/web/src/
   either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
   current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
   prevents the browser from shifting the view when a cycle is prepended.
+- Engage arrow navigation is animated: `animateStep` translates the scroller by one viewport
+  (up or down) over 380ms, then commits the new `scrollTop` while the transform hides the
+  swap. Clicks during the animation are ignored. Wrapping still prepends/appends a cycle.
 - Engage action stack: all five tools (Like, Save, Share, More, Visit) now share the same
   violet gradient circle, with a small stroked label underneath each one. Visit is an
   icon-only button; the old wide "Visit site" pill and the count pill were removed. The Like

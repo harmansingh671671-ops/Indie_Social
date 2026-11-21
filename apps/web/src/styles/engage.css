@@ -26,6 +26,7 @@
   overscroll-behavior-y: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  will-change: transform;
 }
 .engage__scroller::-webkit-scrollbar { display: none; }
 

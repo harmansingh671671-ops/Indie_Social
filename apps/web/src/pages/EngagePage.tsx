@@ -36,13 +36,11 @@ interface FeedEntry {
   uid: string;
 }
 
-type ScrollBehavior = 'auto' | 'smooth';
-
 interface PendingScroll {
   target: number;
   /** Where the currently visible site lands after a cycle is prepended. */
   preserved?: number;
-  behavior: ScrollBehavior;
+  direction: 1 | -1;
 }
 
 /** Immersive full-screen vertical feed of fully interactive websites. */
@@ -68,6 +66,8 @@ export function EngagePage() {
   const cycleIdRef = useRef(0);
   const pendingRef = useRef<PendingScroll | null>(null);
   const targetRef = useRef(0);
+  const animatingRef = useRef(false);
+  const animatingTimerRef = useRef<number | null>(null);
 
   const makeCycle = useCallback(
     (): FeedEntry[] => {
@@ -89,6 +89,41 @@ export function EngagePage() {
     if (scroller) scroller.scrollTop = 0;
   }, [feed]);
 
+  // Slide the scroller instead of jumping: translate it by one viewport, then
+  // commit the new scrollTop while the transform hides the swap.
+  const animateStep = useCallback((direction: 1 | -1, commit: () => void) => {
+    const scroller = scrollerRef.current;
+    if (!scroller || animatingRef.current) return;
+    animatingRef.current = true;
+    scroller.style.transition = 'none';
+    scroller.style.transform = 'translateY(0)';
+    void scroller.offsetHeight;
+
+    requestAnimationFrame(() => {
+      scroller.style.transition = 'transform 0.38s cubic-bezier(0.2, 0.7, 0.3, 1)';
+      scroller.style.transform = `translateY(${direction > 0 ? '-100%' : '100%'})`;
+    });
+
+    if (animatingTimerRef.current) window.clearTimeout(animatingTimerRef.current);
+    animatingTimerRef.current = window.setTimeout(() => {
+      commit();
+      scroller.style.transition = 'none';
+      scroller.style.transform = 'translateY(0)';
+      void scroller.offsetHeight;
+      scroller.style.transition = '';
+      scroller.style.transform = '';
+      animatingRef.current = false;
+      animatingTimerRef.current = null;
+    }, 400);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (animatingTimerRef.current) window.clearTimeout(animatingTimerRef.current);
+    },
+    [],
+  );
+
   // Apply a prepend (which shifts every index) before the browser paints.
   useLayoutEffect(() => {
     const pending = pendingRef.current;
@@ -98,13 +133,12 @@ export function EngagePage() {
     if (pending.preserved !== undefined) {
       scroller.scrollTop = pending.preserved * scroller.clientHeight;
     }
-    scroller.scrollTo({
-      top: pending.target * scroller.clientHeight,
-      behavior: pending.behavior,
-    });
     targetRef.current = pending.target;
     setActive(pending.target);
-  }, [entries]);
+    animateStep(pending.direction, () => {
+      scroller.scrollTop = pending.target * scroller.clientHeight;
+    });
+  }, [entries, animateStep]);
 
   // Keep one extra cycle buffered above and below so reaching either edge extends
   // the stream instead of jumping back to the beginning.
@@ -113,7 +147,7 @@ export function EngagePage() {
     if (!scroller) return undefined;
 
     const onScroll = () => {
-      if (pendingRef.current) return;
+      if (pendingRef.current || animatingRef.current) return;
       const index = Math.round(scroller.scrollTop / scroller.clientHeight);
       setActive(index);
 
@@ -125,7 +159,7 @@ export function EngagePage() {
         pendingRef.current = {
           target: index + feed.length,
           preserved: index + feed.length,
-          behavior: 'auto',
+          direction: -1,
         };
         setEntries((current) => [...previous, ...current]);
       }
@@ -143,9 +177,9 @@ export function EngagePage() {
     };
   }, [entries, feed.length, makeCycle]);
 
-  const goTo = (index: number) => {
+  const goTo = (index: number, direction: 1 | -1) => {
     const scroller = scrollerRef.current;
-    if (!scroller) return;
+    if (!scroller || animatingRef.current) return;
 
     if (index < 0) {
       const previous = makeCycle();
@@ -153,7 +187,7 @@ export function EngagePage() {
       pendingRef.current = {
         target,
         preserved: active + feed.length,
-        behavior: 'auto',
+        direction,
       };
       targetRef.current = target;
       setEntries((current) => [...previous, ...current]);
@@ -162,22 +196,21 @@ export function EngagePage() {
 
     if (index >= entries.length) {
       const next = makeCycle();
-      pendingRef.current = { target: index, behavior: 'auto' };
+      pendingRef.current = { target: index, direction };
       targetRef.current = index;
       setEntries((current) => [...current, ...next]);
       return;
     }
 
     targetRef.current = index;
-    scroller.scrollTo({
-      top: index * scroller.clientHeight,
-      behavior: 'auto',
-    });
     setActive(index);
+    animateStep(direction, () => {
+      scroller.scrollTop = index * scroller.clientHeight;
+    });
   };
 
   const step = (amount: number) => {
-    goTo(targetRef.current + amount);
+    goTo(targetRef.current + amount, amount > 0 ? 1 : -1);
   };
 
   useEffect(() => {
