@@ -16,6 +16,17 @@
   user-select: none;
 }
 
+.engage__chrome {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.7s var(--ease);
+}
+.engage__chrome.is-hidden { opacity: 0; }
+.engage__chrome > * { pointer-events: auto; }
+
 .engage__scroller {
   height: 100%;
   /* Prepend/append cycles must not let the browser shift the scroll position itself. */
@@ -61,8 +72,8 @@
   z-index: 40;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgb(38 26 82 / 0.62);
   border: 1px solid rgb(180 160 255 / 0.3);
@@ -91,8 +102,8 @@
   left: 16px;
   z-index: 20;
   display: grid;
-  gap: 8px;
-  max-width: min(72%, 420px);
+  gap: 7px;
+  max-width: min(70%, 400px);
   padding: 0;
   border: 0;
   background: transparent;
@@ -109,7 +120,7 @@
 }
 .engage__handle {
   min-width: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -121,20 +132,20 @@
 }
 .engage__follow {
   flex: none;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: var(--radius-pill);
   border: 1px solid rgb(180 160 255 / 0.42);
   background: rgb(109 74 255 / 0.34);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #fff;
   transition: background 0.15s var(--ease);
 }
 .engage__follow:hover { background: rgb(109 74 255 / 0.6); }
 .engage__title {
-  font-size: 24px;
+  font-size: 21px;
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.025em;
@@ -152,22 +163,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .engage__actions {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 /* Vertical, pill-shaped thumbnail strip: previous / current / next. */
 .engage__navigator {
   box-sizing: border-box;
-  width: 60px;
-  height: 200px;
-  padding: 40px 0;
+  width: 52px;
+  height: 170px;
+  padding: 34px 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
@@ -189,12 +200,12 @@
   display: grid;
   place-items: center;
   width: 100%;
-  height: 40px;
+  height: 34px;
   scroll-snap-align: center;
 }
 .engage__nav-item img {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   object-fit: cover;
   opacity: 0.55;
@@ -203,8 +214,8 @@
     border-color 0.2s var(--ease);
 }
 .engage__nav-item.is-current img {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   opacity: 1;
   border-color: #fff;
   box-shadow: 0 0 0 2px rgb(109 74 255 / 0.5);
@@ -213,7 +224,7 @@
 .engage__tool {
   display: grid;
   justify-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 /* Every action shares the same violet gradient so the stack reads as one set. */
@@ -221,8 +232,8 @@
 .engage .menu > .icon-btn {
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: 1px solid rgb(200 185 255 / 0.5);
   background: linear-gradient(135deg, #8b6bff, #5b3ce0);
@@ -239,7 +250,7 @@
 
 .engage__tool-label {
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;

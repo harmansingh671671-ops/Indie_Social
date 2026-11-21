@@ -41,7 +41,9 @@ interface PendingScroll {
   preserved?: number;
 }
 
-const NAV_ITEM_H = 40;
+const NAV_ITEM_H = 34;
+const NAV_WINDOW = 4;
+const NAV_CURRENT_SLOT = 2;
 
 /** Immersive full-screen vertical feed of fully interactive websites. */
 export function EngagePage() {
@@ -63,6 +65,7 @@ export function EngagePage() {
   const [active, setActive] = useState(0);
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
+  const [activityTick, setActivityTick] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
@@ -76,6 +79,11 @@ export function EngagePage() {
 
   const activeEntry = entries[active] ?? entries[0];
   const activeSite = activeEntry.site;
+  const navStart = active - NAV_CURRENT_SLOT;
+  const navWindow = Array.from({ length: NAV_WINDOW }, (_, slot) => {
+    const index = (navStart + slot + entries.length) % entries.length;
+    return { entry: entries[index], index };
+  });
   const saved = isSaved(activeSite.id);
   const liked = isLiked(activeSite.id);
   const following = isFollowing(activeSite.creatorHandle);
@@ -267,7 +275,7 @@ export function EngagePage() {
     const strip = navigatorRef.current;
     if (!strip) return undefined;
     navigatorSyncRef.current = true;
-    strip.scrollTo({ top: active * NAV_ITEM_H, behavior: 'smooth' });
+    strip.scrollTo({ top: NAV_CURRENT_SLOT * NAV_ITEM_H, behavior: 'auto' });
     const timer = window.setTimeout(() => {
       navigatorSyncRef.current = false;
     }, 400);
@@ -280,11 +288,9 @@ export function EngagePage() {
     if (!strip) return undefined;
     const onEnd = () => {
       if (navigatorSyncRef.current) return;
-      const index = Math.round(strip.scrollTop / NAV_ITEM_H);
-      const list = entriesRef.current;
-      if (index >= 0 && index < list.length && index !== activeRef.current) {
-        goToRef.current(index);
-      }
+      const slot = Math.round(strip.scrollTop / NAV_ITEM_H);
+      const delta = slot - NAV_CURRENT_SLOT;
+      if (delta !== 0) goToRef.current(activeRef.current + delta);
     };
     strip.addEventListener('scrollend', onEnd);
     return () => strip.removeEventListener('scrollend', onEnd);
@@ -303,6 +309,26 @@ export function EngagePage() {
     if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
     copyTimerRef.current = window.setTimeout(() => setCopiedUid(null), 1600);
   };
+
+  // Treat any interaction with the app chrome as activity; after five quiet
+  // seconds the overlays fade away so the website is unobstructed.
+  useEffect(() => {
+    const onActivity = () => setActivityTick((tick) => tick + 1);
+    window.addEventListener('pointerdown', onActivity, true);
+    window.addEventListener('pointermove', onActivity, true);
+    window.addEventListener('keydown', onActivity, true);
+    return () => {
+      window.removeEventListener('pointerdown', onActivity, true);
+      window.removeEventListener('pointermove', onActivity, true);
+      window.removeEventListener('keydown', onActivity, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (chromeHidden) return undefined;
+    const timer = window.setTimeout(() => setChromeHidden(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [chromeHidden, activityTick]);
 
   return (
     <div className="engage">
@@ -327,11 +353,10 @@ export function EngagePage() {
         ))}
       </div>
 
-      {!chromeHidden && (
-        <>
+      <div className={`engage__chrome${chromeHidden ? ' is-hidden' : ''}`}>
           <div className="engage__meta">
             <div className="engage__creator">
-              <Avatar name={activeSite.creator} size={32} />
+              <Avatar name={activeSite.creator} size={28} />
               <span className="engage__handle">@{activeSite.creatorHandle}</span>
               <button
                 type="button"
@@ -349,7 +374,7 @@ export function EngagePage() {
 
           <div className="engage__rail">
             <div className="engage__navigator" ref={navigatorRef} aria-label="Website navigator">
-              {entries.map((entry, index) => (
+              {navWindow.map(({ entry, index }) => (
                 <button
                   key={entry.uid}
                   type="button"
@@ -372,7 +397,7 @@ export function EngagePage() {
                   onClick={() => toggleLike(activeSite.id)}
                 >
                   <span className="engage__icon-swap" key={liked ? 'liked' : 'like'}>
-                    <Star size={23} fill={liked ? 'currentColor' : 'none'} />
+                    <Star size={20} fill={liked ? 'currentColor' : 'none'} />
                   </span>
                 </button>
                 <span className="engage__tool-label">
@@ -392,7 +417,7 @@ export function EngagePage() {
                   }}
                 >
                   <span className="engage__icon-swap" key={saved ? 'saved' : 'save'}>
-                    {saved ? <Check size={23} /> : <Bookmark size={23} />}
+                    {saved ? <Check size={20} /> : <Bookmark size={20} />}
                   </span>
                 </button>
                 <span className="engage__tool-label">{saved ? 'Saved' : 'Save'}</span>
@@ -412,7 +437,7 @@ export function EngagePage() {
                     className="engage__icon-swap"
                     key={copiedUid === activeEntry.uid ? 'copied' : 'share'}
                   >
-                    {copiedUid === activeEntry.uid ? <Check size={23} /> : <Share2 size={23} />}
+                    {copiedUid === activeEntry.uid ? <Check size={20} /> : <Share2 size={20} />}
                   </span>
                 </button>
                 <span className="engage__tool-label">
@@ -426,7 +451,7 @@ export function EngagePage() {
                   align="right"
                   direction="up"
                   iconVariant="light"
-                  trigger={<MoreHorizontal size={23} />}
+                  trigger={<MoreHorizontal size={20} />}
                   items={[
                     {
                       label: 'Open website',
@@ -451,7 +476,7 @@ export function EngagePage() {
                   aria-label="Visit website"
                   onClick={() => openSite(activeSite.url)}
                 >
-                  <ExternalLink size={23} />
+                  <ExternalLink size={20} />
                 </button>
                 <span className="engage__tool-label">Visit</span>
               </div>
@@ -466,8 +491,7 @@ export function EngagePage() {
           >
             <ArrowLeft size={20} />
           </button>
-        </>
-      )}
+      </div>
 
       <button
         type="button"

@@ -207,6 +207,9 @@ apps/web/src/
   feed via `scrollend`; clicking a thumbnail jumps to that site. The main website can still be
   scrolled/swiped directly and stays in sync. A top-right hide button toggles all overlays
   (back arrow, meta, rail/actions, navigator); only the hide button remains when hidden.
+  After 5s of no app-chrome interaction the overlays fade out automatically (0.7s opacity
+  transition); any pointer/key activity resets the timer. The navigator renders only a 4-site
+  window around the active site; overlay sizes were reduced slightly.
   The per-slide meta/action controls were moved out of the slides into one page-level overlay.
 - Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
   snapping is temporarily disabled). The earlier CSS-transform version made cross-origin
