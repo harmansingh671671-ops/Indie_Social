@@ -26,18 +26,18 @@ export function formatRelativeDays(days: number): string {
 /** Deterministic, readable colour from a name — used for initials avatars. */
 export function colourFromName(name: string): string {
   const palette = [
+    '#6d4aff',
+    '#5b6ef5',
+    '#7c3aed',
     '#4f46e5',
-    '#c0392b',
-    '#e67e22',
-    '#b8860b',
-    '#2e7d32',
-    '#00897b',
-    '#1565c0',
-    '#5e35b1',
-    '#8e24aa',
-    '#ad1457',
-    '#455a64',
-    '#6d4c41',
+    '#8b5cf6',
+    '#3b82f6',
+    '#6366f1',
+    '#a855f7',
+    '#2563eb',
+    '#7e22ce',
+    '#4f46e5',
+    '#6d4aff',
   ];
   let hash = 0;
   for (let index = 0; index < name.length; index += 1) {

@@ -46,7 +46,7 @@ All global values live in `apps/web/src/styles/tokens.css`:
 
 ```css
 :root {
-  --accent: #4f46e5;    /* primary action colour */
+  --accent: #6d4aff;    /* bluish-purple primary action colour */
   --ink: #111111;       /* text, active pills and the wordmark */
   --surface-2: #f1f1f1; /* search field, chips */
   --radius-md: 16px;    /* feed cards */

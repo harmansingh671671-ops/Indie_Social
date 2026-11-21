@@ -229,7 +229,7 @@ export function EngagePage() {
 
               <div className="engage__meta">
                 <div className="engage__creator">
-                  <Avatar name={item.creator} size={28} />
+                  <Avatar name={item.creator} size={32} />
                   <span className="engage__handle">@{item.creatorHandle}</span>
                   <button
                     type="button"
@@ -270,11 +270,7 @@ export function EngagePage() {
                   label="More options"
                   align="right"
                   iconVariant="light"
-                  trigger={
-                    <span className="engage__action engage__action--static">
-                      <MoreHorizontal size={22} />
-                    </span>
-                  }
+                  trigger={<MoreHorizontal size={22} />}
                   items={[
                     {
                       label: 'Like this experience',

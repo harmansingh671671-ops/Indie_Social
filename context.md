@@ -195,6 +195,11 @@ apps/web/src/
   either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
   current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
   prevents the browser from shifting the view when a cycle is prepended.
+- Bluish-purple theme: `--accent` is now `#6d4aff` (hover `#5b3ce0`) and avatar colours are
+  all blue/violet shades. Engage's creator meta sits in a translucent violet frosted panel so
+  it stays readable on any website background; the creator avatar, handle, title, action
+  buttons and Visit site pill were enlarged and recoloured to match. The embedded-site
+  ActionMenu icon buttons are restyled via `.engage .menu > .icon-btn` (no white circles).
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
   `scrollbar-width: none`, and each iframe is 24px wider/taller than its slide so scrollbars
   drawn by the embedded website itself fall outside the clipped slide.
