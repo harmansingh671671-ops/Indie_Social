@@ -222,20 +222,6 @@
   animation: engage-pop 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-/* The star spins a third of a turn, then smashes back into place. */
-@keyframes engage-star-spin {
-  0% { transform: rotate(0deg) scale(1); }
-  40% { transform: rotate(120deg) scale(1.18); }
-  60% { transform: rotate(120deg) scale(1.18); }
-  78% { transform: rotate(-7deg) scale(0.86); }
-  90% { transform: rotate(3deg) scale(1.05); }
-  100% { transform: rotate(0deg) scale(1); }
-}
-
-.engage__action--star.is-popping > svg {
-  animation: engage-star-spin 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-
 .engage__icon-swap {
   display: grid;
   place-items: center;

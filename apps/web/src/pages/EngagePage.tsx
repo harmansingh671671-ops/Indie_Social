@@ -310,15 +310,14 @@ export function EngagePage() {
                 <div className="engage__tool">
                   <button
                     type="button"
-                    className="engage__action engage__action--star"
+                    className="engage__action"
                     aria-label={liked ? 'Unlike this site' : 'Like this site'}
                     aria-pressed={liked}
-                    onClick={(event) => {
-                      toggleLike(item.id);
-                      pop(event.currentTarget);
-                    }}
+                    onClick={() => toggleLike(item.id)}
                   >
-                    <Star size={23} fill={liked ? 'currentColor' : 'none'} />
+                    <span className="engage__icon-swap" key={liked ? 'liked' : 'like'}>
+                      <Star size={23} fill={liked ? 'currentColor' : 'none'} />
+                    </span>
                   </button>
                   <span className="engage__tool-label">
                     {formatCount(item.likes + (liked ? 1 : 0))}
