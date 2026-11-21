@@ -1,4 +1,4 @@
-# Customising Scroll
+# Customising SitesHub
 
 A short map of the edits you are most likely to make. No build configuration needs to change for any of these.
 

@@ -11,11 +11,34 @@ import { EngagePage } from './pages/EngagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AppStateProvider } from './state/AppState';
 import { ToastProvider } from './components/common/Toast';
+import { siteConfig } from './config/site';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+const PAGE_TITLES: Array<[string, string]> = [
+  ['/explore', 'Explore'],
+  ['/search', 'Search'],
+  ['/saved', 'Saved'],
+  ['/profile', 'Profile'],
+  ['/pin/', 'Site preview'],
+  ['/engage/', 'Engage'],
+];
+
+function DocumentTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const match = PAGE_TITLES.find(([prefix]) =>
+      prefix.endsWith('/') ? pathname.startsWith(prefix) : pathname === prefix,
+    );
+    document.title = match
+      ? `${match[1]} · ${siteConfig.name}`
+      : `${siteConfig.name} · ${siteConfig.tagline}`;
   }, [pathname]);
   return null;
 }
@@ -26,6 +49,7 @@ export default function App() {
       <ToastProvider>
         <AppShell>
           <ScrollToTop />
+          <DocumentTitle />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/explore" element={<ExplorePage />} />

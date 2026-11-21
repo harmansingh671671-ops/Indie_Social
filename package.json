@@ -1,8 +1,8 @@
 {
-  "name": "indiesocial",
+  "name": "siteshub",
   "private": true,
   "version": "0.1.0",
-  "description": "Scroll — a visual discovery feed for the indie web",
+  "description": "SitesHub — a visual discovery feed for the indie web",
   "workspaces": [
     "apps/web"
   ],

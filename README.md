@@ -1,6 +1,6 @@
-# Scroll
+# SitesHub
 
-A visual discovery feed for strange, playful and beautiful corners of the indie web — built to feel like Pinterest, but every pin is a real interactive website.
+**siteshub.sites** — a visual discovery feed for strange, playful and beautiful corners of the indie web, built to feel like Pinterest, but every pin is a real interactive website.
 
 > Part of the IndieSocial project. See `plan.md` for the full product and execution plan.
 
@@ -32,7 +32,7 @@ Open <http://localhost:4000>.
 - **Profile** — Saved / Likes / Created tabs, stats, share and edit-profile actions
 - **Mobile** — bottom navigation, 2-column masonry, compact search icon that opens a full search sheet with recent/trending suggestions and live results (all header icons stay visible)
 
-Saved pins, likes, follows and comments persist in `localStorage` under the `scroll.v1.*` keys. There is no backend yet.
+Saved pins, likes, follows and comments persist in `localStorage` under the `siteshub.v1.*` keys. There is no backend yet.
 
 ## Project structure
 
@@ -89,7 +89,7 @@ Each card also has a ~150-byte blurred placeholder inlined in the bundle (`data/
 
 ## Notes and limits
 
-- The site list is curated demo content. Every site belongs to its maker; Scroll only links out.
+- The site list is curated demo content. Every site belongs to its maker; SitesHub only links out.
 - Search, boards, likes and comments are local to the browser.
 - The Create / submit-a-site flow is deferred to `plan.md`; its modal component is kept in the codebase for later.
 - Cards show static landing-page screenshots only. Websites are never loaded inside the feed — use "Visit site" on a pin to open the real site.

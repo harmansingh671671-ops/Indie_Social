@@ -113,7 +113,7 @@ export function MobileSearch() {
           className="search-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Search Scroll"
+          aria-label="Search SitesHub"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setOpen(false);
           }}

@@ -28,7 +28,7 @@ export function SearchPage() {
     <div className="page">
       <PageHeader
         eyebrow="Search"
-        title={query ? `Results for “${query}”` : 'Search Scroll'}
+        title={query ? `Results for “${query}”` : 'Search SitesHub'}
         description={
           query
             ? `${results.length} ${results.length === 1 ? 'idea' : 'ideas'} found`

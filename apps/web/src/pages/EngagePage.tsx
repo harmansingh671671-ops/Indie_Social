@@ -107,9 +107,6 @@ export function EngagePage() {
                 <img className="engage__poster" src={posterFor(item)} alt="" />
               )}
 
-              <div className="engage__scrim engage__scrim--top" aria-hidden />
-              <div className="engage__scrim engage__scrim--bottom" aria-hidden />
-
               <div className="engage__meta">
                 <div className="engage__creator">
                   <Avatar name={item.creator} size={28} />

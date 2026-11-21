@@ -1,4 +1,4 @@
-# Scroll / IndieSocial — working context
+# SitesHub / IndieSocial — working context
 
 Read this file **once at the start of a session** (rule in `AGENTS.md`). Don't re-read it
 repeatedly. Before every commit, add the important changes to the **Change log** below.
@@ -7,13 +7,14 @@ still matters.
 
 ## What this is
 
-"Scroll" is a Pinterest-like web app for discovering real interactive websites. It is a
-**web prototype only**: the feed shows local landing-page screenshots, never live sites.
-Clicking a card opens a Pinterest-style detail page; the real site opens on "Visit site".
+**SitesHub** (domain `siteshub.sites`) is a Pinterest-like web app for discovering real
+interactive websites. It is a **web prototype only**: the feed shows local landing-page
+screenshots, never live sites. Clicking a card opens the immersive **Engage** feed, where
+the active site and its two neighbours load in iframes; `/pin/:id` is the older detail page.
 
 - Monorepo root: `C:\IndieSocial`, npm workspaces, branch `main`.
 - Stack: Vite 8 + React 19 + TypeScript + plain CSS. No backend, no auth, no database.
-- Persistence: `localStorage`, keys prefixed `scroll.v1.*` (`saves`, `likes`, `follows`,
+- Persistence: `localStorage`, keys prefixed `siteshub.v1.*` (`saves`, `likes`, `follows`,
   `comments`, `boards`, `searchHistory`, ...).
 - 30 curated real sites in 6 categories: Art, Music, Games, Experiments, Worlds, Tools.
 
@@ -44,7 +45,7 @@ apps/web/src/
   lib/feed.ts             buildHomeFeed, searchSites, relatedSites, filterByCategory
   lib/search.ts           suggestions, fuzzy closeness, recent-search history
   lib/posters.ts          posterFor, placeholderFor, accentGradient
-  lib/storage.ts          readJSON / writeJSON under scroll.v1.*
+  lib/storage.ts          readJSON / writeJSON under siteshub.v1.*
   components/common/      Avatar, Button, IconButton, Modal, PinImage, Toast, ...
   components/layout/      TopBar, MobileSearch, SideRail, MobileNav, AppShell, ...
   components/search/      SearchSuggestions (shared desktop/mobile dropdown rows)
@@ -94,7 +95,7 @@ apps/web/src/
   "search for this" row, closest sites, makers, categories and tags. It is typo-tolerant
   (Levenshtein/subsequence matching). `SearchSuggestions` renders them with highlighted
   matches, icons, ↑/↓ + Enter keyboard navigation and Escape to close.
-- Recent searches persist in `scroll.v1.searchHistory` (max 8). Per-item X removes one —
+- Recent searches persist in `siteshub.v1.searchHistory` (max 8). Per-item X removes one —
   hidden until row hover on hover-capable devices, always visible on touch. Clear-all was
   removed at the user's request. `readSearchHistory()` sanitises bad stored values so a
   corrupted entry cannot crash the search UI.
@@ -110,13 +111,15 @@ apps/web/src/
   back arrow top-left, up/down arrow buttons at top/bottom centre (they wrap through all 30
   sites), bottom-left creator meta + "Untitled experience" (real naming comes later), and a
   bottom-right Save/Share/More/Visit stack. Save/Follow/Like use the existing `AppState`.
-  The old island header, dots, progress bar, category badge and swipe hint were removed.
+  The old island header, dots, progress bar, category badge, swipe hint and the top/bottom
+  black gradient scrims were removed, so websites render edge-to-edge with no shading.
 - Each active slide and its two neighbours render the real website in an `<iframe>` so it is
   fully interactive; further slides show only the local poster. Only 3–5 iframes exist at
   once. Some external sites refuse framing (X-Frame-Options/CSP), so "Visit site" opens the
   real site in a new tab as a fallback.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
-  "Scroll — Engage", screen "Engage — Indie Discovery Feed"). The React implementation lives
+  "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SitesHub
+  rename). The React implementation lives
   in `pages/EngagePage.tsx` with styles in `styles/engage.css`.
 
 ### Navigation / pages
@@ -175,6 +178,9 @@ apps/web/src/
   and hid the normal app shell on that route. Later switched slides to real interactive
   iframes (±2 window), removed the island/dots/progress/badge, and added wrapping top/bottom
   navigation arrows.
+- Rebranded the app from "Scroll" to **SitesHub** (domain `siteshub.sites`): brand config,
+  document titles/meta, page titles, search strings, storage prefix (`siteshub.v1.*`), package
+  metadata, README/docs/plan. Removed the black top/bottom gradient scrims from Engage.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo

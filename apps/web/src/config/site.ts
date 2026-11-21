@@ -3,7 +3,9 @@
  * Changing the name here updates the document title, header, and aria labels.
  */
 export const siteConfig = {
-  name: 'Scroll',
+  name: 'SitesHub',
+  /** Product domain shown in metadata and sharing copy. */
+  domain: 'siteshub.sites',
   /** Letter shown inside the red logo badge. */
   logoLetter: 'S',
   tagline: 'Discover the indie web',

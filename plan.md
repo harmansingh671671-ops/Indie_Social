@@ -1,6 +1,6 @@
 # IndieSocial — Production Plan
 
-> **Codename:** Scroll
+> **Product name:** SitesHub (domain: `siteshub.sites`)
 > **Start date:** November 2026
 > **Working folder:** `C:\IndieSocial`
 > **Updated against:** `Scroll_Updated_Product_and_Execution_Plan.docx` (17 November 2026)
@@ -56,7 +56,7 @@ A native mobile app for discovering and experiencing real websites through a vis
 | **Public comments** | Deferred | Start with likes, saves, follows and structured reactions/feedback; add comments only if evidence and moderation capacity justify them. |
 | **Team assumption** | Solo founder for planning | Validate with a small prototype and technical spike before committing to the full native app. Roadmap durations are assumptions, not commitments. |
 | **Object storage** | Cloudflare R2 or S3-compatible | For capture media (posters, loops). |
-| **Hosting** | After audience validation | Keep hosting optional, portable and exportable. Do not ask creators to pay before Scroll can show distribution value. |
+| **Hosting** | After audience validation | Keep hosting optional, portable and exportable. Do not ask creators to pay before SitesHub can show distribution value. |
 | **Discovery model** | Opt-in, curated launch | Only list owner-submitted, verified sites. Start with 30–50 exceptional candidates and a smaller permissioned collection. |
 | **AI disclosure** | Human-made / AI-assisted / AI-generated | Creator-editable disclosure and viewer filters; AI is an assistive feature, not a dependency. |
 
@@ -146,7 +146,7 @@ Do not use a single five-second promotion percentage as the go/no-go measure. Fi
 - [ ] Postgres schema: users, channels, sites, interactions/reactions, collections, captures and privacy-conscious feed events
 - [ ] Auth (email magic link + OAuth: Google, GitHub)
 - [ ] Site registry API: submit URL, verify ownership (well-known file or DNS TXT)
-- [ ] Manifest parser: fetch `/.well-known/scroll.json`, fill missing fields from page meta / AI
+- [ ] Manifest parser: fetch `/.well-known/siteshub.json`, fill missing fields from page meta / AI
 - [ ] Feed API: curated order plus explainable basic ranking; preserve a discovery lane
 
 #### 1B: Capture Pipeline Production (after Phase 0)
@@ -165,7 +165,7 @@ Do not use a single five-second promotion percentage as the go/no-go measure. Fi
 - [ ] Search, categories, interest onboarding, likes, saves, named collections, follows, structured reactions, share and report
 - [ ] Data saver mode (reduce automatic media/background loading; allow tap-to-load)
 - [ ] Failure/timeout state with Retry, Skip and Open in browser; retain Tier 0 preview
-- [ ] Document the `ScrollPreview/1.0` user-agent token for creators; avoid unnecessary personal data
+- [ ] Document the `SitesHubPreview/1.0` user-agent token for creators; avoid unnecessary personal data
 
 #### 1D: Viewer Feedback & Moderation (after alpha core)
 - [ ] Likes, saves to collections, follows and structured reactions/feedback
@@ -220,7 +220,7 @@ Do not use a single five-second promotion percentage as the go/no-go measure. Fi
 
 ### Phase 3 — Creator Services (only after evidence; timing TBD)
 
-- [ ] Pilot Scroll Host only if creator interviews and a waitlist justify it; keep it portable/exportable
+- [ ] Pilot SitesHub Host only if creator interviews and a waitlist justify it; keep it portable/exportable
 - [ ] Metering: storage (GB-month), bandwidth (GB), requests
 - [ ] Prepaid wallet with top-ups, spend cap (alert at 50/80/100%)
 - [ ] Static fallback when wallet empty (don't kill the site)
@@ -292,7 +292,7 @@ feed_events    (id, user_id, site_id, event[impression/preview_load/ready/open/s
 
 ---
 
-## 8. The Manifest Spec (`/.well-known/scroll.json`)
+## 8. The Manifest Spec (`/.well-known/siteshub.json`)
 
 ```json
 {
@@ -445,7 +445,7 @@ Only list sites that their owners submitted and verified. Directories and commun
 
 ## 16. Open Questions
 
-- [ ] App name: "Scroll" is a placeholder. Final name TBD.
+- [x] App name: **SitesHub**, on the `.sites` domain (`siteshub.sites`).
 - [ ] Product emphasis: continuous discovery feed, visual library, or a blend?
 - [ ] Should a feed item represent a whole site, a particular experience/page, or both?
 - [ ] Which first audience should lead: general curious viewers, designers, developers/makers, or people who like unusual web experiences?
