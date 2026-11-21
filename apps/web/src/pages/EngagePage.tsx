@@ -74,6 +74,7 @@ export function EngagePage() {
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
   const [activityTick, setActivityTick] = useState(0);
+  const [frameReady, setFrameReady] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
@@ -357,6 +358,12 @@ export function EngagePage() {
     copyTimerRef.current = window.setTimeout(() => setCopiedUid(null), 1600);
   };
 
+  // Only the active site keeps an iframe mounted, so leaving a site always
+  // unloads its document (and therefore stops any sound it was playing).
+  useEffect(() => {
+    setFrameReady(false);
+  }, [activeEntry.uid]);
+
   // Treat any interaction with the app chrome as activity; after five quiet
   // seconds the overlays fade away so the website is unobstructed.
   useEffect(() => {
@@ -380,21 +387,21 @@ export function EngagePage() {
   return (
     <div className="engage">
       <div className="engage__scroller" ref={scrollerRef}>
-        {entries.map((entry) => (
+        {entries.map((entry, index) => (
           <section className="engage__slide" key={entry.uid}>
-            {Math.abs(entries.indexOf(entry) - active) <= 2 ? (
+            <img className="engage__poster" src={posterFor(entry.site)} alt="" />
+            {index === active && (
               <iframe
-                className="engage__frame"
+                key={activeEntry.uid}
+                className={`engage__frame${frameReady ? ' is-ready' : ''}`}
                 src={entry.site.url}
                 title={`Interactive website: ${entry.site.title}`}
-                inert={Math.abs(entries.indexOf(entry) - active) !== 0}
-                loading={Math.abs(entries.indexOf(entry) - active) <= 1 ? 'eager' : 'lazy'}
+                loading="eager"
+                onLoad={() => setFrameReady(true)}
                 allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
               />
-            ) : (
-              <img className="engage__poster" src={posterFor(entry.site)} alt="" />
             )}
           </section>
         ))}

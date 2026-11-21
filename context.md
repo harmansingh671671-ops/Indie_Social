@@ -9,8 +9,8 @@ still matters.
 
 **SiteHub** (domain `sitehub.sites`) is a visual discovery app for real interactive websites.
 It is a **web prototype only**: the feed shows local landing-page screenshots, never live
-sites. Clicking a card opens the immersive **Engage** feed, where the active site and its two
-neighbours load in iframes. The old `/pin/:id` detail page has been deleted; there is no
+sites. Clicking a card opens the immersive **Engage** feed, where only the active site loads
+in an iframe. The old `/pin/:id` detail page has been deleted; there is no
 "pin" terminology left in the app.
 
 - Monorepo root: `C:\IndieSocial`, npm workspaces, branch `main`.
@@ -113,10 +113,11 @@ apps/web/src/
   bottom-right Save/Share/More/Visit stack. Save/Follow/Like use the existing `AppState`.
   The old island header, dots, progress bar, category badge, swipe hint and the top/bottom
   black gradient scrims were removed, so websites render edge-to-edge with no shading.
-- Each active slide and its two neighbours render the real website in an `<iframe>` so it is
-  fully interactive; further slides show only the local poster. Only 3–5 iframes exist at
-  once. Some external sites refuse framing (X-Frame-Options/CSP), so "Visit site" opens the
-  real site in a new tab as a fallback.
+- Only the active slide renders the real website in an `<iframe>`; every slide also renders its
+  local poster underneath, so switching sites unloads the previous document (stopping its
+  sound) and the new site fades in over its poster when loaded. Neighbouring iframes were
+  dropped because they kept playing audio in the background. Some external sites refuse
+  framing (X-Frame-Options/CSP), so "Visit site" opens the real site in a new tab as a fallback.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
   "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SiteHub
   rename). The React implementation lives
@@ -236,6 +237,8 @@ apps/web/src/
   `-webkit-text-stroke` plus a small shadow for contrast. The creator avatar, handle, title, action
   buttons and Visit site pill were enlarged and recoloured to match. The embedded-site
   ActionMenu icon buttons are restyled via `.engage .menu > .icon-btn` (no white circles).
+- Engage mounts only the active site's iframe so switching sites stops the previous site's
+  audio; every slide keeps its poster underneath and the iframe fades in when loaded.
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
   `scrollbar-width: none`, and each iframe is 24px wider/taller than its slide so scrollbars
   drawn by the embedded website itself fall outside the clipped slide.

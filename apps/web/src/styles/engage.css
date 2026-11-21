@@ -66,10 +66,21 @@
 
 /* Oversize the embedded document slightly so any scrollbar rendered by the
    external site itself falls outside the clipped slide. */
+.engage__poster {
+  position: absolute;
+  inset: 0;
+}
+
 .engage__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: calc(100% + 24px);
   height: calc(100% + 24px);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
 }
+.engage__frame.is-ready { opacity: 1; }
 
 .engage__back,
 .engage__hide {
