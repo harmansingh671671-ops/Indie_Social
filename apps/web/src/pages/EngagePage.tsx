@@ -39,7 +39,6 @@ interface PendingScroll {
   target: number;
   /** Where the currently visible site lands after a cycle is prepended. */
   preserved?: number;
-  direction: 1 | -1;
 }
 
 /** Immersive full-screen vertical feed of fully interactive websites. */
@@ -66,8 +65,9 @@ export function EngagePage() {
   const pendingRef = useRef<PendingScroll | null>(null);
   const targetRef = useRef(0);
   const animatingRef = useRef(false);
-  const animatingTimerRef = useRef<number | null>(null);
   const copyTimerRef = useRef<number | null>(null);
+  const settleRef = useRef<{ top: number; until: number } | null>(null);
+  const settleTimerRef = useRef<number | null>(null);
 
   const makeCycle = useCallback(
     (): FeedEntry[] => {
@@ -82,6 +82,7 @@ export function EngagePage() {
   useEffect(() => {
     cycleIdRef.current = 0;
     pendingRef.current = null;
+    settleRef.current = null;
     targetRef.current = 0;
     setEntries(feed.map((site) => ({ site, uid: `0:${site.id}` })));
     setActive(0);
@@ -89,38 +90,49 @@ export function EngagePage() {
     if (scroller) scroller.scrollTop = 0;
   }, [feed]);
 
-  // Slide the scroller instead of jumping: translate it by one viewport, then
-  // commit the new scrollTop while the transform hides the swap.
-  const animateStep = useCallback((direction: 1 | -1, commit: () => void) => {
+  // Animate by scrolling (not by transforming the scroller): CSS transforms on a
+  // container of cross-origin iframes make them render dark until they repaint.
+  const animateStep = useCallback((target: number) => {
     const scroller = scrollerRef.current;
     if (!scroller || animatingRef.current) return;
+
+    const start = scroller.scrollTop;
+    const end = target * scroller.clientHeight;
+    const duration = 380;
+    const startedAt = performance.now();
     animatingRef.current = true;
-    scroller.style.transition = 'none';
-    scroller.style.transform = 'translateY(0)';
-    void scroller.offsetHeight;
+    scroller.style.scrollSnapType = 'none';
 
-    requestAnimationFrame(() => {
-      scroller.style.transition = 'transform 0.38s cubic-bezier(0.2, 0.7, 0.3, 1)';
-      scroller.style.transform = `translateY(${direction > 0 ? '-100%' : '100%'})`;
-    });
-
-    if (animatingTimerRef.current) window.clearTimeout(animatingTimerRef.current);
-    animatingTimerRef.current = window.setTimeout(() => {
-      commit();
-      scroller.style.transition = 'none';
-      scroller.style.transform = 'translateY(0)';
-      void scroller.offsetHeight;
-      scroller.style.transition = '';
-      scroller.style.transform = '';
+    const frame = (now: number) => {
+      if (!animatingRef.current) return;
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      scroller.scrollTop = start + (end - start) * eased;
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+        return;
+      }
+      scroller.scrollTop = end;
+      scroller.style.scrollSnapType = '';
       animatingRef.current = false;
-      animatingTimerRef.current = null;
-    }, 400);
+
+      // Embedded sites can grab focus a moment later and scroll themselves into
+      // view. Keep the requested slide in place during that short settle window.
+      settleRef.current = { top: end, until: performance.now() + 800 };
+      if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = window.setTimeout(() => {
+        settleRef.current = null;
+        settleTimerRef.current = null;
+      }, 820);
+    };
+
+    requestAnimationFrame(frame);
   }, []);
 
   useEffect(
     () => () => {
-      if (animatingTimerRef.current) window.clearTimeout(animatingTimerRef.current);
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
+      if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
     },
     [],
   );
@@ -136,9 +148,7 @@ export function EngagePage() {
     }
     targetRef.current = pending.target;
     setActive(pending.target);
-    animateStep(pending.direction, () => {
-      scroller.scrollTop = pending.target * scroller.clientHeight;
-    });
+    animateStep(pending.target);
   }, [entries, animateStep]);
 
   // Keep one extra cycle buffered above and below so reaching either edge extends
@@ -146,6 +156,14 @@ export function EngagePage() {
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return undefined;
+
+    const onFocusIn = (event: FocusEvent) => {
+      const settle = settleRef.current;
+      const target = event.target as HTMLElement | null;
+      if (!settle || performance.now() >= settle.until || target?.tagName !== 'IFRAME') return;
+      target.blur();
+      scroller.scrollTop = settle.top;
+    };
 
     const onScroll = () => {
       if (pendingRef.current || animatingRef.current) return;
@@ -160,7 +178,6 @@ export function EngagePage() {
         pendingRef.current = {
           target: index + feed.length,
           preserved: index + feed.length,
-          direction: -1,
         };
         setEntries((current) => [...previous, ...current]);
       }
@@ -172,15 +189,16 @@ export function EngagePage() {
 
     scroller.addEventListener('scroll', onScroll, { passive: true });
     scroller.addEventListener('scrollend', onScrollEnd);
+    scroller.addEventListener('focusin', onFocusIn);
     return () => {
       scroller.removeEventListener('scroll', onScroll);
       scroller.removeEventListener('scrollend', onScrollEnd);
+      scroller.removeEventListener('focusin', onFocusIn);
     };
   }, [entries, feed.length, makeCycle]);
 
-  const goTo = (index: number, direction: 1 | -1) => {
-    const scroller = scrollerRef.current;
-    if (!scroller || animatingRef.current) return;
+  const goTo = (index: number) => {
+    if (animatingRef.current || !scrollerRef.current) return;
 
     if (index < 0) {
       const previous = makeCycle();
@@ -188,7 +206,6 @@ export function EngagePage() {
       pendingRef.current = {
         target,
         preserved: active + feed.length,
-        direction,
       };
       targetRef.current = target;
       setEntries((current) => [...previous, ...current]);
@@ -197,7 +214,7 @@ export function EngagePage() {
 
     if (index >= entries.length) {
       const next = makeCycle();
-      pendingRef.current = { target: index, direction };
+      pendingRef.current = { target: index };
       targetRef.current = index;
       setEntries((current) => [...current, ...next]);
       return;
@@ -205,13 +222,11 @@ export function EngagePage() {
 
     targetRef.current = index;
     setActive(index);
-    animateStep(direction, () => {
-      scroller.scrollTop = index * scroller.clientHeight;
-    });
+    animateStep(index);
   };
 
   const step = (amount: number) => {
-    goTo(targetRef.current + amount, amount > 0 ? 1 : -1);
+    goTo(targetRef.current + amount);
   };
 
   useEffect(() => {

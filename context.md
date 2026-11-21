@@ -198,9 +198,11 @@ apps/web/src/
 - Engage no longer shows toasts for Like/Save/Follow/Share. Those actions now animate their
   icons instead: a pop + violet glow on the button, and the Share icon swaps to a check for
   1.6s after a successful copy. The Report menu item is currently a no-op.
-- Engage arrow navigation is animated: `animateStep` translates the scroller by one viewport
-  (up or down) over 380ms, then commits the new `scrollTop` while the transform hides the
-  swap. Clicks during the animation are ignored. Wrapping still prepends/appends a cycle.
+- Engage arrow navigation is animated by rAF-driven `scrollTop` changes over 380ms (scroll
+  snapping is temporarily disabled). The earlier CSS-transform version made cross-origin
+  iframes render dark until repaint, so it was replaced. A short `focusin` guard blurs iframes
+  that steal focus right after a step and restores the target scroll position, which also
+  fixed the one-slide skip. Clicks during the animation are ignored; wrapping still works.
 - Engage action stack: all five tools (Like, Save, Share, More, Visit) now share the same
   violet gradient circle, with a small stroked label underneath each one. Visit is an
   icon-only button; the old wide "Visit site" pill and the count pill were removed. The Like
