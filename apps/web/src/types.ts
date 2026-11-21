@@ -1,7 +1,7 @@
 export type Category = 'Art' | 'Music' | 'Games' | 'Experiments' | 'Worlds' | 'Tools';
 
 export interface Site {
-  /** Stable id used in URLs (/pin/:id) and local storage. */
+  /** Stable id used in URLs (/engage/:id) and local storage. */
   id: string;
   title: string;
   creator: string;
@@ -30,10 +30,4 @@ export interface Comment {
   author: string;
   text: string;
   createdAt: number;
-}
-
-export interface Board {
-  id: string;
-  name: string;
-  description: string;
 }

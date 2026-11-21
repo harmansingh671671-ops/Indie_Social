@@ -136,7 +136,7 @@ export function getSuggestions(
       add(empty, {
         id: `trend:${tag}`,
         label: tag,
-        detail: 'Trending on SitesHub',
+        detail: 'Trending on SiteHub',
         term: tag,
         kind: 'trend',
         score: 100,

@@ -1,4 +1,4 @@
-const PREFIX = 'siteshub.v1.';
+const PREFIX = 'sitehub.v1.';
 
 export function readJSON<T>(key: string, fallback: T): T {
   try {

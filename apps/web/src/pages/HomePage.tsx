@@ -1,13 +1,13 @@
 import { SITES } from '../data/sites';
 import { buildHomeFeed } from '../lib/feed';
-import { PinGrid } from '../components/feed/PinGrid';
+import { SiteGrid } from '../components/feed/SiteGrid';
 
 export function HomePage() {
   const feed = buildHomeFeed(SITES);
 
   return (
     <div className="page page--feed">
-      <PinGrid sites={feed} showMeta={false} />
+      <SiteGrid sites={feed} showMeta={false} />
     </div>
   );
 }

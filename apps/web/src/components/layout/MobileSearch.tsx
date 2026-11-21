@@ -113,7 +113,7 @@ export function MobileSearch() {
           className="search-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Search SitesHub"
+          aria-label="Search SiteHub"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setOpen(false);
           }}
@@ -126,11 +126,11 @@ export function MobileSearch() {
                   ref={inputRef}
                   className="search-sheet__input"
                   type="search"
-                  placeholder="Search ideas, makers, feelings…"
+                  placeholder="Search sites, makers, tags"
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
                   onKeyDown={onInputKeyDown}
-                  aria-label="Search for ideas"
+                  aria-label="Search sites"
                   aria-autocomplete="list"
                   autoComplete="off"
                 />

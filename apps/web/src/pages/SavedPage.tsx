@@ -4,7 +4,7 @@ import { Bookmark, Compass, Layers } from 'lucide-react';
 import { CATEGORIES, SITES } from '../data/sites';
 import { useAppState } from '../state/AppState';
 import { PageHeader } from '../components/layout/PageHeader';
-import { PinGrid } from '../components/feed/PinGrid';
+import { SiteGrid } from '../components/feed/SiteGrid';
 import { EmptyState } from '../components/common/EmptyState';
 import { Button } from '../components/common/Button';
 import { posterFor } from '../lib/posters';
@@ -14,7 +14,7 @@ import type { Site } from '../types';
 
 export function SavedPage() {
   const { savedIds } = useAppState();
-  const [activeBoard, setActiveBoard] = useState('All');
+  const [activeCollection, setActiveCollection] = useState('All');
 
   const savedSites = useMemo(
     () =>
@@ -25,19 +25,19 @@ export function SavedPage() {
     [savedIds],
   );
 
-  const boards = useMemo(
+  const collections = useMemo(
     () =>
       CATEGORIES.map((category) => ({
         name: category,
         sites: savedSites.filter((site) => site.category === category),
-      })).filter((board) => board.sites.length > 0),
+      })).filter((collection) => collection.sites.length > 0),
     [savedSites],
   );
 
   const visible =
-    activeBoard === 'All'
+    activeCollection === 'All'
       ? savedSites
-      : savedSites.filter((site) => site.category === activeBoard);
+      : savedSites.filter((site) => site.category === activeCollection);
 
   return (
     <div className="page">
@@ -47,14 +47,12 @@ export function SavedPage() {
         description={
           savedSites.length === 0
             ? 'Everything you save lands here, ready when you need it.'
-            : `${savedSites.length} ${savedSites.length === 1 ? 'pin' : 'pins'} across ${boards.length} ${
-                boards.length === 1 ? 'board' : 'boards'
-              }.`
+            : `${savedSites.length} ${savedSites.length === 1 ? 'site' : 'sites'} across ${collections.length} ${collections.length === 1 ? 'collection' : 'collections'}.`
         }
         action={
           <Link to={ROUTES.explore}>
             <Button variant="light">
-              <Compass size={16} /> Explore ideas
+              <Compass size={16} /> Explore sites
             </Button>
           </Link>
         }
@@ -64,7 +62,7 @@ export function SavedPage() {
         <EmptyState
           icon={<Bookmark size={30} />}
           title="Nothing saved yet"
-          body="Tap Save on any pin to keep it here. Your boards build themselves from what you collect."
+          body="Tap Save on any site to keep it here. Your collections build themselves from what you collect."
           action={
             <Link to={ROUTES.explore}>
               <Button>Find something to save</Button>
@@ -73,55 +71,58 @@ export function SavedPage() {
         />
       ) : (
         <>
-          <section className="boards" aria-label="Your boards">
+          <section className="collections" aria-label="Your collections">
             <h2 className="section-title">
-              <Layers size={18} /> Your boards
+              <Layers size={18} /> Your collections
             </h2>
-            <div className="boards__row">
+            <div className="collections__row">
               <button
                 type="button"
-                className={cn('board-card', activeBoard === 'All' && 'is-active')}
-                onClick={() => setActiveBoard('All')}
+                className={cn('collection-card', activeCollection === 'All' && 'is-active')}
+                onClick={() => setActiveCollection('All')}
               >
                 <span
                   className={cn(
-                    'board-card__preview',
-                    `board-card__preview--${Math.min(3, savedSites.length)}`,
+                    'collection-card__preview',
+                    `collection-card__preview--${Math.min(3, savedSites.length)}`,
                   )}
                 >
                   {savedSites.slice(0, 3).map((site) => (
                     <img key={site.id} src={posterFor(site, 220)} alt="" loading="lazy" />
                   ))}
                 </span>
-                <span className="board-card__name">All pins</span>
-                <span className="board-card__count">{savedSites.length}</span>
+                <span className="collection-card__name">All sites</span>
+                <span className="collection-card__count">{savedSites.length}</span>
               </button>
 
-              {boards.map((board) => (
+              {collections.map((collection) => (
                 <button
-                  key={board.name}
+                  key={collection.name}
                   type="button"
-                  className={cn('board-card', activeBoard === board.name && 'is-active')}
-                  onClick={() => setActiveBoard(board.name)}
+                  className={cn(
+                    'collection-card',
+                    activeCollection === collection.name && 'is-active',
+                  )}
+                  onClick={() => setActiveCollection(collection.name)}
                 >
                   <span
                     className={cn(
-                      'board-card__preview',
-                      `board-card__preview--${Math.min(3, board.sites.length)}`,
+                      'collection-card__preview',
+                      `collection-card__preview--${Math.min(3, collection.sites.length)}`,
                     )}
                   >
-                    {board.sites.slice(0, 3).map((site) => (
+                    {collection.sites.slice(0, 3).map((site) => (
                       <img key={site.id} src={posterFor(site, 220)} alt="" loading="lazy" />
                     ))}
                   </span>
-                  <span className="board-card__name">{board.name}</span>
-                  <span className="board-card__count">{board.sites.length}</span>
+                  <span className="collection-card__name">{collection.name}</span>
+                  <span className="collection-card__count">{collection.sites.length}</span>
                 </button>
               ))}
             </div>
           </section>
 
-          <PinGrid sites={visible} />
+          <SiteGrid sites={visible} />
         </>
       )}
     </div>

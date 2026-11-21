@@ -6,7 +6,6 @@ import { ExplorePage } from './pages/ExplorePage';
 import { SearchPage } from './pages/SearchPage';
 import { SavedPage } from './pages/SavedPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { PinDetailPage } from './pages/PinDetailPage';
 import { EngagePage } from './pages/EngagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AppStateProvider } from './state/AppState';
@@ -26,7 +25,6 @@ const PAGE_TITLES: Array<[string, string]> = [
   ['/search', 'Search'],
   ['/saved', 'Saved'],
   ['/profile', 'Profile'],
-  ['/pin/', 'Site preview'],
   ['/engage/', 'Engage'],
 ];
 
@@ -56,7 +54,6 @@ export default function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/saved" element={<SavedPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/pin/:id" element={<PinDetailPage />} />
             <Route path="/engage/:id" element={<EngagePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

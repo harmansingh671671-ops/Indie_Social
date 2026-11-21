@@ -9,7 +9,7 @@ export function NotFoundPage() {
     <div className="page">
       <EmptyState
         icon={<Compass size={30} />}
-        title="This pin has wandered off"
+        title="This page has wandered off"
         body="The page you were looking for doesn't exist — or the site was removed."
         action={
           <Link to={ROUTES.home}>

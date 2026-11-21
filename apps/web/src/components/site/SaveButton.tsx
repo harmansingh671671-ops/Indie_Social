@@ -36,7 +36,7 @@ export function SaveButton({
           event.stopPropagation();
         }
         const next = toggleSave(siteId);
-        showToast(next ? 'Saved to your pins' : 'Removed from saved pins');
+        showToast(next ? 'Saved to your sites' : 'Removed from saved sites');
       }}
     >
       {saved ? (

@@ -113,7 +113,7 @@ export function SearchSuggestions({
         <>
           {!query.trim() && (
             <div className="suggestions__head">
-              <span>Trending on SitesHub</span>
+              <span>Trending on SiteHub</span>
             </div>
           )}
           {others.map((suggestion, index) => row(suggestion, recent.length + index))}

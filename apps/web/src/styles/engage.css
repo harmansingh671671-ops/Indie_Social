@@ -154,11 +154,11 @@
 .engage__action:hover { background: rgb(255 255 255 / 0.24); transform: scale(1.05); }
 .engage__action--static { cursor: pointer; pointer-events: none; }
 .engage__action--save {
-  background: var(--red);
+  background: var(--accent);
   border-color: transparent;
-  box-shadow: 0 8px 24px rgb(230 0 35 / 0.45);
+  box-shadow: 0 8px 24px rgb(79 70 229 / 0.45);
 }
-.engage__action--save:hover { background: var(--red-hover); }
+.engage__action--save:hover { background: var(--accent-hover); }
 .engage__action--save.is-saved { background: #fff; color: var(--ink); }
 .engage__visit {
   display: inline-flex;

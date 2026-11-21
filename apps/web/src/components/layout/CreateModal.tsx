@@ -11,7 +11,7 @@ interface CreateModalProps {
 }
 
 /**
- * Create isn't a full pin editor yet. This captures site submissions locally
+ * Create isn't a site submission form yet. This captures site submissions locally
  * so the flow is testable; swap the submit handler for an API call later.
  */
 export function CreateModal({ open, onClose }: CreateModalProps) {

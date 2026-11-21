@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/format';
 
-interface PinImageProps {
+interface SiteImageProps {
   src: string;
   alt: string;
   label: string;
@@ -16,7 +16,7 @@ interface PinImageProps {
  * images do not always fire `load` again when a page remounts, so we also check
  * `complete` before paint — otherwise they stay invisible on the placeholder.
  */
-export function PinImage({
+export function SiteImage({
   src,
   alt,
   label,
@@ -24,7 +24,7 @@ export function PinImage({
   placeholder,
   eager = false,
   className,
-}: PinImageProps) {
+}: SiteImageProps) {
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -42,14 +42,14 @@ export function PinImage({
 
   return (
     <span
-      className={cn('pin-image', className)}
+      className={cn('site-image', className)}
       style={{ background }}
       aria-busy={status === 'loading'}
     >
       {status !== 'error' && (
         <img
           ref={imgRef}
-          className={cn('pin-image__img', status === 'loaded' && 'is-loaded')}
+          className={cn('site-image__img', status === 'loaded' && 'is-loaded')}
           src={src}
           alt={alt}
           loading={eager ? 'eager' : 'lazy'}
@@ -59,13 +59,13 @@ export function PinImage({
           onError={() => setStatus('error')}
         />
       )}
-      {status === 'loading' && !placeholder && <span className="pin-image__shimmer" aria-hidden />}
+      {status === 'loading' && !placeholder && <span className="site-image__shimmer" aria-hidden />}
       {status === 'error' && (
-        <span className="pin-image__fallback">
-          <span className="pin-image__fallback-mark" aria-hidden>
+        <span className="site-image__fallback">
+          <span className="site-image__fallback-mark" aria-hidden>
             {label.slice(0, 1)}
           </span>
-          <span className="pin-image__fallback-label">{label}</span>
+          <span className="site-image__fallback-label">{label}</span>
         </span>
       )}
     </span>

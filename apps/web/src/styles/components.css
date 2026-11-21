@@ -50,12 +50,12 @@
 }
 
 .btn--primary {
-  background: var(--red);
+  background: var(--accent);
   color: #fff;
 }
 
 .btn--primary:hover {
-  background: var(--red-hover);
+  background: var(--accent-hover);
 }
 
 .btn--dark {
@@ -189,7 +189,7 @@
 }
 
 .menu__item--danger {
-  color: var(--red);
+  color: var(--accent);
 }
 
 /* ──────────────────────────── Toasts ──────────────────────────── */
@@ -314,7 +314,7 @@
   height: 44px;
   border-radius: 50%;
   background: #ffe9ec;
-  color: var(--red);
+  color: var(--accent);
 }
 
 .create-modal__foot {
@@ -355,7 +355,7 @@
 }
 
 .field__error {
-  color: var(--red);
+  color: var(--accent);
   font-size: 13px;
 }
 
@@ -374,7 +374,7 @@
   height: 76px;
   border-radius: 50%;
   background: var(--surface-2);
-  color: var(--red);
+  color: var(--accent);
 }
 
 .empty-state__title {
@@ -464,12 +464,12 @@
   height: 44px;
   margin-top: 12px;
   border-radius: var(--radius-pill);
-  background: var(--red);
+  background: var(--accent);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
 }
-.search-sheet__all:hover { background: var(--red-hover); }
+.search-sheet__all:hover { background: var(--accent-hover); }
 
 /* ---------- Search suggestions ---------- */
 .suggestions {
@@ -540,7 +540,7 @@
 .suggestion__text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .suggestion__text strong { font-size: 14px; font-weight: 600; }
 .suggestion__text small { color: var(--muted); font-size: 12px; }
-.suggestion mark { background: transparent; color: var(--red); font-weight: 700; }
+.suggestion mark { background: transparent; color: var(--accent); font-weight: 700; }
 
 .suggestion__remove {
   display: grid;

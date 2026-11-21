@@ -1,4 +1,4 @@
-# Customising SitesHub
+# Customising SiteHub
 
 A short map of the edits you are most likely to make. No build configuration needs to change for any of these.
 
@@ -15,7 +15,7 @@ Open `apps/web/src/data/sites.ts` and copy an existing object. Only `id` must be
   category: 'Experiments',      // Art | Music | Games | Experiments | Worlds | Tools
   description: 'One or two sentences about the experience.',
   url: 'https://example.com',
-  accent: '#e60023',            // used for the fallback poster and detail tint
+  accent: '#4f46e5',            // used for the fallback poster tint
   ratio: 0.8,                   // image width / height. 0.75 = portrait, 1.25 = landscape
   tags: ['drawing', 'calm'],
   likes: 1200,
@@ -46,10 +46,10 @@ All global values live in `apps/web/src/styles/tokens.css`:
 
 ```css
 :root {
-  --red: #e60023;       /* primary action colour */
-  --ink: #111111;       /* text and active pills */
+  --accent: #4f46e5;    /* primary action colour */
+  --ink: #111111;       /* text, active pills and the wordmark */
   --surface-2: #f1f1f1; /* search field, chips */
-  --radius-md: 16px;    /* pin cards */
+  --radius-md: 16px;    /* feed cards */
   --header-h: 80px;
   --rail-w: 80px;
   --font: -apple-system, ...;
@@ -60,15 +60,15 @@ Per-area stylesheets:
 
 | File | Covers |
 |---|---|
-| `layout.css` | top bar, side rail, mobile nav, page frame |
+| `layout.css` | top bar, black wordmark logo, side rail, mobile nav, page frame |
 | `components.css` | buttons, avatars, menus, modal, toast, forms, empty states |
-| `feed.css` | masonry, pin cards, action overlays, category chips |
-| `pin.css` | pin detail page, creator row, comments, related grid |
-| `pages.css` | page headers, trending, sort toggle, boards, profile |
+| `feed.css` | masonry, site cards, action overlays, category chips |
+| `engage.css` | full-screen interactive website stream |
+| `pages.css` | page headers, trending, sort toggle, collections, profile |
 
 ## 4. Change branding and the demo profile
 
-`apps/web/src/config/site.ts` holds the product name, the letter inside the red logo badge, and the profile shown on `/profile`. The document title and meta description are in `apps/web/index.html`.
+`apps/web/src/config/site.ts` holds the product name, product domain and the profile shown on `/profile`. The header renders the name as a black wordmark with no coloured badge; restyle it in `apps/web/src/styles/layout.css` under `.logo`. The document title and meta description are in `apps/web/index.html`, and the favicon is `apps/web/public/favicon.svg`.
 
 ## 5. Add a page
 
@@ -78,7 +78,7 @@ Per-area stylesheets:
 
 ## 6. Swap local state for an API
 
-`state/AppState.tsx` is the only place that reads and writes saved pins, likes, follows and comments. Replace `usePersistedState` with server calls and keep the same exposed functions; every page will keep working unchanged.
+`state/AppState.tsx` is the only place that reads and writes saved sites, likes and follows. Replace `usePersistedState` with server calls and keep the same exposed functions; every page will keep working unchanged.
 
 Posters, search and formatting are isolated in `lib/`, so they can be replaced independently.
 

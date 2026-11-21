@@ -1,4 +1,4 @@
-# SitesHub / IndieSocial — working context
+# SiteHub / IndieSocial — working context
 
 Read this file **once at the start of a session** (rule in `AGENTS.md`). Don't re-read it
 repeatedly. Before every commit, add the important changes to the **Change log** below.
@@ -7,15 +7,16 @@ still matters.
 
 ## What this is
 
-**SitesHub** (domain `siteshub.sites`) is a Pinterest-like web app for discovering real
-interactive websites. It is a **web prototype only**: the feed shows local landing-page
-screenshots, never live sites. Clicking a card opens the immersive **Engage** feed, where
-the active site and its two neighbours load in iframes; `/pin/:id` is the older detail page.
+**SiteHub** (domain `sitehub.sites`) is a visual discovery app for real interactive websites.
+It is a **web prototype only**: the feed shows local landing-page screenshots, never live
+sites. Clicking a card opens the immersive **Engage** feed, where the active site and its two
+neighbours load in iframes. The old `/pin/:id` detail page has been deleted; there is no
+"pin" terminology left in the app.
 
 - Monorepo root: `C:\IndieSocial`, npm workspaces, branch `main`.
 - Stack: Vite 8 + React 19 + TypeScript + plain CSS. No backend, no auth, no database.
-- Persistence: `localStorage`, keys prefixed `siteshub.v1.*` (`saves`, `likes`, `follows`,
-  `comments`, `boards`, `searchHistory`, ...).
+- Persistence: `localStorage`, keys prefixed `sitehub.v1.*` (`saves`, `likes`, `follows`,
+  `searchHistory`).
 - 30 curated real sites in 6 categories: Art, Music, Games, Experiments, Worlds, Tools.
 
 ## Commands / verification
@@ -38,21 +39,21 @@ a devDependency used only by poster scripts.
 
 ```
 apps/web/src/
-  config/site.ts          brand name, logo letter, demo profile, ROUTES
+  config/site.ts          brand name, domain, demo profile, ROUTES
   data/sites.ts           the 30 sites, CATEGORIES, TRENDING_TAGS
   data/posters.ts         generated id -> /posters/*.webp map
   data/placeholders.ts    generated tiny inline blurred previews
   lib/feed.ts             buildHomeFeed, searchSites, relatedSites, filterByCategory
   lib/search.ts           suggestions, fuzzy closeness, recent-search history
   lib/posters.ts          posterFor, placeholderFor, accentGradient
-  lib/storage.ts          readJSON / writeJSON under siteshub.v1.*
-  components/common/      Avatar, Button, IconButton, Modal, PinImage, Toast, ...
+  lib/storage.ts          readJSON / writeJSON under sitehub.v1.*
+  components/common/      Avatar, Button, IconButton, Modal, SiteImage, Toast, ...
   components/layout/      TopBar, MobileSearch, SideRail, MobileNav, AppShell, ...
   components/search/      SearchSuggestions (shared desktop/mobile dropdown rows)
-  components/feed/        PinGrid, PinCard, CategoryChips
-  components/pin/         PinActions, comments
-  pages/                  Home, Explore, Search, Pin detail, Saved, Profile, 404
-  styles/                 tokens, base, layout, components, feed, pages, pin
+  components/feed/        SiteGrid, SiteCard, CategoryChips
+  components/site/        SaveButton, SiteActions
+  pages/                  Home, Explore, Search, Engage, Saved, Profile, 404
+  styles/                 tokens, base, layout, components, feed, pages, engage
 ```
 
 `CreateModal.tsx` is intentionally kept but not imported — see Deferred below.
@@ -69,7 +70,7 @@ apps/web/src/
   flash and no layout shift.
 - First 6 cards are `eager` + high `fetchPriority`; the rest are lazy. All 30 load locally
   with no network fallback.
-- `PinImage` shows placeholder -> poster, with a designed gradient fallback on error. It also
+- `SiteImage` shows placeholder -> poster, with a designed gradient fallback on error. It also
   checks `img.complete` in a layout effect: cached images don't re-fire `load` on remount,
   which previously left every card stuck on its blurred placeholder after route changes.
 - Replacing posters: drop a WebP in `public/posters/`, set `poster: '/posters/name.webp'`
@@ -95,7 +96,7 @@ apps/web/src/
   "search for this" row, closest sites, makers, categories and tags. It is typo-tolerant
   (Levenshtein/subsequence matching). `SearchSuggestions` renders them with highlighted
   matches, icons, ↑/↓ + Enter keyboard navigation and Escape to close.
-- Recent searches persist in `siteshub.v1.searchHistory` (max 8). Per-item X removes one —
+- Recent searches persist in `sitehub.v1.searchHistory` (max 8). Per-item X removes one —
   hidden until row hover on hover-capable devices, always visible on touch. Clear-all was
   removed at the user's request. `readSearchHistory()` sanitises bad stored values so a
   corrupted entry cannot crash the search UI.
@@ -104,9 +105,8 @@ apps/web/src/
 - Search results page shows a "Did you mean …?" link when a query finds nothing.
 
 ### Engage page (new vertical experience)
-- Clicking a website card now opens `/engage/:id`, an immersive full-screen vertical
-  snap-scroll feed. `/pin/:id` (the old Pinterest-style detail page) is kept but is no longer
-  the card destination; `siteLink()` also points to `/engage/:id`.
+- Clicking a website card opens `/engage/:id`, an immersive full-screen vertical snap-scroll
+  feed. `siteLink()` also points to `/engage/:id`; there is no separate detail page any more.
 - `AppShell` renders Engage without the header, rail or bottom nav. Current layout: standalone
   back arrow top-left, up/down arrow buttons at top/bottom centre (they wrap through all 30
   sites), bottom-left creator meta + "Untitled experience" (real naming comes later), and a
@@ -118,15 +118,15 @@ apps/web/src/
   once. Some external sites refuse framing (X-Frame-Options/CSP), so "Visit site" opens the
   real site in a new tab as a fallback.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
-  "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SitesHub
+  "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SiteHub
   rename). The React implementation lives
   in `pages/EngagePage.tsx` with styles in `styles/engage.css`.
 
 ### Navigation / pages
 - Desktop: fixed top island + 80px side rail (Home, Explore, Saved, Settings, Help) +
   masonry. Mobile: bottom nav (Home, Explore, Saved) + 2-column masonry.
-- Pin detail: preview, creator row, Save/Share/More, tags, comments, Visit site, related.
-- Saved boards are auto-generated by category. Profile has Saved/Likes/Created tabs.
+- Engage replaces the old detail page: full-screen interactive stream with Save/Share/More.
+- Saved collections are auto-generated by category. Profile has Saved/Likes/Created tabs.
 - All vertical scrollbars are hidden globally (`base.css`) while scrolling still works.
 
 ### Git / tooling notes
@@ -165,22 +165,27 @@ apps/web/src/
 - `4af40e0` hide vertical scrollbars on all pages.
 - `context.md` + `AGENTS.md` added: mandatory once-per-session read, update before each
   commit, compress past 15K words.
-- `PinImage` cache fix: detect already-complete images so Home/Explore cards show the real
+- `SiteImage` cache fix: detect already-complete images so Home/Explore cards show the real
   poster immediately after page switches instead of staying blurred.
 - Search blank-screen fix: remove all `onClearHistory` references after deleting the Clear
   link, harden `readSearchHistory()` against malformed `localStorage`, and **restart the dev
   server** — Vite on port 4000 was still serving the stale pre-fix module from memory.
-- `PinCard`/`PinGrid` gained `showMeta`; Home and Explore pass `false` so cards are image-only
-  while other pages keep the title/creator row. Enabled Vite file polling and restarted the
-  dev server because port 4000 was serving the stale pre-change `PinCard` transform.
+- `SiteCard`/`SiteGrid` gained `showMeta`; Home and Explore pass `false` so cards are
+  image-only while other pages keep the title/creator row. Enabled Vite file polling and
+  restarted the dev server because port 4000 was serving the stale module.
 - Retired the 4001 preview server; all verification is done on the 4000 dev server.
 - Added Engage vertical feed (Stitch-generated design), routed card clicks to `/engage/:id`,
   and hid the normal app shell on that route. Later switched slides to real interactive
   iframes (±2 window), removed the island/dots/progress/badge, and added wrapping top/bottom
   navigation arrows.
-- Rebranded the app from "Scroll" to **SitesHub** (domain `siteshub.sites`): brand config,
-  document titles/meta, page titles, search strings, storage prefix (`siteshub.v1.*`), package
+- Rebranded the app from "Scroll" to **SiteHub** (domain `sitehub.sites`): brand config,
+  document titles/meta, page titles, search strings, storage prefix (`sitehub.v1.*`), package
   metadata, README/docs/plan. Removed the black top/bottom gradient scrims from Engage.
+- Removed the old Pinterest-style detail page and all "pin" wording: deleted `/pin/:id`,
+  `PinDetailPage.tsx`, `pin.css`, comment state and the unused `Board` type. Renamed
+  `PinImage`/`PinCard`/`PinGrid`/`PinActions` to `Site*`, classes to `site-*`, and Saved
+  "boards" to "collections". Replaced the red circular logo with a black "SiteHub" wordmark,
+  changed the accent to indigo (`--accent: #4f46e5`), and made the favicon a black "SH".
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo

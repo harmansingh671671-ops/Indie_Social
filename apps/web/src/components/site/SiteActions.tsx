@@ -6,12 +6,12 @@ import { useToast } from '../common/Toast';
 import { copyText, openSite, siteLink } from '../../lib/share';
 import { useAppState } from '../../state/AppState';
 
-interface PinActionsProps {
+interface SiteActionsProps {
   site: Site;
-  variant: 'card' | 'detail';
 }
 
-export function PinActions({ site, variant }: PinActionsProps) {
+/** Hover actions shown on a feed card. */
+export function SiteActions({ site }: SiteActionsProps) {
   const { showToast } = useToast();
   const { toggleLike } = useAppState();
 
@@ -57,7 +57,7 @@ export function PinActions({ site, variant }: PinActionsProps) {
       onSelect: () => openSite(site.url),
     },
     {
-      label: 'Like this pin',
+      label: 'Like this site',
       icon: <Heart size={17} />,
       onSelect: () => {
         const next = toggleLike(site.id);
@@ -65,30 +65,30 @@ export function PinActions({ site, variant }: PinActionsProps) {
       },
     },
     {
-      label: 'Report pin',
+      label: 'Report site',
       icon: <Flag size={17} />,
       danger: true,
-      onSelect: () => showToast('Thanks — this pin is queued for review'),
+      onSelect: () => showToast('Thanks — this site is queued for review'),
     },
   ];
 
   return (
-    <div className={`pin-actions pin-actions--${variant}`}>
-      <div className="pin-actions__group">
+    <div className="site-actions site-actions--card">
+      <div className="site-actions__group">
         <ActionMenu
-          label="Share pin"
+          label="Share site"
           items={shareItems}
           trigger={<Share2 size={18} />}
-          iconVariant={variant === 'card' ? 'light' : 'ghost'}
+          iconVariant="light"
         />
         <ActionMenu
           label="More options"
           items={moreItems}
           trigger={<MoreHorizontal size={18} />}
-          iconVariant={variant === 'card' ? 'light' : 'ghost'}
+          iconVariant="light"
         />
       </div>
-      <SaveButton siteId={site.id} size={variant === 'card' ? 'sm' : 'md'} />
+      <SaveButton siteId={site.id} size="sm" />
     </div>
   );
 }

@@ -69,32 +69,24 @@
 }
 
 .logo {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
   flex: none;
-  width: 48px;
   height: 48px;
-  border-radius: 50%;
+  padding: 0 4px;
 }
 
-.logo__badge {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--red);
-  color: #fff;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+.logo__wordmark {
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.045em;
   line-height: 1;
-  padding-bottom: 2px;
-  transition: background 0.15s var(--ease);
+  white-space: nowrap;
 }
 
-.logo:hover .logo__badge {
-  background: var(--red-hover);
+.logo:hover .logo__wordmark {
+  color: var(--ink-2);
 }
 
 .search {
@@ -283,14 +275,13 @@
     padding: 8px 12px 40px;
   }
 
-  .logo,
-  .logo__badge {
-    width: 40px;
+  .logo {
     height: 40px;
+    padding: 0 2px;
   }
 
-  .logo__badge {
-    font-size: 22px;
+  .logo__wordmark {
+    font-size: 17px;
   }
 
   .search {

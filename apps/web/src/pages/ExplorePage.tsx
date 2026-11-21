@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { CATEGORIES, SITES } from '../data/sites';
 import { filterByCategory } from '../lib/feed';
 import { CategoryChips } from '../components/feed/CategoryChips';
-import { PinGrid } from '../components/feed/PinGrid';
+import { SiteGrid } from '../components/feed/SiteGrid';
 import { PageHeader } from '../components/layout/PageHeader';
 
 export function ExplorePage() {
@@ -17,7 +17,7 @@ export function ExplorePage() {
         active={category}
         onChange={setCategory}
       />
-      <PinGrid sites={visible} showMeta={false} />
+      <SiteGrid sites={visible} showMeta={false} />
     </div>
   );
 }

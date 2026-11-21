@@ -99,9 +99,7 @@ export function TopBar() {
   return (
     <header className="topbar">
       <Link to={ROUTES.home} className="logo" aria-label={`${siteConfig.name} home`}>
-        <span className="logo__badge" aria-hidden>
-          {siteConfig.logoLetter}
-        </span>
+        <span className="logo__wordmark">{siteConfig.name}</span>
       </Link>
 
       <MobileSearch />
@@ -112,7 +110,7 @@ export function TopBar() {
           ref={inputRef}
           className="search__input"
           type="search"
-          placeholder="Search for ideas"
+          placeholder="Search sites"
           value={value}
           onChange={(event) => {
             setValue(event.target.value);
@@ -124,7 +122,7 @@ export function TopBar() {
           }}
           onBlur={() => setOpen(false)}
           onKeyDown={onInputKeyDown}
-          aria-label="Search for ideas"
+          aria-label="Search sites"
           aria-autocomplete="list"
           autoComplete="off"
         />

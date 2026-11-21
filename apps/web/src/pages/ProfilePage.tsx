@@ -7,7 +7,7 @@ import { useToast } from '../components/common/Toast';
 import { siteConfig, ROUTES } from '../config/site';
 import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
-import { PinGrid } from '../components/feed/PinGrid';
+import { SiteGrid } from '../components/feed/SiteGrid';
 import { EmptyState } from '../components/common/EmptyState';
 import { copyText } from '../lib/share';
 import { cn } from '../lib/format';
@@ -117,7 +117,7 @@ export function ProfilePage() {
       </nav>
 
       {visible.length > 0 ? (
-        <PinGrid sites={visible} />
+        <SiteGrid sites={visible} />
       ) : (
         <EmptyState
           icon={
@@ -131,15 +131,15 @@ export function ProfilePage() {
           }
           title={
             tab === 'created'
-              ? 'No pins created yet'
+              ? 'No sites created yet'
               : tab === 'likes'
                 ? 'No likes yet'
-                : 'Your saved pins will live here'
+                : 'Your saved sites will live here'
           }
           body={
             tab === 'created'
               ? 'Creator tools are coming. Soon you will be able to submit and manage sites from this page.'
-              : 'Tap the heart on a pin to keep a quiet list of favourites.'
+              : 'Tap the heart on a site to keep a quiet list of favourites.'
           }
           action={
             <Link to={ROUTES.explore}>

@@ -9,7 +9,6 @@ import './styles/layout.css';
 import './styles/components.css';
 import './styles/feed.css';
 import './styles/pages.css';
-import './styles/pin.css';
 import './styles/engage.css';
 
 createRoot(document.getElementById('root')!).render(

@@ -1,8 +1,8 @@
 {
-  "name": "siteshub",
+  "name": "sitehub",
   "private": true,
   "version": "0.1.0",
-  "description": "SitesHub — a visual discovery feed for the indie web",
+  "description": "SiteHub — a visual discovery feed for the indie web",
   "workspaces": [
     "apps/web"
   ],

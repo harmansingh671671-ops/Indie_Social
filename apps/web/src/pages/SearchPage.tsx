@@ -5,7 +5,7 @@ import { CATEGORIES, SITES } from '../data/sites';
 import { filterByCategory, searchSites } from '../lib/feed';
 import { getSuggestions } from '../lib/search';
 import { CategoryChips } from '../components/feed/CategoryChips';
-import { PinGrid } from '../components/feed/PinGrid';
+import { SiteGrid } from '../components/feed/SiteGrid';
 import { PageHeader } from '../components/layout/PageHeader';
 import { EmptyState } from '../components/common/EmptyState';
 import { Button } from '../components/common/Button';
@@ -28,10 +28,10 @@ export function SearchPage() {
     <div className="page">
       <PageHeader
         eyebrow="Search"
-        title={query ? `Results for “${query}”` : 'Search SitesHub'}
+        title={query ? `Results for “${query}”` : 'Search SiteHub'}
         description={
           query
-            ? `${results.length} ${results.length === 1 ? 'idea' : 'ideas'} found`
+            ? `${results.length} ${results.length === 1 ? 'site' : 'sites'} found`
             : 'Try a site name, a maker, or a feeling like “calm” or “chaos”.'
         }
       />
@@ -44,7 +44,7 @@ export function SearchPage() {
             onChange={setCategory}
             label="Filter search results"
           />
-          <PinGrid sites={visible} />
+          <SiteGrid sites={visible} />
         </>
       )}
 
@@ -61,7 +61,7 @@ export function SearchPage() {
       {results.length === 0 && (
         <EmptyState
           icon={<SearchX size={30} />}
-          title={query ? 'No ideas matched that search' : 'What are you in the mood for?'}
+          title={query ? 'No sites matched that search' : 'What are you in the mood for?'}
           body={
             query
               ? 'Try a broader word — “art”, “music”, “space” — or explore the full catalogue.'

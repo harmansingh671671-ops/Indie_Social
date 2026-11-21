@@ -129,11 +129,11 @@ export function EngagePage() {
                 <button
                   type="button"
                   className={`engage__action engage__action--save${saved ? ' is-saved' : ''}`}
-                  aria-label="Save to your pins"
+                  aria-label="Save to your sites"
                   aria-pressed={saved}
                   onClick={() => {
                     const next = toggleSave(item.id);
-                    showToast(next ? 'Saved to your pins' : 'Removed from saved pins');
+                    showToast(next ? 'Saved to your sites' : 'Removed from saved sites');
                   }}
                 >
                   {saved ? <Check size={24} /> : <Bookmark size={24} />}
@@ -173,7 +173,7 @@ export function EngagePage() {
                       label: 'Report',
                       icon: <Flag size={17} />,
                       danger: true,
-                      onSelect: () => showToast('Thanks — this pin is queued for review'),
+                      onSelect: () => showToast('Thanks — this site is queued for review'),
                     },
                   ]}
                 />

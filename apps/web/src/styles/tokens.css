@@ -2,9 +2,9 @@
    Design tokens. Change colours, spacing and type scale here.
    ────────────────────────────────────────────────────────────── */
 :root {
-  --red: #e60023;
-  --red-hover: #ad081b;
-  --red-press: #8a0616;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-press: #3730a3;
 
   --ink: #111111;
   --ink-2: #333333;

@@ -7,22 +7,18 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { Comment } from '../types';
 import { readJSON, writeJSON } from '../lib/storage';
 
 interface AppStateValue {
   savedIds: string[];
   likedIds: string[];
   followedHandles: string[];
-  comments: Record<string, Comment[]>;
   isSaved: (id: string) => boolean;
   isLiked: (id: string) => boolean;
   isFollowing: (handle: string) => boolean;
   toggleSave: (id: string) => boolean;
   toggleLike: (id: string) => boolean;
   toggleFollow: (handle: string) => boolean;
-  addComment: (siteId: string, text: string, author: string) => void;
-  commentsFor: (siteId: string) => Comment[];
   resetDemoData: () => void;
 }
 
@@ -45,11 +41,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     'followed',
     [],
   );
-  const [comments, setComments] = usePersistedState<Record<string, Comment[]>>(
-    'comments',
-    {},
-  );
-
   const toggleInList = useCallback(
     (list: string[], value: string) =>
       list.includes(value) ? list.filter((item) => item !== value) : [...list, value],
@@ -90,65 +81,35 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     [followedHandles, setFollowedHandles, toggleInList],
   );
 
-  const addComment = useCallback(
-    (siteId: string, text: string, author: string) => {
-      const trimmed = text.trim();
-      if (!trimmed) return;
-      const comment: Comment = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        author,
-        text: trimmed,
-        createdAt: Date.now(),
-      };
-      setComments((current) => ({
-        ...current,
-        [siteId]: [...(current[siteId] ?? []), comment],
-      }));
-    },
-    [setComments],
-  );
-
-  const commentsFor = useCallback(
-    (siteId: string) => comments[siteId] ?? [],
-    [comments],
-  );
-
   const resetDemoData = useCallback(() => {
     setSavedIds([]);
     setLikedIds([]);
     setFollowedHandles([]);
-    setComments({});
-  }, [setSavedIds, setLikedIds, setFollowedHandles, setComments]);
+  }, [setSavedIds, setLikedIds, setFollowedHandles]);
 
   const value = useMemo<AppStateValue>(
     () => ({
       savedIds,
       likedIds,
       followedHandles,
-      comments,
       isSaved,
       isLiked,
       isFollowing,
       toggleSave,
       toggleLike,
       toggleFollow,
-      addComment,
-      commentsFor,
       resetDemoData,
     }),
     [
       savedIds,
       likedIds,
       followedHandles,
-      comments,
       isSaved,
       isLiked,
       isFollowing,
       toggleSave,
       toggleLike,
       toggleFollow,
-      addComment,
-      commentsFor,
       resetDemoData,
     ],
   );
