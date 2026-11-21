@@ -195,6 +195,10 @@ apps/web/src/
   either edge appends or prepends another 30-site cycle. A stable `uid` per cycle keeps the
   current iframe mounted, and `overflow-anchor: none` plus an explicit `scrollTop` restore
   prevents the browser from shifting the view when a cycle is prepended.
+- Engage action stack now has a YouTube-style Like star above Save: it toggles the shared
+  `isLiked` state, fills violet when liked and shows a formatted like count. The old "Like"
+  item was removed from the More menu. `ActionMenu` gained a `direction="up"` option, used by
+  the 3-dot menu so its panel opens above the trigger.
 - Bluish-purple theme: `--accent` is now `#6d4aff` (hover `#5b3ce0`) and avatar colours are
   all blue/violet shades. Engage's creator meta sits in a translucent violet frosted panel so
   it stays readable on any website background; the creator avatar, handle, title, action

@@ -14,15 +14,16 @@ import {
   ChevronUp,
   ExternalLink,
   Flag,
-  Heart,
   MoreHorizontal,
   Share2,
+  Star,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SITES } from '../data/sites';
 import { buildHomeFeed } from '../lib/feed';
 import { posterFor } from '../lib/posters';
 import { copyText, openSite, siteLink } from '../lib/share';
+import { formatCount } from '../lib/format';
 import { useAppState } from '../state/AppState';
 import type { Site } from '../types';
 import { Avatar } from '../components/common/Avatar';
@@ -49,7 +50,8 @@ export function EngagePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { isSaved, toggleSave, isFollowing, toggleFollow, toggleLike } = useAppState();
+  const { isSaved, toggleSave, isLiked, toggleLike, isFollowing, toggleFollow } =
+    useAppState();
 
   // All available sites, starting with the one the user tapped. No artificial limit.
   const feed = useMemo(() => {
@@ -208,6 +210,7 @@ export function EngagePage() {
           const distance = Math.abs(index - active);
           const loadWebsite = distance <= 2;
           const saved = isSaved(item.id);
+          const liked = isLiked(item.id);
           const following = isFollowing(item.creatorHandle);
 
           return (
@@ -246,6 +249,24 @@ export function EngagePage() {
               </div>
 
               <div className="engage__actions">
+                <div className="engage__star">
+                  <button
+                    type="button"
+                    className={`engage__action engage__action--star${liked ? ' is-liked' : ''}`}
+                    aria-label={liked ? 'Unlike this site' : 'Like this site'}
+                    aria-pressed={liked}
+                    onClick={() => {
+                      const next = toggleLike(item.id);
+                      showToast(next ? 'Liked' : 'Like removed');
+                    }}
+                  >
+                    <Star size={25} fill={liked ? 'currentColor' : 'none'} />
+                  </button>
+                  <span className="engage__star-count">
+                    {formatCount(item.likes + (liked ? 1 : 0))}
+                  </span>
+                </div>
+
                 <button
                   type="button"
                   className={`engage__action engage__action--save${saved ? ' is-saved' : ''}`}
@@ -269,17 +290,10 @@ export function EngagePage() {
                 <ActionMenu
                   label="More options"
                   align="right"
+                  direction="up"
                   iconVariant="light"
                   trigger={<MoreHorizontal size={22} />}
                   items={[
-                    {
-                      label: 'Like this experience',
-                      icon: <Heart size={17} />,
-                      onSelect: () => {
-                        const next = toggleLike(item.id);
-                        showToast(next ? 'Liked' : 'Like removed');
-                      },
-                    },
                     {
                       label: 'Open website',
                       icon: <ExternalLink size={17} />,

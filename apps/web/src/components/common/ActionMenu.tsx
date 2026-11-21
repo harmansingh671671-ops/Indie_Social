@@ -15,6 +15,7 @@ interface ActionMenuProps {
   trigger: ReactNode;
   iconVariant?: 'light' | 'ghost' | 'dark';
   align?: 'left' | 'right';
+  direction?: 'up' | 'down';
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export function ActionMenu({
   trigger,
   iconVariant = 'ghost',
   align = 'right',
+  direction = 'down',
   className,
 }: ActionMenuProps) {
   const [open, setOpen] = useState(false);
@@ -64,7 +66,14 @@ export function ActionMenu({
       </IconButton>
 
       {open && (
-        <div className={cn('menu__panel', align === 'left' ? 'is-left' : 'is-right')} role="menu">
+        <div
+          className={cn(
+            'menu__panel',
+            `menu__panel--${direction}`,
+            align === 'left' ? 'is-left' : 'is-right',
+          )}
+          role="menu"
+        >
           {items.map((item) => (
             <button
               key={item.label}
