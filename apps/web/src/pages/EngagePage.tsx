@@ -101,6 +101,8 @@ export function EngagePage() {
   // Keep latest values reachable from listeners attached once.
   const activeRef = useRef(active);
   activeRef.current = active;
+  const chromeHiddenRef = useRef(chromeHidden);
+  chromeHiddenRef.current = chromeHidden;
   const entriesRef = useRef(entries);
   entriesRef.current = entries;
 
@@ -208,6 +210,8 @@ export function EngagePage() {
 
     const onScroll = () => {
       if (pendingRef.current || animatingRef.current) return;
+      // A real swipe or wheel scroll brings the controls back smoothly.
+      if (chromeHiddenRef.current) setChromeHidden(false);
       const index = Math.round(scroller.scrollTop / scroller.clientHeight);
       setActive(index);
 
@@ -228,13 +232,21 @@ export function EngagePage() {
       targetRef.current = Math.round(scroller.scrollTop / scroller.clientHeight);
     };
 
+    const onScrollIntent = () => {
+      if (chromeHiddenRef.current) setChromeHidden(false);
+    };
+
     scroller.addEventListener('scroll', onScroll, { passive: true });
     scroller.addEventListener('scrollend', onScrollEnd);
     scroller.addEventListener('focusin', onFocusIn);
+    scroller.addEventListener('touchstart', onScrollIntent, { passive: true });
+    scroller.addEventListener('wheel', onScrollIntent, { passive: true });
     return () => {
       scroller.removeEventListener('scroll', onScroll);
       scroller.removeEventListener('scrollend', onScrollEnd);
       scroller.removeEventListener('focusin', onFocusIn);
+      scroller.removeEventListener('touchstart', onScrollIntent);
+      scroller.removeEventListener('wheel', onScrollIntent);
     };
   }, [entries, feed.length, makeCycle]);
 
