@@ -28,7 +28,6 @@ import { useAppState } from '../state/AppState';
 import type { Site } from '../types';
 import { Avatar } from '../components/common/Avatar';
 import { ActionMenu } from '../components/common/ActionMenu';
-import { useToast } from '../components/common/Toast';
 
 interface FeedEntry {
   site: Site;
@@ -47,7 +46,6 @@ interface PendingScroll {
 export function EngagePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } = useToast();
   const { isSaved, toggleSave, isLiked, toggleLike, isFollowing, toggleFollow } =
     useAppState();
 
@@ -62,12 +60,14 @@ export function EngagePage() {
     feed.map((site) => ({ site, uid: `0:${site.id}` })),
   );
   const [active, setActive] = useState(0);
+  const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
   const pendingRef = useRef<PendingScroll | null>(null);
   const targetRef = useRef(0);
   const animatingRef = useRef(false);
   const animatingTimerRef = useRef<number | null>(null);
+  const copyTimerRef = useRef<number | null>(null);
 
   const makeCycle = useCallback(
     (): FeedEntry[] => {
@@ -120,6 +120,7 @@ export function EngagePage() {
   useEffect(
     () => () => {
       if (animatingTimerRef.current) window.clearTimeout(animatingTimerRef.current);
+      if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
     },
     [],
   );
@@ -229,9 +230,18 @@ export function EngagePage() {
     return () => window.removeEventListener('keydown', onKeyDown);
   });
 
-  const share = async (url: string) => {
+  const pop = (element: HTMLElement) => {
+    element.classList.remove('is-popping');
+    void element.offsetWidth;
+    element.classList.add('is-popping');
+  };
+
+  const share = async (url: string, uid: string) => {
     const ok = await copyText(url);
-    showToast(ok ? 'Link copied' : 'Could not copy the link');
+    if (!ok) return;
+    setCopiedUid(uid);
+    if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = window.setTimeout(() => setCopiedUid(null), 1600);
   };
 
   return (
@@ -270,9 +280,9 @@ export function EngagePage() {
                   <button
                     type="button"
                     className="engage__follow"
-                    onClick={() => {
-                      const next = toggleFollow(item.creatorHandle);
-                      showToast(next ? 'Following' : 'Unfollowed');
+                    onClick={(event) => {
+                      toggleFollow(item.creatorHandle);
+                      pop(event.currentTarget);
                     }}
                   >
                     {following ? 'Following' : 'Follow'}
@@ -288,9 +298,9 @@ export function EngagePage() {
                     className="engage__action"
                     aria-label={liked ? 'Unlike this site' : 'Like this site'}
                     aria-pressed={liked}
-                    onClick={() => {
-                      const next = toggleLike(item.id);
-                      showToast(next ? 'Liked' : 'Like removed');
+                    onClick={(event) => {
+                      toggleLike(item.id);
+                      pop(event.currentTarget);
                     }}
                   >
                     <Star size={23} fill={liked ? 'currentColor' : 'none'} />
@@ -306,9 +316,9 @@ export function EngagePage() {
                     className="engage__action"
                     aria-label="Save to your sites"
                     aria-pressed={saved}
-                    onClick={() => {
-                      const next = toggleSave(item.id);
-                      showToast(next ? 'Saved to your sites' : 'Removed from saved sites');
+                    onClick={(event) => {
+                      toggleSave(item.id);
+                      pop(event.currentTarget);
                     }}
                   >
                     {saved ? <Check size={23} /> : <Bookmark size={23} />}
@@ -321,9 +331,14 @@ export function EngagePage() {
                     type="button"
                     className="engage__action"
                     aria-label="Share site"
-                    onClick={() => share(siteLink(item))}
+                    onClick={(event) => {
+                      pop(event.currentTarget);
+                      void share(siteLink(item), entry.uid);
+                    }}
                   >
-                    <Share2 size={23} />
+                    <span className="engage__icon-swap" key={copiedUid === entry.uid ? 'copied' : 'share'}>
+                      {copiedUid === entry.uid ? <Check size={23} /> : <Share2 size={23} />}
+                    </span>
                   </button>
                   <span className="engage__tool-label">Share</span>
                 </div>
@@ -345,7 +360,7 @@ export function EngagePage() {
                         label: 'Report',
                         icon: <Flag size={17} />,
                         danger: true,
-                        onSelect: () => showToast('Thanks — this site is queued for review'),
+                        onSelect: () => undefined,
                       },
                     ]}
                   />
