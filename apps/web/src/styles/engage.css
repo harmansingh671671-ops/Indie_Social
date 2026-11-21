@@ -98,15 +98,14 @@
   left: 16px;
   z-index: 20;
   display: grid;
-  gap: 10px;
-  max-width: min(56%, 380px);
-  padding: 12px 14px 14px;
-  border-radius: 20px;
-  border: 1px solid rgb(180 160 255 / 0.24);
-  background: linear-gradient(135deg, rgb(38 26 82 / 0.82), rgb(18 16 40 / 0.8));
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  box-shadow: 0 14px 38px rgb(12 8 34 / 0.42);
+  gap: 8px;
+  max-width: min(72%, 420px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   pointer-events: none;
 }
 .engage__meta button { pointer-events: auto; }
@@ -123,6 +122,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: #fff;
+  -webkit-text-stroke: 0.6px rgb(18 12 44 / 0.9);
+  paint-order: stroke fill;
+  text-shadow: 0 1px 3px rgb(12 8 34 / 0.7);
 }
 .engage__follow {
   flex: none;
@@ -144,6 +146,9 @@
   line-height: 1.12;
   letter-spacing: -0.025em;
   color: #fff;
+  -webkit-text-stroke: 0.8px rgb(18 12 44 / 0.92);
+  paint-order: stroke fill;
+  text-shadow: 0 2px 5px rgb(12 8 34 / 0.72);
 }
 
 .engage__actions {

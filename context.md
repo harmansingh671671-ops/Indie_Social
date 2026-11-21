@@ -201,7 +201,9 @@ apps/web/src/
   the 3-dot menu so its panel opens above the trigger.
 - Bluish-purple theme: `--accent` is now `#6d4aff` (hover `#5b3ce0`) and avatar colours are
   all blue/violet shades. Engage's creator meta sits in a translucent violet frosted panel so
-  it stays readable on any website background; the creator avatar, handle, title, action
+  it stays readable on any website background. The panel background was later removed — the
+  meta is now fully transparent and the handle/title use white fill with a thin dark
+  `-webkit-text-stroke` plus a small shadow for contrast. The creator avatar, handle, title, action
   buttons and Visit site pill were enlarged and recoloured to match. The embedded-site
   ActionMenu icon buttons are restyled via `.engage .menu > .icon-btn` (no white circles).
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
