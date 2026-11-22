@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bookmark, Compass, Layers } from 'lucide-react';
 import { CATEGORIES, SITES } from '../data/sites';
+import { useHiddenSiteIds } from '../lib/siteHealth';
 import { useAppState } from '../state/AppState';
 import { PageHeader } from '../components/layout/PageHeader';
 import { SiteGrid } from '../components/feed/SiteGrid';
@@ -14,6 +15,7 @@ import type { Site } from '../types';
 
 export function SavedPage() {
   const { savedIds } = useAppState();
+  const hidden = useHiddenSiteIds();
   const [activeCollection, setActiveCollection] = useState('All');
 
   const savedSites = useMemo(
@@ -21,8 +23,8 @@ export function SavedPage() {
       [...savedIds]
         .reverse()
         .map((id) => SITES.find((site) => site.id === id))
-        .filter((site): site is Site => Boolean(site)),
-    [savedIds],
+        .filter((site): site is Site => site !== undefined && !hidden.has(site.id)),
+    [savedIds, hidden],
   );
 
   const collections = useMemo(

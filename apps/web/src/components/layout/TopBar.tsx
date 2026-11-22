@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Bell, MessageCircle, Search, X } from 'lucide-react';
 import { siteConfig, ROUTES } from '../../config/site';
-import { SITES } from '../../data/sites';
+import { useVisibleSites } from '../../lib/siteHealth';
 import {
   forgetSearch,
   getSuggestions,
@@ -28,10 +28,11 @@ export function TopBar() {
   const [active, setActive] = useState(-1);
   const [history, setHistory] = useState<string[]>(() => readSearchHistory());
   const inputRef = useRef<HTMLInputElement>(null);
+  const sites = useVisibleSites();
 
   const suggestions = useMemo(
-    () => getSuggestions(SITES, value, history),
-    [value, history],
+    () => getSuggestions(sites, value, history),
+    [sites, value, history],
   );
 
   useEffect(() => {

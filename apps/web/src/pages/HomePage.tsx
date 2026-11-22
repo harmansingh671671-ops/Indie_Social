@@ -1,9 +1,11 @@
-import { SITES } from '../data/sites';
+import { useMemo } from 'react';
 import { buildHomeFeed } from '../lib/feed';
+import { useVisibleSites } from '../lib/siteHealth';
 import { SiteGrid } from '../components/feed/SiteGrid';
 
 export function HomePage() {
-  const feed = buildHomeFeed(SITES);
+  const sites = useVisibleSites();
+  const feed = useMemo(() => buildHomeFeed(sites), [sites]);
 
   return (
     <div className="page page--feed">

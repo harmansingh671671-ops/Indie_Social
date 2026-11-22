@@ -19,11 +19,12 @@ import {
   Star,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { SITES } from '../data/sites';
 import { buildHomeFeed } from '../lib/feed';
 import { posterFor } from '../lib/posters';
 import { copyText, openSite, siteLink } from '../lib/share';
 import { formatCount } from '../lib/format';
+import { useVisibleSites } from '../lib/siteHealth';
+import { ROUTES } from '../config/site';
 import { useAppState } from '../state/AppState';
 import type { Site } from '../types';
 import { Avatar } from '../components/common/Avatar';
@@ -52,9 +53,15 @@ export function EngagePage() {
   const { isSaved, toggleSave, isLiked, toggleLike, isFollowing, toggleFollow } =
     useAppState();
 
+  // Snapshot the healthy catalogue when Engage opens: a background check that
+  // finishes mid-session must not reshuffle the stream under the user.
+  const visibleSites = useVisibleSites();
+  const poolRef = useRef(visibleSites);
+  const pool = poolRef.current;
+
   // All available sites, starting with the one the user tapped. No artificial limit.
   const feed = useMemo(() => {
-    const ordered = buildHomeFeed(SITES);
+    const ordered = buildHomeFeed(pool);
     const index = ordered.findIndex((site) => site.id === id);
     const first = index < 0 ? ordered[0] : ordered[index];
     const rest = ordered.filter((site) => site.id !== first.id);
@@ -65,7 +72,18 @@ export function EngagePage() {
       [rest[i], rest[j]] = [rest[j], rest[i]];
     }
     return [first, ...rest];
-  }, [id]);
+  }, [id, pool]);
+
+  // A hidden site can still be reached from an old link; move to a healthy one.
+  const initialIdRef = useRef(id);
+  useEffect(() => {
+    const initial = initialIdRef.current;
+    if (!initial) return;
+    initialIdRef.current = undefined;
+    if (visibleSites.some((site) => site.id === initial)) return;
+    const fallback = feed[0];
+    if (fallback) navigate(`${ROUTES.engage}/${fallback.id}`, { replace: true });
+  }, [visibleSites, feed, navigate]);
 
   const [entries, setEntries] = useState<FeedEntry[]>(() =>
     feed.map((site) => ({ site, uid: `0:${site.id}` })),

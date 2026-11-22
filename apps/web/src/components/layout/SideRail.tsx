@@ -9,7 +9,7 @@ import {
   Shuffle,
 } from 'lucide-react';
 import { ROUTES } from '../../config/site';
-import { SITES } from '../../data/sites';
+import { useVisibleSites } from '../../lib/siteHealth';
 import { cn } from '../../lib/format';
 
 const NAV_ITEMS = [
@@ -20,10 +20,11 @@ const NAV_ITEMS = [
 
 export function SideRail() {
   const navigate = useNavigate();
+  const sites = useVisibleSites();
 
   const openRandomSite = () => {
-    const site = SITES[Math.floor(Math.random() * SITES.length)];
-    navigate(`${ROUTES.engage}/${site.id}`);
+    const site = sites[Math.floor(Math.random() * sites.length)];
+    if (site) navigate(`${ROUTES.engage}/${site.id}`);
   };
 
   return (

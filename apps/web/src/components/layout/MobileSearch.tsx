@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Search, X } from 'lucide-react';
-import { SITES } from '../../data/sites';
+import { useVisibleSites } from '../../lib/siteHealth';
 import { ROUTES } from '../../config/site';
 import {
   forgetSearch,
@@ -25,10 +25,11 @@ export function MobileSearch() {
   const [active, setActive] = useState(-1);
   const [history, setHistory] = useState<string[]>(() => readSearchHistory());
   const inputRef = useRef<HTMLInputElement>(null);
+  const sites = useVisibleSites();
 
   const suggestions = useMemo(
-    () => getSuggestions(SITES, value, history),
-    [value, history],
+    () => getSuggestions(sites, value, history),
+    [sites, value, history],
   );
   useEffect(() => {
     if (!open) return;

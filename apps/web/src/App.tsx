@@ -11,6 +11,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { AppStateProvider } from './state/AppState';
 import { ToastProvider } from './components/common/Toast';
 import { siteConfig } from './config/site';
+import { startSiteHealth } from './lib/siteHealth';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -42,6 +43,9 @@ function DocumentTitle() {
 }
 
 export default function App() {
+  // Low-priority background checks; failing sites are hidden from every page.
+  useEffect(() => startSiteHealth(), []);
+
   return (
     <AppStateProvider>
       <ToastProvider>

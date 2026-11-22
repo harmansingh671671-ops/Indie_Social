@@ -19,6 +19,7 @@ Open <http://localhost:4000>.
 | `npm run build` | Type-check and production build |
 | `npm run preview` | Preview the production build |
 | `npm run typecheck` | TypeScript only |
+| `npm run health` | Re-scan site response headers for framing permission (`X-Frame-Options` / CSP) |
 | `npm run posters` | Refresh and compress the local poster screenshots in `apps/web/public/posters/` |
 | `npm run posters:optimize` | Re-compress existing posters to WebP and rebuild inline placeholders |
 
@@ -27,12 +28,15 @@ Open <http://localhost:4000>.
 - **Home feed** — responsive masonry, hover Save/Share/More actions
 - **Explore** — category filters over the curated catalogue
 - **Search** — YouTube-style live suggestions after every keystroke (closest titles, makers, categories and tags, typo-tolerant), recent-search history, highlighted matches, arrow-key navigation and "Did you mean" on no-result pages
-- **Engage** — full-screen vertical stream opened from any card. The active site and its two neighbours load in iframes so they are fully interactive; other cards show their local poster. The stream loops continuously in both directions — reaching the last site appends another cycle instead of jumping back to the top. The side rail also has a shuffle button that opens a random site in Engage
+- **Engage** — full-screen vertical stream opened from any card. Only the active site loads its real iframe (plus a silent preload of the next one for an instant forward swipe); every card shows its local poster underneath. The stream loops continuously in both directions — reaching the last site appends another cycle instead of jumping back to the top. The side rail also has a shuffle button that opens a random site in Engage
+- **Site health** — sites that cannot be embedded or no longer respond are hidden from every page. Framing permission is checked at build time from the response headers; reachability is checked in the app in the background, one site at a time. After three identical results a site is only re-checked once a day
 - **Saved** — auto-generated collections grouped by category, with a stacked-image preview
 - **Profile** — Saved / Likes / Created tabs, stats, share and edit-profile actions
 - **Mobile** — bottom navigation, 2-column masonry, compact search icon that opens a full search sheet with recent/trending suggestions and live results (all header icons stay visible)
 
-Saved sites, likes and follows persist in `localStorage` under the `sitehub.v1.*` keys. There is no backend yet.
+Saved sites, likes and follows persist in `localStorage` under the `sitehub.v1.*` keys. There is no backend yet. Health results are stored under `sitehub.v1.health`.
+
+Checks never run while the tab is hidden, the device is offline, or data saver / a 2G connection is active. Run `npm run health` to refresh the header scan manually; production builds refresh it automatically when the previous scan is older than 24 hours. Injecting the response headers is necessary because a browser cannot read them cross-origin — a blocked iframe still fires `load`.
 
 ## Project structure
 
@@ -69,6 +73,7 @@ Everything is deliberately split so content edits never touch layout code.
 | Add, remove or rewrite a site | `apps/web/src/data/sites.ts` |
 | Change a site's poster image | add `poster: '/posters/name.webp'` to that site and drop the file in `apps/web/public/posters/` |
 | Change colours, radii, spacing | `apps/web/src/styles/tokens.css` |
+| Tune site health checks | `apps/web/src/config/health.ts` (intervals) and `scripts/check-embeddable.mjs` (header rules) |
 | Restyle the feed or a card | `apps/web/src/styles/feed.css` |
 | Restyle the Engage stream | `apps/web/src/styles/engage.css` |
 | Change navigation items | `components/layout/SideRail.tsx` + `MobileNav.tsx` |
@@ -94,7 +99,7 @@ Each card also has a ~150-byte blurred placeholder inlined in the bundle (`data/
 - The site list is curated demo content. Every site belongs to its maker; SiteHub only links out.
 - Search, collections, likes and follows are local to the browser.
 - The Create / submit-a-site flow is deferred to `plan.md`; its modal component is kept in the codebase for later.
-- Some external sites refuse to be embedded, so their Engage frame may be blank. "Visit site" always opens them in a new tab.
+- Sites that forbid framing or fail their background reachability check are hidden automatically; a stale `/engage/:id` link redirects to a healthy site. "Visit site" always opens a site in a new tab.
 - The app is a web client. The native WebView lifecycle work in `docs/webview-lifecycle-spike.md` is still future work.
 
 ## Next steps

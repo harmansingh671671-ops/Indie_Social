@@ -1,13 +1,18 @@
 import { useMemo, useState } from 'react';
-import { CATEGORIES, SITES } from '../data/sites';
+import { CATEGORIES } from '../data/sites';
 import { filterByCategory } from '../lib/feed';
+import { useVisibleSites } from '../lib/siteHealth';
 import { CategoryChips } from '../components/feed/CategoryChips';
 import { SiteGrid } from '../components/feed/SiteGrid';
 import { PageHeader } from '../components/layout/PageHeader';
 
 export function ExplorePage() {
+  const sites = useVisibleSites();
   const [category, setCategory] = useState('All');
-  const visible = useMemo(() => filterByCategory(SITES, category), [category]);
+  const visible = useMemo(
+    () => filterByCategory(sites, category),
+    [sites, category],
+  );
 
   return (
     <div className="page">

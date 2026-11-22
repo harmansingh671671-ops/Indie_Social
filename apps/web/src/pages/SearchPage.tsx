@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchX } from 'lucide-react';
-import { CATEGORIES, SITES } from '../data/sites';
+import { CATEGORIES } from '../data/sites';
 import { filterByCategory, searchSites } from '../lib/feed';
 import { getSuggestions } from '../lib/search';
+import { useVisibleSites } from '../lib/siteHealth';
 import { CategoryChips } from '../components/feed/CategoryChips';
 import { SiteGrid } from '../components/feed/SiteGrid';
 import { PageHeader } from '../components/layout/PageHeader';
@@ -15,14 +16,15 @@ import { ROUTES } from '../config/site';
 export function SearchPage() {
   const [params] = useSearchParams();
   const query = params.get('q') ?? '';
+  const sites = useVisibleSites();
   const [category, setCategory] = useState('All');
 
-  const results = useMemo(() => searchSites(SITES, query), [query]);
+  const results = useMemo(() => searchSites(sites, query), [sites, query]);
   const visible = useMemo(() => filterByCategory(results, category), [results, category]);
   const didYouMean = useMemo(() => {
     if (!query.trim() || results.length > 0) return undefined;
-    return getSuggestions(SITES, query, [], 6).find((item) => item.kind !== 'search');
-  }, [query, results.length]);
+    return getSuggestions(sites, query, [], 6).find((item) => item.kind !== 'search');
+  }, [sites, query, results.length]);
 
   return (
     <div className="page">

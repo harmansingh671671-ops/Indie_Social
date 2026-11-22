@@ -89,3 +89,14 @@ npm run build
 ```
 
 The output is a static SPA in `apps/web/dist`. Host it on Cloudflare Pages, Netlify or Vercel. Because routing is client-side, configure a fallback rewrite to `/index.html` (Vercel and Netlify do this for SPAs; on Cloudflare Pages add a `_redirects` file containing `/* /index.html 200`).
+
+## 8. Site health and hidden sites
+
+A site disappears from every page when either check fails:
+
+1. **Build-time header scan** — `npm run health` fetches each URL's headers and writes `apps/web/src/data/embedStatus.ts`. A site with `X-Frame-Options: DENY/SAMEORIGIN` or a `frame-ancestors` list that excludes `https://sitehub.sites` is marked non-embeddable. `npm run build` refreshes this automatically once a day and never fails because of a network problem.
+2. **Runtime reachability** — `lib/siteHealth.ts` probes each remaining site with one `no-cors` request, sequentially, only while the tab is visible and the device is online. Results are in `sitehub.v1.health` in `localStorage`.
+
+A result that repeats three times backs that site off to a 24-hour check; otherwise sites are re-checked hourly. A later success makes the site visible again. Hidden sites intentionally have no UI. To tune the timings, edit `apps/web/src/config/health.ts`; to add new framing rules, edit `scripts/check-embeddable.mjs`.
+
+If you add a site, run `npm run health` once so its header verdict is added to the generated manifest.

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, MapPin, Settings, Share2, Sparkles } from 'lucide-react';
 import { SITES } from '../data/sites';
+import { useHiddenSiteIds } from '../lib/siteHealth';
 import { useAppState } from '../state/AppState';
 import { useToast } from '../components/common/Toast';
 import { siteConfig, ROUTES } from '../config/site';
@@ -23,6 +24,7 @@ const TABS: Array<{ id: Tab; label: string }> = [
 
 export function ProfilePage() {
   const { savedIds, likedIds, followedHandles } = useAppState();
+  const hidden = useHiddenSiteIds();
   const { showToast } = useToast();
   const [tab, setTab] = useState<Tab>('saved');
 
@@ -32,8 +34,8 @@ export function ProfilePage() {
     () =>
       savedIds
         .map((id) => SITES.find((site) => site.id === id))
-        .filter((site): site is Site => Boolean(site)),
-    [savedIds],
+        .filter((site): site is Site => site !== undefined && !hidden.has(site.id)),
+    [savedIds, hidden],
   );
 
   const likedSites = useMemo(
@@ -41,8 +43,8 @@ export function ProfilePage() {
       [...likedIds]
         .reverse()
         .map((id) => SITES.find((site) => site.id === id))
-        .filter((site): site is Site => Boolean(site)),
-    [likedIds],
+        .filter((site): site is Site => site !== undefined && !hidden.has(site.id)),
+    [likedIds, hidden],
   );
 
   const visible = tab === 'saved' ? savedSites : tab === 'likes' ? likedSites : [];
