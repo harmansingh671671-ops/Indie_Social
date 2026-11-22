@@ -242,6 +242,11 @@ apps/web/src/
   transition so it is barely noticeable; showing them again uses a fast 0.35s fade. Pointer/key
   activity and scrolling/swiping the main feed while hidden reveal the overlays, but neither
   extends the dwell timer — only moving to another website resets it (and reveals the chrome).
+  That 20s dwell also **locks the feed** (`is-locked` → `overflow: hidden`): swipes then belong
+  to the website and cannot change the site; the vertical site bar (wheel/click) still works and
+  unlocks by moving to another site. The hide-button tooltip reports the live state on hover
+  (controls hidden/visible, swiping locked, click action); its pointerdown is ignored by the
+  reveal handler so clicking it reliably toggles.
   The navigator renders only a 4-site
   window around the active site, with the current site always in the 2nd slot (index 1). The
   strip is re-anchored to that slot after every change; wheel/swipe only ever advances one
@@ -293,3 +298,5 @@ apps/web/src/
   7 sites up front - including deep-sea and coolors, which showed "refused to connect".
 - Engage frames now fill the window exactly (`100%` + `scrolling="no"`) instead of overflowing by
   24px; resizing stays locked.
+- Refined chrome toggle: reliable click show/hide, live status tooltip on hover, and a 20s dwell
+  feed lock so swipes cannot leave a site — only the vertical site bar can navigate.

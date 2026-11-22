@@ -91,6 +91,7 @@ export function EngagePage() {
   const [active, setActive] = useState(0);
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
+  const [feedLocked, setFeedLocked] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
@@ -378,12 +379,17 @@ export function EngagePage() {
   // own dwell timer.
   useEffect(() => {
     setChromeHidden(false);
+    setFeedLocked(false);
   }, [activeEntry.uid]);
 
   // Hide the overlays only after the user has stayed on the same website for
   // 20s. Activity brings them back, but does not extend the dwell timer.
   useEffect(() => {
-    const reveal = () => {
+    const reveal = (event: Event) => {
+      // The toggle handles its own clicks; revealing here would immediately
+      // cancel a "show controls" click and leave the overlays hidden.
+      const target = event.target as Element | null;
+      if (target?.closest?.('.engage__hide')) return;
       if (chromeHiddenRef.current) setChromeHidden(false);
     };
     window.addEventListener('pointerdown', reveal, true);
@@ -398,13 +404,21 @@ export function EngagePage() {
 
   useEffect(() => {
     if (chromeHidden) return undefined;
-    const timer = window.setTimeout(() => setChromeHidden(true), 20000);
+    const timer = window.setTimeout(() => {
+      setChromeHidden(true);
+      // Once someone has settled into a site, swipes belong to the website.
+      // Navigation is explicit: the vertical site bar only.
+      setFeedLocked(true);
+    }, 20000);
     return () => window.clearTimeout(timer);
   }, [chromeHidden, activeEntry.uid]);
 
   return (
     <div className="engage">
-      <div className="engage__scroller" ref={scrollerRef}>
+      <div
+        className={`engage__scroller${feedLocked ? ' is-locked' : ''}`}
+        ref={scrollerRef}
+      >
         {entries.map((entry, index) => {
           const isActive = index === active;
           // The next website is loaded ahead of time without the autoplay
@@ -581,6 +595,7 @@ export function EngagePage() {
       <button
         type="button"
         className="engage__hide"
+        data-tooltip={`${chromeHidden ? 'Controls hidden' : 'Controls visible'}${feedLocked ? ' · swiping locked' : ''} · click to ${chromeHidden ? 'show' : 'hide'}`}
         aria-label={chromeHidden ? 'Show controls' : 'Hide controls'}
         aria-pressed={chromeHidden}
         onClick={() => setChromeHidden((value) => !value)}
