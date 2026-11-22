@@ -152,8 +152,13 @@ apps/web/src/
 - A cross-origin iframe cannot reveal framing refusal (Chrome fires `load` even when embedding
   is blocked), so `scripts/check-embeddable.mjs` (`npm run health`, also a soft `prebuild`)
   reads `X-Frame-Options` / CSP `frame-ancestors` with Node and writes
-  `data/embedStatus.ts`. Those sites are hidden without being probed at runtime. Currently 5
-  sites are header-blocked: 2048, blob-opera, draw-a-stickman, quick-draw, windy.
+  `data/embedStatus.ts`. Requests use full browser-like headers so bot-protected hosts reveal
+  their real headers instead of a 403 challenge. Any HTTP error status is also treated as
+  non-embeddable, because it renders an error page in the frame. Network failures keep their
+  previous verdict (the in-app check decides at runtime). Those sites are hidden without being
+  probed at runtime. Currently 7 sites are blocked up front: 2048, blob-opera, draw-a-stickman,
+  quick-draw, windy, deep-sea and coolors — the last two were showing Chrome's "refused to
+  connect" page.
 - Hidden sites have **no UI** by request; old `/engage/:id` links to a hidden site redirect to
   the first healthy one. Engage snapshots the healthy catalogue at mount so a background check
   cannot reshuffle the stream mid-session.
@@ -283,3 +288,5 @@ apps/web/src/
 - Locked Engage iframes against resizing (`resize: none`, forced width/height) so embedded sites
   always fill the screen.
 - Overlay auto-hide is now dwell-based: 20s on one website, reset only by moving to another site.
+- Header scan now sends browser-like requests, treats HTTP errors as non-embeddable, and hides
+  7 sites up front — including deep-sea and coolors, which showed "refused to connect".

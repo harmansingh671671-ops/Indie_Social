@@ -3,14 +3,15 @@
  * Do not edit by hand.
  *
  * A site is marked non-embeddable when its response headers forbid framing
- * (X-Frame-Options, or a CSP frame-ancestors list without our origin).
+ * (X-Frame-Options, or a CSP frame-ancestors list without our origin), or when
+ * it answers with an HTTP error status that would show an error page in a frame.
  */
 export interface EmbedStatus {
   embeddable: boolean;
   reason?: string;
 }
 
-export const EMBED_STATUS_CHECKED_AT = '2026-11-22T14:04:18.297Z';
+export const EMBED_STATUS_CHECKED_AT = '2026-11-22T14:45:19.372Z';
 
 export const EMBED_STATUS: Record<string, EmbedStatus> = {
   "2048": { embeddable: false, reason: "frame-ancestors: 'self' https://next.play2048.co https://play2048.co https://play2048-co.translate.goog" },
@@ -18,7 +19,7 @@ export const EMBED_STATUS: Record<string, EmbedStatus> = {
   "typatone": { embeddable: true },
   "chrome-music-lab": { embeddable: true },
   "radio-garden": { embeddable: true },
-  "blob-opera": { embeddable: false, reason: "x-frame-options: sameorigin" },
+  "blob-opera": { embeddable: false, reason: "http 403" },
   "silk": { embeddable: true },
   "this-is-sand": { embeddable: true },
   "fluid-simulation": { embeddable: true },
@@ -37,7 +38,9 @@ export const EMBED_STATUS: Record<string, EmbedStatus> = {
   "earth": { embeddable: true },
   "scale-of-the-universe": { embeddable: true },
   "windy": { embeddable: false, reason: "frame-ancestors: 'self' *.windy.com:*" },
+  "deep-sea": { embeddable: false, reason: "x-frame-options: sameorigin" },
   "excalidraw": { embeddable: true },
+  "coolors": { embeddable: false, reason: "x-frame-options: sameorigin" },
   "photopea": { embeddable: true },
   "squoosh": { embeddable: true },
 };

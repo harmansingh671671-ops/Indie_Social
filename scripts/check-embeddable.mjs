@@ -54,31 +54,43 @@ async function checkSite(site) {
     const response = await fetch(site.url, {
       redirect: 'follow',
       signal: controller.signal,
+      // Look like a real navigation: bot-protected hosts return a challenge
+      // page to plain requests, which hides their framing headers from us.
       headers: {
-        // Some hosts reject unknown clients; look like a normal browser.
         'user-agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36 SiteHubEmbedCheck',
-        accept: 'text/html,application/xhtml+xml',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'accept-language': 'en-US,en;q=0.9',
+        'sec-ch-ua':
+          '"Chromium";v="131", "Not(A:Brand";v="24", "Google Chrome";v="131"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'iframe',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'cross-site',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
       },
     });
 
     // Only the headers matter; stop the body download immediately.
     response.body?.cancel().catch(() => {});
 
-    if (response.status === 404 || response.status === 410) {
-      return { embeddable: false, reason: `http ${response.status}` };
-    }
-    if (!response.ok) {
-      console.warn(`  ? ${site.id}: HTTP ${response.status} (kept as unknown)`);
-      return null;
-    }
-
     const reason = refusalReason(
       response.headers.get('x-frame-options'),
       response.headers.get('content-security-policy'),
     );
-    return reason ? { embeddable: false, reason } : { embeddable: true };
+    if (reason) return { embeddable: false, reason };
+
+    // An error status in a browser means an error page in the iframe.
+    if (!response.ok) {
+      return { embeddable: false, reason: `http ${response.status}` };
+    }
+    return { embeddable: true };
   } catch (error) {
+    // A network failure here is usually this machine, not the site. Keep the
+    // previous verdict; the in-app check will decide at runtime.
     console.warn(`  ? ${site.id}: ${error.name === 'AbortError' ? 'timeout' : error.message}`);
     return null;
   } finally {
@@ -140,7 +152,8 @@ async function main() {
  * Do not edit by hand.
  *
  * A site is marked non-embeddable when its response headers forbid framing
- * (X-Frame-Options, or a CSP frame-ancestors list without our origin).
+ * (X-Frame-Options, or a CSP frame-ancestors list without our origin), or when
+ * it answers with an HTTP error status that would show an error page in a frame.
  */
 export interface EmbedStatus {
   embeddable: boolean;

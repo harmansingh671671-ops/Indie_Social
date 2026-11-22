@@ -36,7 +36,7 @@ Open <http://localhost:4000>.
 
 Saved sites, likes and follows persist in `localStorage` under the `sitehub.v1.*` keys. There is no backend yet. Health results are stored under `sitehub.v1.health`.
 
-Checks never run while the tab is hidden, the device is offline, or data saver / a 2G connection is active. Run `npm run health` to refresh the header scan manually; production builds refresh it automatically when the previous scan is older than 24 hours. Injecting the response headers is necessary because a browser cannot read them cross-origin — a blocked iframe still fires `load`.
+Checks never run while the tab is hidden, the device is offline, or data saver / a 2G connection is active. Run `npm run health` to refresh the header scan manually; production builds refresh it automatically when the previous scan is older than 24 hours. The scan sends browser-like request headers and rejects any HTTP error response as well as framing restrictions, so sites that would show an error page are hidden before they are ever opened. Injecting the response headers is necessary because a browser cannot read them cross-origin — a blocked iframe still fires `load`.
 
 ## Project structure
 
