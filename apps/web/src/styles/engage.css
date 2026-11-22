@@ -77,13 +77,13 @@
   position: absolute;
   top: 0;
   left: 0;
-  /* A browser lets an iframe be dragged smaller by its corner. Lock the
-     website to the slide so it always fills the screen; !important also
-     overrides an inline width/height left behind by an earlier drag. */
-  width: calc(100% + 24px) !important;
-  height: calc(100% + 24px) !important;
-  min-width: calc(100% + 24px);
-  min-height: calc(100% + 24px);
+  /* Fill the window exactly: no 24px oversize that pushes the right/bottom
+     edges past the slide. `scrolling="no"` on the element hides any scrollbar
+     the embedded document would otherwise draw. */
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100%;
+  min-height: 100%;
   resize: none !important;
   opacity: 0;
   transition: opacity 0.35s var(--ease);

@@ -422,6 +422,7 @@ export function EngagePage() {
                   title={`Interactive website: ${entry.site.title}`}
                   inert={!isActive}
                   loading="eager"
+                  scrolling="no"
                   onLoad={(event) => event.currentTarget.classList.add('is-ready')}
                   allow={
                     isActive

@@ -273,8 +273,9 @@ apps/web/src/
   moment it leaves the window; every slide keeps its poster underneath and each iframe reveals
   itself when its own load event fires.
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
-  `scrollbar-width: none`, and each iframe is 24px wider/taller than its slide so scrollbars
-  drawn by the embedded website itself fall outside the clipped slide.
+  `scrollbar-width: none`, and each iframe uses `scrolling="no"` so the embedded document draws
+  no scrollbars. The frame is exactly `100%` of its slide (top/left/right/bottom all flush with
+  the window) — the earlier 24px oversize made the right and bottom edges overrun the window.
 - Engage iframes are locked to the slide with `resize: none` and `!important` dimensions, so a
   corner drag cannot shrink the website; dimensions left behind by a drag are overridden too.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
@@ -289,4 +290,6 @@ apps/web/src/
   always fill the screen.
 - Overlay auto-hide is now dwell-based: 20s on one website, reset only by moving to another site.
 - Header scan now sends browser-like requests, treats HTTP errors as non-embeddable, and hides
-  7 sites up front — including deep-sea and coolors, which showed "refused to connect".
+  7 sites up front - including deep-sea and coolors, which showed "refused to connect".
+- Engage frames now fill the window exactly (`100%` + `scrolling="no"`) instead of overflowing by
+  24px; resizing stays locked.
