@@ -269,6 +269,8 @@ apps/web/src/
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
   `scrollbar-width: none`, and each iframe is 24px wider/taller than its slide so scrollbars
   drawn by the embedded website itself fall outside the clipped slide.
+- Engage iframes are locked to the slide with `resize: none` and `!important` dimensions, so a
+  corner drag cannot shrink the website; dimensions left behind by a drag are overridden too.
 - Card hover: the whole card scales up 2% (`transform: scale(1.02)`) with a blurred halo
   behind it; the other cards in the feed blur 0.5px while one is hovered/focused; removed the
   inner image zoom and the dark dimming overlay (posters stay bright). Scale/blur/halo
@@ -277,3 +279,5 @@ apps/web/src/
   soft `prebuild`) + low-priority runtime reachability checks in `lib/siteHealth.ts`; 1h
   cadence, 24h after 3 identical results; failing sites hidden everywhere with no UI;
   `useVisibleSites()` / `useHiddenSiteIds()` are the single filtering entry points.
+- Locked Engage iframes against resizing (`resize: none`, forced width/height) so embedded sites
+  always fill the screen.
