@@ -91,7 +91,6 @@ export function EngagePage() {
   const [active, setActive] = useState(0);
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
-  const [activityTick, setActivityTick] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
@@ -375,17 +374,25 @@ export function EngagePage() {
     copyTimerRef.current = window.setTimeout(() => setCopiedUid(null), 1600);
   };
 
-  // Treat any interaction with the app chrome as activity; after five quiet
-  // seconds the overlays fade away so the website is unobstructed.
+  // Moving to another website brings the controls back and starts that site's
+  // own dwell timer.
   useEffect(() => {
-    const onActivity = () => setActivityTick((tick) => tick + 1);
-    window.addEventListener('pointerdown', onActivity, true);
-    window.addEventListener('pointermove', onActivity, true);
-    window.addEventListener('keydown', onActivity, true);
+    setChromeHidden(false);
+  }, [activeEntry.uid]);
+
+  // Hide the overlays only after the user has stayed on the same website for
+  // 20s. Activity brings them back, but does not extend the dwell timer.
+  useEffect(() => {
+    const reveal = () => {
+      if (chromeHiddenRef.current) setChromeHidden(false);
+    };
+    window.addEventListener('pointerdown', reveal, true);
+    window.addEventListener('pointermove', reveal, true);
+    window.addEventListener('keydown', reveal, true);
     return () => {
-      window.removeEventListener('pointerdown', onActivity, true);
-      window.removeEventListener('pointermove', onActivity, true);
-      window.removeEventListener('keydown', onActivity, true);
+      window.removeEventListener('pointerdown', reveal, true);
+      window.removeEventListener('pointermove', reveal, true);
+      window.removeEventListener('keydown', reveal, true);
     };
   }, []);
 
@@ -393,7 +400,7 @@ export function EngagePage() {
     if (chromeHidden) return undefined;
     const timer = window.setTimeout(() => setChromeHidden(true), 20000);
     return () => window.clearTimeout(timer);
-  }, [chromeHidden, activityTick]);
+  }, [chromeHidden, activeEntry.uid]);
 
   return (
     <div className="engage">

@@ -233,10 +233,11 @@ apps/web/src/
   feed via `scrollend`; clicking a thumbnail jumps to that site. The main website can still be
   scrolled/swiped directly and stays in sync. A top-right hide button toggles all overlays
   (back arrow, meta, rail/actions, navigator); only the hide button remains when hidden.
-  After 20s of no app-chrome interaction the overlays fade out automatically over a slow 3s
-  opacity transition so it is barely noticeable; showing them again uses a fast 0.35s fade.
-  Any pointer/key activity resets the timer, and scrolling/swiping the main feed while hidden
-  immediately reveals the overlays with the fast fade. The navigator renders only a 4-site
+  After 20s on the **same website** the overlays fade out automatically over a slow 3s opacity
+  transition so it is barely noticeable; showing them again uses a fast 0.35s fade. Pointer/key
+  activity and scrolling/swiping the main feed while hidden reveal the overlays, but neither
+  extends the dwell timer — only moving to another website resets it (and reveals the chrome).
+  The navigator renders only a 4-site
   window around the active site, with the current site always in the 2nd slot (index 1). The
   strip is re-anchored to that slot after every change; wheel/swipe only ever advances one
   site in the chosen direction. The catalogue order is shuffled on every Engage mount, but
@@ -281,3 +282,4 @@ apps/web/src/
   `useVisibleSites()` / `useHiddenSiteIds()` are the single filtering entry points.
 - Locked Engage iframes against resizing (`resize: none`, forced width/height) so embedded sites
   always fill the screen.
+- Overlay auto-hide is now dwell-based: 20s on one website, reset only by moving to another site.
