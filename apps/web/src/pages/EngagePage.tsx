@@ -74,7 +74,6 @@ export function EngagePage() {
   const [copiedUid, setCopiedUid] = useState<string | null>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
   const [activityTick, setActivityTick] = useState(0);
-  const [frameReady, setFrameReady] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const cycleIdRef = useRef(0);
@@ -358,12 +357,6 @@ export function EngagePage() {
     copyTimerRef.current = window.setTimeout(() => setCopiedUid(null), 1600);
   };
 
-  // Only the active site keeps an iframe mounted, so leaving a site always
-  // unloads its document (and therefore stops any sound it was playing).
-  useEffect(() => {
-    setFrameReady(false);
-  }, [activeEntry.uid]);
-
   // Treat any interaction with the app chrome as activity; after five quiet
   // seconds the overlays fade away so the website is unobstructed.
   useEffect(() => {
@@ -387,24 +380,36 @@ export function EngagePage() {
   return (
     <div className="engage">
       <div className="engage__scroller" ref={scrollerRef}>
-        {entries.map((entry, index) => (
-          <section className="engage__slide" key={entry.uid}>
-            <img className="engage__poster" src={posterFor(entry.site)} alt="" />
-            {index === active && (
-              <iframe
-                key={activeEntry.uid}
-                className={`engage__frame${frameReady ? ' is-ready' : ''}`}
-                src={entry.site.url}
-                title={`Interactive website: ${entry.site.title}`}
-                loading="eager"
-                onLoad={() => setFrameReady(true)}
-                allow="autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            )}
-          </section>
-        ))}
+        {entries.map((entry, index) => {
+          const isActive = index === active;
+          // The next website is loaded ahead of time without the autoplay
+          // permission, so it is already rendered when the user swipes to it.
+          // It is silent while warm and only gets audio once it is active.
+          const isWarm = index === active + 1;
+          return (
+            <section className="engage__slide" key={entry.uid}>
+              <img className="engage__poster" src={posterFor(entry.site)} alt="" />
+              {(isActive || isWarm) && (
+                <iframe
+                  key={entry.uid}
+                  className="engage__frame"
+                  src={entry.site.url}
+                  title={`Interactive website: ${entry.site.title}`}
+                  inert={!isActive}
+                  loading="eager"
+                  onLoad={(event) => event.currentTarget.classList.add('is-ready')}
+                  allow={
+                    isActive
+                      ? 'autoplay; fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking'
+                      : 'fullscreen; clipboard-read; clipboard-write; geolocation; microphone; camera; midi; serial; gamepad; xr-spatial-tracking'
+                  }
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              )}
+            </section>
+          );
+        })}
       </div>
 
       <div className={`engage__chrome${chromeHidden ? ' is-hidden' : ''}`}>

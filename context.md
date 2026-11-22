@@ -113,11 +113,14 @@ apps/web/src/
   bottom-right Save/Share/More/Visit stack. Save/Follow/Like use the existing `AppState`.
   The old island header, dots, progress bar, category badge, swipe hint and the top/bottom
   black gradient scrims were removed, so websites render edge-to-edge with no shading.
-- Only the active slide renders the real website in an `<iframe>`; every slide also renders its
-  local poster underneath, so switching sites unloads the previous document (stopping its
-  sound) and the new site fades in over its poster when loaded. Neighbouring iframes were
-  dropped because they kept playing audio in the background. Some external sites refuse
-  framing (X-Frame-Options/CSP), so "Visit site" opens the real site in a new tab as a fallback.
+- Only the active slide renders the real website in an `<iframe>` with the `autoplay`
+  permission; every slide also renders its local poster underneath, so switching sites
+  unloads the previous document (stopping its sound). The next site in the stream is
+  mounted one step ahead as a silent warm-up frame (`inert`, no `autoplay` delegation) so a
+  forward swipe shows an already-rendered site instantly instead of a loading delay; it gets
+  the `autoplay` permission when it becomes active. Sites that need a gesture for audio start
+  playing on the first interaction. Some external sites refuse framing
+  (X-Frame-Options/CSP), so "Visit site" opens the real site in a new tab as a fallback.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
   "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SiteHub
   rename). The React implementation lives
@@ -237,8 +240,10 @@ apps/web/src/
   `-webkit-text-stroke` plus a small shadow for contrast. The creator avatar, handle, title, action
   buttons and Visit site pill were enlarged and recoloured to match. The embedded-site
   ActionMenu icon buttons are restyled via `.engage .menu > .icon-btn` (no white circles).
-- Engage mounts only the active site's iframe so switching sites stops the previous site's
-  audio; every slide keeps its poster underneath and the iframe fades in when loaded.
+- Engage mounts the active site's iframe (with autoplay) plus one silent warm-up iframe for the
+  next site, so forward swipes render instantly while the previous site's audio still stops the
+  moment it leaves the window; every slide keeps its poster underneath and each iframe reveals
+  itself when its own load event fires.
 - Engage scrollbar hiding: the scroller is explicitly `overflow-x: hidden` with
   `scrollbar-width: none`, and each iframe is 24px wider/taller than its slide so scrollbars
   drawn by the embedded website itself fall outside the clipped slide.
