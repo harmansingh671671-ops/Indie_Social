@@ -15,6 +15,11 @@
   --surface-2: #f1f1f1;
   --surface-3: #e9e9e9;
 
+  /* Engage backdrop follows the device colour scheme, so the space behind an
+     embedded website matches light or dark mode. */
+  --engage-bg: #f4f4f6;
+  --engage-canvas: #ffffff;
+
   --radius-xs: 8px;
   --radius-sm: 12px;
   --radius-md: 16px;
@@ -33,4 +38,11 @@
     Helvetica, Arial, sans-serif;
 
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --engage-bg: #0e0e10;
+    --engage-canvas: #0e0e10;
+  }
 }

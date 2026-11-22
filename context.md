@@ -121,6 +121,10 @@ apps/web/src/
   the `autoplay` permission when it becomes active. Sites that need a gesture for audio start
   playing on the first interaction. Some external sites refuse framing
   (X-Frame-Options/CSP), so "Visit site" opens the real site in a new tab as a fallback.
+- The Engage backdrop follows the device colour scheme: `--engage-bg` is `#f4f4f6` in light
+  mode and `#0e0e10` in dark mode (`prefers-color-scheme`), and `--engage-canvas` does the same
+  for the iframe canvas. `.app--engage` also sets `color-scheme: light dark`, so the space
+  behind a transparent or still-loading website matches the device theme.
 - Design reference was generated with **Stitch MCP** (project `5010295139379108609`,
   "Scroll — Engage", screen "Engage — Indie Discovery Feed"; generated before the SiteHub
   rename). The React implementation lives
